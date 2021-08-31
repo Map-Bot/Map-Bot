@@ -1,0 +1,86 @@
+{
+  "status": "config",
+  "hostServer": 0,
+  "startDate": "N/A",
+  "gameType":"N/A",
+  "roles": {
+    "Faction 1 Member": {
+      "id": "0",
+      "permissions": [
+        "claim"
+      ],
+      "faction": "Faction 1"
+    },
+    "Faction 1 Midrank": {
+      "id": "0",
+      "permissions": [
+        "claim",
+        "trade",
+        "induction"
+      ],
+      "faction": "Faction 1"
+    },
+    "Faction 1 Leader": {
+      "id": "0",
+      "permissions": [
+        "claim",
+        "trade",
+        "induction",
+        "config"
+      ],
+      "faction": "Faction 1"
+    },
+    "Faction 2 Member": {
+      "id": "0",
+      "permissions": [
+        "claim"
+      ],
+      "faction": "Faction 1"
+    },
+    "Faction 2 Midrank": {
+      "id": "0",
+      "permissions": [
+        "claim",
+        "trade",
+        "induction"
+      ],
+      "faction": "Faction 1"
+    },
+    "Faction 2 Leader": {
+      "id": "0",
+      "permissions": [
+        "claim",
+        "trade",
+        "induction",
+        "config"
+      ],
+      "faction": "Faction 1"
+    },
+    "Faction 3 Member": {
+      "id": "0",
+      "permissions": [
+        "claim"
+      ],
+      "faction": "Faction 1"
+    },
+    "Faction 3 Midrank": {
+      "id": "0",
+      "permissions": [
+        "claim",
+        "trade",
+        "induction"
+      ],
+      "faction": "Faction 1"
+    },
+    "Faction 3 Leader": {
+      "id": "0",
+      "permissions": [
+        "claim",
+        "trade",
+        "induction",
+        "config"
+      ],
+      "faction": "Faction 1"
+    },
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "status": "config",
+  "hostServer": 0,
+  "startDate": "N/A",
+  "roles": {
+    //the numbers are placeholders for the actual role ID's
+    "0": {
+      "name": "Faction 1 Member",
+      "permissions": "1",
+      "faction": "Faction 1"
+    },
+    "1": {
+      "name": "Faction 1 Midrank",
+      "permissions": "2",
+      "faction": "Faction 1"
+    },
+    "2": {
+      "name": "Faction 1 Leader",
+      "permissions": "4",
+      "faction": "Faction 1"
+    }
+  }
+}
+/*
+Pros to this model:
+Utilizes role ID's rather than names
+Makes data easily accessible using only a known role ID
+
+Cons:
+Less readable
+Unstable if role becomes deleted
+More space used
+Does not work for satellites
+Limits permissions
+
+*/
+
+
+}

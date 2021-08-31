@@ -1,0 +1,27 @@
+{
+  "status": "config",
+  "hostServer": 0,
+  "startDate": "N/A",
+  "roles": {
+    "Faction 1": [
+      "Faction 1 Member",
+      "Faction 1 Mid Rank",
+      "Faction 1 Leader"
+    ],
+    "Faction 2": [
+      "Faction 2 Member",
+      "Faction 2 Mid Rank",
+      "Faction 2 Leader"
+    ],
+    "Faction 3": [
+      "Faction 3 Member",
+      "Faction 3 Mid Rank",
+      "Faction 3 Leader"
+    ],
+    "Faction 4": [
+      "Faction 4 Member",
+      "Faction 4 Mid Rank",
+      "Faction 4 Leader"
+    ]
+  }
+}
