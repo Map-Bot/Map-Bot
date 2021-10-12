@@ -1,5 +1,4 @@
 absl-py==0.13.0
-aiocron @ file:///home/runner/.cache/pypoetry/artifacts/a4/44/79/4af76ee80985f8883c58e13057dc69f72c0fa8234972ff430bfb2dd40b/aiocron-1.6-py3-none-any.whl
 aiohttp==3.7.4.post0
 antlr4-python3-runtime==4.9.2
 astunparse==1.6.3
@@ -16,13 +15,10 @@ charset-normalizer==2.0.4
 cleo==0.8.1
 clikit==0.6.2
 crashtest==0.3.1
-croniter @ file:///home/runner/.cache/pypoetry/artifacts/dd/21/55/8ef1b0d27030ab7c990965d5c7508d51f2a62167339b389c31781cb283/croniter-1.0.15-py2.py3-none-any.whl
 cryptography==3.4.8
 cs50==7.0.2
 cycler==0.10.0
 debugpy==1.2.1
-discord @ file:///home/runner/.cache/pypoetry/artifacts/2a/dc/46/ea51f1b99fab3043473352404824cf8774020f4ef65ef7e8985e928ce3/discord-1.7.3-py3-none-any.whl
-discord.py @ file:///home/runner/.cache/pypoetry/artifacts/93/3d/7e/a71579025e378cc8608f84db0999aa01171575fc9bd9078988d8520a75/discord.py-1.7.3-py3-none-any.whl
 distlib==0.3.2
 docopt==0.6.2
 filelock==3.0.12
@@ -58,7 +54,6 @@ packaging==20.9
 parso==0.5.2
 pastel==0.2.1
 pexpect==4.8.0
-pil-compat @ file:///home/runner/.cache/pypoetry/artifacts/f8/f5/ff/25c308cb22420fff36bc64c5c14df599e76d3eb88feaa3a48c085155ff/pil_compat-1.0.0-py2.py3-none-any.whl
 Pillow==8.3.2
 pipreqs-amasad==0.4.10
 pkginfo==1.7.1
@@ -80,12 +75,9 @@ pyquil==1.9.0
 python-dateutil==2.8.2
 python-jsonrpc-server==0.3.2
 python-language-server==0.31.10
-pytz @ file:///home/runner/.cache/pypoetry/artifacts/19/50/c9/f8bffb0360052b3c85b912bc4172f824bc2571e24002806fb3a428302e/pytz-2021.1-py2.py3-none-any.whl
-pyxel @ git+https://github.com/amasad/pyxel@8bcc2266b2fbb65f72ad686952de3838971c136e
-redis @ file:///home/runner/.cache/pypoetry/artifacts/7d/10/53/5e7715691ea8dff1b633fa5813e2a864bf74e3659c469d2a23cd6aae35/redis-3.5.3-py2.py3-none-any.whl
 referenceqvm==0.3
 regex==2021.8.28
-rejson @ file:///home/runner/.cache/pypoetry/artifacts/3d/b7/30/7fcfa7206135745a9e18ede3882c68710c194f0693943415a974f17be9/rejson-0.5.4.tar.gz
+rejson == 0.5.4
 replit==3.2.4
 requests==2.26.0
 requests-oauthlib==1.3.0
@@ -103,8 +95,6 @@ termcolor==1.1.0
 toml==0.10.2
 tomlkit==0.7.2
 tqdm==4.62.2
-typing-extensions @ file:///home/runner/.cache/pypoetry/artifacts/fe/31/ef/8176395be3e4536aa430a84a1af3ade772047a9017c78ce2d045c1636b/typing_extensions-3.10.0.0-py3-none-any.whl
-tzlocal @ file:///home/runner/.cache/pypoetry/artifacts/4c/ef/5d/b791e0d6b44f26be0d4fb1b08d3941ac8edff227d1e71a995cb91b5c3c/tzlocal-2.1-py2.py3-none-any.whl
 ujson==1.35
 urllib3==1.26.6
 virtualenv==20.7.2
