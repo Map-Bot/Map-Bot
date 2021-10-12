@@ -248,4 +248,4 @@ async def end(ctx: commands.Context, name: str):
 
 
 client.run(os.environ['api'])
-asyncio.get_event_loop().run_forever()
+#asyncio.get_event_loop().run_forever()
