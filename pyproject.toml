@@ -8,7 +8,6 @@ authors = ["Your Name <you@example.com>"]
 python = "^3.8"
 aiocron = "^1.6"
 discord = "^1.7.3"
-Flask = "^2.0.1"
 rejson = "^0.5.4"
 pil-compat = "^1.0.0"
 
