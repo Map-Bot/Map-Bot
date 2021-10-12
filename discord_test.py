@@ -1,4 +1,3 @@
-import typing
 import os
 import asyncio
 import time
@@ -24,9 +23,7 @@ print("Discord Main")
 # https://tenor.com/view/wooo-yeah-baby-gif-18955985
 
 
-async def wait_for(
-        ctx: commands.Context, msg: discord.Message,
-        reactions: typing.List[typing.Union[str, discord.PartialEmoji]]) -> typing.Optional[str]:
+async def wait_for(ctx,msg,reaction):
     for i in reactions:
         await msg.add_reaction(i)
 
