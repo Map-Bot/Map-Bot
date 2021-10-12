@@ -1,1 +1,1 @@
-run="python core/main.py"
+run="python discord_test.py"
