@@ -27,15 +27,6 @@ funcsigs==1.0.2
 future==0.18.2
 gast==0.3.3
 glfw==2.2.0
-google-auth==1.35.0
-google-auth-oauthlib==0.4.6
-google-pasta==0.2.0
-greenlet==1.1.1
-grpcio==1.40.0
-h5py==2.10.0
-html5lib==1.1
-idna==3.2
-importlib-metadata==3.10.1
 jedi==0.15.2
 jeepney==0.7.1
 joblib==1.0.1
@@ -58,7 +49,6 @@ Pillow==8.3.2
 pipreqs-amasad==0.4.10
 pkginfo==1.7.1
 platformdirs==2.3.0
-pluggy==0.13.1
 poetry==1.1.6
 poetry-core==1.0.4
 protobuf==3.17.3
