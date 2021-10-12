@@ -17,7 +17,7 @@ client = commands.Bot(command_prefix="%", intents=discord.Intents.all())
 
 # Main should be used for the core, unchanging functions of the bot.
 
-
+print("Discord Main")
 # Include hotswappable cogs code here
 
 
