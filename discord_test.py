@@ -1,3 +1,4 @@
+print("1")
 import os
 import asyncio
 import time
@@ -9,6 +10,7 @@ import class_playground
 #import roles
 from decorators import *
 import r_test
+
 
 client = commands.Bot(command_prefix="%", intents=discord.Intents.all())
 
