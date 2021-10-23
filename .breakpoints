@@ -4,8 +4,24 @@
       {
         "id": "1ef3e938-9c40-4b3a-96d3-c206e699ee0c",
         "line": 1,
-        "version": 125,
+        "version": 129,
         "index": 0
+      }
+    ],
+    "decorators.py": [
+      {
+        "id": "72a4459f-099f-4fbb-8ce4-7c9370623243",
+        "line": 25,
+        "version": 685,
+        "index": 572
+      }
+    ],
+    "discord_test.py": [
+      {
+        "id": "ea669e50-0aa1-4a2c-8144-0006d3ea1f58",
+        "line": 304,
+        "version": 0,
+        "index": 11911
       }
     ]
   }

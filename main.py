@@ -3,7 +3,12 @@ import asyncio
 import time
 import discord
 from discord.ext import commands
+from discord.ext.commands import has_permissions, MissingPermissions
 from discord import Client, Intents, Embed
+from discord_slash import SlashCommand, SlashContext
+from discord_slash.utils.manage_commands import create_choice, create_option
+from discord_slash.utils.manage_components import create_button, create_actionrow, wait_for_component
+from discord_slash.model import ButtonStyle
 import class_playground
 #import roles
 from decorators import *
@@ -11,7 +16,7 @@ import r_test
 
 
 client = commands.Bot(command_prefix="%", intents=discord.Intents.all())
-
+slash = SlashCommand(client, sync_commands=True)
 
 # Main should be used for the core, unchanging functions of the bot.
 
@@ -20,6 +25,40 @@ print("Discord Main")
 
 
 # https://tenor.com/view/wooo-yeah-baby-gif-18955985
+
+@slash.slash(name="setup", description="Setup a game", guild_ids=[821486857367322624])
+async def slash_setup(ctx):
+    author = ctx.author
+
+    buttons1 = [
+    create_button(style=ButtonStyle.blue, label="Join"),
+    create_button(style=ButtonStyle.green, label="Host")
+    ]
+
+    action_row = create_actionrow(*buttons1)
+    await ctx.send("Are you joining a current game or hosting a new one?",components=[action_row])
+    button_ctx: ComponentContext = await wait_for_component(client, components=action_row)
+    
+    if button_ctx.component["label"] == "Host":
+        await button_ctx.edit_origin(content="What is the name of the game that you want to host?", components=[])
+    elif button_ctx.component["label"] == "Join":
+        await button_ctx.edit_origin(content="What is the name of the game that you want to join?", components=[])
+
+    
+    def check(message):
+        return author == message.author
+    message = await client.wait_for("message", timeout=10.0, check=check)
+    buttons2 = [
+        create_button(style=ButtonStyle.green, label=f"Yes, I want my game named '{message.content}'"),
+        create_button(style=ButtonStyle.red, label="No, I want to cancel")
+    ]
+    action_row = create_actionrow(*buttons2)
+    await ctx.send(content=f"Confirm that you want the game to be named '{message.content}', as this cannot be changed later", components=[action_row])
+    button_ctx: ComponentContext = await wait_for_component(client, components=action_row)
+    if button_ctx.component["label"] == f"Yes, I want my faction named '{message.content}'":
+        await button_ctx.edit_origin(content="Game created", components=[])
+    elif button_ctx.component["label"] == "No, I want to cancel":
+        await button_ctx.edit_origin(content="Ok, cancelling", components=[])
 
 
 async def wait_for(ctx,msg, reactions):
@@ -37,7 +76,7 @@ async def wait_for(ctx,msg, reactions):
     return None
 
 
-@client.command()
+@commands.command
 async def setup(ctx: commands.Context):
     #Record each step of setup and save the configuration information and the exact step last completed in the config file of the game.
     author = ctx.message.author
@@ -96,9 +135,9 @@ async def setup(ctx: commands.Context):
         else:
             await ctx.send("This game does not exist")
 
-@not_in_fac()
-@client.command()
-async def join(ctx: commands.Context, faction: str):
+#@not_in_fac()
+@slash.slash(name="join", description="Join the stated faction", guild_ids=[821486857367322624])
+async def join(ctx, faction):
     game = r_test.load_from_id(ctx.guild.id)
     user = game.get_user(ctx.author.id)
     faction_obj = game.get_faction(faction)
@@ -121,8 +160,9 @@ async def user(ctx):
 
 
 @in_fac()
-@client.command()
+@slash.slash(name="leave", description="Leave your current faction", guild_ids=[821486857367322624])
 async def leave(ctx):
+    await ctx.defer()
     game = r_test.load_from_id(ctx.guild.id)
     faction = get_faction(ctx)
     if faction:
@@ -130,6 +170,14 @@ async def leave(ctx):
             if faction.name in i.name:
                 await ctx.author.remove_roles(i)
                 await ctx.send(f"You have successfully left faction: {faction.name}")
+
+@leave.error
+async def leave_error(ctx: commands.Context, error:commands.CommandError):
+    await ctx.send("You must be in a faction to use this command")
+
+    print(error)
+
+
 
 @client.command()
 async def test(ctx: commands.Context):
@@ -154,7 +202,7 @@ async def maps(ctx):
     pass
 
 
-@client.command()
+@slash.slash(name="map", description="Shows the latest map", guild_ids=[821486857367322624])
 @test_predicate()
 async def map(ctx):
     game = r_test.load_from_id(ctx.guild.id)
@@ -165,27 +213,23 @@ async def map(ctx):
     else:
         await ctx.send("No map found for current game. Try using %add_map first")
 
-@client.command()
+@slash.slash(name="add_map", description="Add the given map to the game", guild_ids=[821486857367322624])
 async def add_map(ctx, name):
     game = r_test.load_from_id(ctx.guild.id)
     await ctx.send(game.add_map(name))
 
-@client.command()
+@slash.slash(name="yes", description="WOOO!", guild_ids=[821486857367322624])
 #@not_in_faction()
 async def y(ctx: commands.Context):
-    await ctx.message.delete()
-    time.sleep(.05)
     await ctx.send("https://tenor.com/view/wooo-yeah-baby-gif-18955985")
 
-
-@client.command()
 @in_fac()
+@slash.slash(name="claim", description="Claim the province with the given ID", guild_ids=[821486857367322624])
 async def claim(ctx, id):
     game = r_test.load_from_id(ctx.guild.id)
     user = game.get_user(ctx.author.id)
     done = 0
     faction = False
-    #game.create_faction("Faction 1")
     for i in ctx.author.roles:
         if game.get_faction(i.name) != None:
             faction = i
@@ -202,7 +246,7 @@ async def claim(ctx, id):
         image = game.map()
         image.save("test.png")
         await ctx.send(file=discord.File("test.png"))
-        
+    
     game.save()
 @claim.error
 async def claim_error(ctx: commands.Context, error):
@@ -210,15 +254,13 @@ async def claim_error(ctx: commands.Context, error):
         await ctx.send("You must be in a faction to use this command")
     print(error)
 
-@client.command()
+#@client.command()
 async def update_roles(ctx):
     game = r_test.load_from_id(ctx.guild.id)
-    print(game.server_id)
     edited = []
     role_names = [i.name for i in ctx.guild.roles]
     for i in game.factions:
         for j in i.roles:
-            
             if game.server_id == ctx.guild.id:
                 if j.central_id == 0 and j.central_name not in role_names:
                     edited.append(j.central_name)
@@ -236,15 +278,16 @@ async def update_roles(ctx):
                     j.central_name = ctx.guild.get_role(j.central_id).name
                     print(j.central_name)
     game.save()
-    await ctx.send(f"Roles updated: {', '.join(edited)}")
+    #await ctx.send(f"Roles updated: {', '.join(edited)}")
 
 @not_in_fac()
-@client.command()
-async def newfac(ctx, name: str):
+#@has_permissions(manage_channels=True, manage_roles=True)
+@slash.slash(name="newfac", description="Create a new faction with the provided name", guild_ids=[821486857367322624])
+async def newfac(ctx, name):
     #Add config option later for restricting certain characters like : 
     game = r_test.load_from_id(ctx.guild.id)
     user = game.get_user(ctx.author.id)
-    
+    await ctx.defer()
 
     if len(name) > 20 or len(name) < 1:
         await ctx.send("Faction name must be less than or equal to 20 characters and greater than zero")
@@ -264,33 +307,31 @@ async def newfac(ctx, name: str):
     if game.create_faction(name) == "Faction name already exists":
         await ctx.send("Faction name already exists")
         return
-    
     await update_roles(ctx)
-    await ctx.send("Faction successfully created")
     game = r_test.load_from_id(ctx.guild.id)
     role = ctx.guild.get_role(game.factions[-1].roles[-1].central_id)
-    print(role)
-    #role = await ctx.guild.create_role(name=name, color=discord.Color.from_rgb(game.factions[-1].colors[0],game.factions[-1].colors[1],game.factions[-1].colors[2]))
     await ctx.author.add_roles(role, reason = "Faction creation")
+    
+    await ctx.send("Done")
    
 @newfac.error
 async def new_fac_error(ctx: commands.Context, error: commands.CommandError):
+    print(error)
     if isinstance(error, commands.UnexpectedQuoteError) or isinstance(error, commands.InvalidEndOfQuotedStringError):
         await ctx.send("Invalid name, don't mess with quotes in the name")
     elif isinstance(error, commands.CheckFailure):
         print("In faction")
     else:
-        print(error)
         await ctx.send(f"An error occured, try a different name")
 
 
-@client.command()
+@slash.slash(name="factions", description="List the current factions of this game", guild_ids=[821486857367322624])
 async def factions(ctx):
     game = r_test.load_from_id(ctx.guild.id)
-    await ctx.send(game.faction_names())
+    await ctx.send(str(game.faction_names()))
     
 
-#client.command()
+@client.command()
 async def clearfacs(ctx):
     game = r_test.load_from_id(ctx.guild.id)
     for i in game.factions:
@@ -304,13 +345,15 @@ async def clearfacs(ctx):
     game.save()
     await ctx.send("Factions sucessfully cleared")
 
-@client.command()
+@slash.slash(name="myfac", description="Gives the name of the faction you are in", guild_ids=[821486857367322624])
 async def myfac(ctx):
     game = r_test.load_from_id(ctx.guild.id)
     for i in ctx.author.roles:
         if game.get_faction(i.name) != None:
             await ctx.send(i.name)
-            
+            return
+    await ctx.send("You are not in a faction. Use /join to join one")
+    
 
 
 client.run(os.environ['api'])
