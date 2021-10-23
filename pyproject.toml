@@ -10,6 +10,7 @@ aiocron = "^1.6"
 discord = "^1.7.3"
 rejson = "^0.5.4"
 pil-compat = "^1.0.0"
+Flask = "^2.0.2"
 
 [tool.poetry.dev-dependencies]
 

@@ -7,7 +7,6 @@ import io
 import random
 
 class Game:
-    
     def save(self):
         r_test.save_game(self.name, self)
         
@@ -17,6 +16,7 @@ class Game:
         self.server_id = server_id
         self.factions = []
         self.servers = []
+        self.users = []
         self.map_bytes = ""
         self.map_name = ""
         self.game_json = {}
@@ -80,13 +80,17 @@ class Game:
     def edit_province(self, id, faction):
         if not self.verify_id(id):
             return "Invalid ID"
+        if self.game_json[id] != 0:
+            return "Province already claimed"
         print(self.game_json[id])
         self.game_json[id] = faction.id
         coordinates = r_test.map_json(self.map_name)[f"l{id}"]["coordinates"]
         print(faction.colors)
         temp = self.map()
+        
         for i in coordinates:
             image.quick_fill(temp, eval(i), tuple(faction.colors))
+        print("coordinates done")
         self.update_map(temp)
         return "Sucessfully claimed"
 
@@ -109,6 +113,13 @@ class Game:
         else:
             return "Invalid JSON"
     
+    def get_user(self, id):
+        for i in self.users:
+            if i.discord_id == id:
+                return i
+        user = User(id)
+        self.users.append(user)
+        return user
 
 """"
             
@@ -125,12 +136,14 @@ class Faction:
     def __init__(self, name, faction_id):
         self.name = name
         self.server_id = 0
+        self.users = []
+        self.claims = {}
         try:
             self.colors = color_list[faction_id-1]
         except:
             self.colors = [random.randint(0,255),random.randint(0,255),random.randint(0,255)]
         self.id = faction_id
-        self.roles = [Roles(f"{name} Leader", 1, self),Roles(f"{name} Midrank", 2, self),Roles(f"{name} Member", 3, self)]
+        self.roles = [Roles(f"{name} Leader", 1, self),Roles(f"{name} Midrank", 2, self),Roles(f"{name} Member", 3, self), Roles(f"{name}", 3, self)]
         
     def connect_server(self, id):
         if self.server_id == 0:
@@ -167,9 +180,8 @@ class Roles:
 
 
 class User:
-    def __init__(self, name, discord_id):
-        self.name = name
+    def __init__(self, discord_id):
+        self.name = ""
         self.discord_id = discord_id
-    
-    def join_faction(self, faction_name):
-        pass
+        self.claims = []
+        self.faction = ""

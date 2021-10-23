@@ -42,6 +42,8 @@ def save_game(name, obj):
     print("SAVED")
 
 def add_game(name, obj):
+    if r.jsonget("games", Path.rootPath()) == None:
+        r.jsonset("games", Path.rootPath(), {})
     directory = r.jsonget("games", Path.rootPath())
     if name in directory:
         return "Name already in use"
@@ -116,6 +118,8 @@ def map_json(name):
 
 
 def load_from_id(id):
+    if r.jsonget("games", Path.rootPath()) == None:
+        r.jsonset("games", Path.rootPath(), {})
     games = r.jsonget("games", Path.rootPath())
     for i in games.keys():
         game = unpack(games[i])
