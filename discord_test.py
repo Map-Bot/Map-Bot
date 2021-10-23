@@ -1,14 +1,21 @@
 print("1")
 import os
+print("2")
 import asyncio
+print("3")
 import time
+print("4")
 import discord
+print("5")
 from discord.ext import commands
+print("6")
 from discord import Client, Intents, Embed
-
+print("7")
 import class_playground
 #import roles
+print("8")
 from decorators import *
+print("9")
 import r_test
 
 
