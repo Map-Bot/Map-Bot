@@ -1,6 +1,6 @@
 import r_test
 import json
-import Image
+from PIL import Image
 import image
 import base64
 import io
