@@ -6,6 +6,7 @@ from discord.ext import commands
 from discord.ext.commands import has_permissions, MissingPermissions
 from discord import Client, Intents, Embed
 from discord_slash import SlashCommand, SlashContext
+from discord_slash.error import CheckFailure
 from discord_slash.utils.manage_commands import create_choice, create_option
 from discord_slash.utils.manage_components import create_button, create_actionrow, wait_for_component, create_select, create_select_option
 from discord_slash.model import ButtonStyle
@@ -198,12 +199,16 @@ async def user(ctx):
 async def leave(ctx):
     await ctx.defer()
     game = r_test.load_from_id(ctx.guild.id)
+    user = game.get_user(ctx.author.id)
+    user.claims = []
+    user.faction = ""
     faction = get_faction(ctx)
     if faction:
         for i in ctx.author.roles:
             if faction.name in i.name:
                 await ctx.author.remove_roles(i)
                 await ctx.send(f"You have successfully left faction: {faction.name}")
+    game.save()
 
 @leave.error
 async def leave_error(ctx: commands.Context, error:commands.CommandError):
@@ -248,7 +253,7 @@ async def map(ctx):
         await ctx.send(file=discord.File("test.png"))
         
     else:
-        await ctx.send("No map found for current game. Try using %add_map first")
+        await ctx.send("No map found for current game. Try using /add_map first")
 
 @slash.slash(name="add_map", description="Add the given map to the game", guild_ids=servers)
 async def add_map(ctx, name):
@@ -256,7 +261,6 @@ async def add_map(ctx, name):
     await ctx.send(game.add_map(name))
 
 @slash.slash(name="yes", description="WOOO!", guild_ids=servers)
-#@not_in_faction()
 async def y(ctx: commands.Context):
     await ctx.send("https://tenor.com/view/wooo-yeah-baby-gif-18955985")
 
@@ -281,7 +285,7 @@ async def claim(ctx, id):
     await ctx.send(result)
     if result == "Sucessfully claimed":
         user.claims.append(id)
-        image = game.map()
+        image = game.redraw_map()
         image.save("test.png")
         await ctx.send(file=discord.File("test.png"))
     
@@ -347,18 +351,25 @@ async def newfac(ctx, name):
         return
     await update_roles(ctx)
     game = r_test.load_from_id(ctx.guild.id)
-    role = ctx.guild.get_role(game.factions[-1].roles[-1].central_id)
-    await ctx.author.add_roles(role, reason = "Faction creation")
-    
+    print(game.factions[-1].roles)
+    base_role = ctx.guild.get_role(game.factions[-1].roles[-1].central_id)
+    print(game.factions[-1].roles)
+    user.faction = name
+    game.users[user.id] = user
+    leader_role = ctx.guild.get_role(game.factions[-1].roles[0].central_id)
+    await ctx.author.add_roles(base_role, reason = "Faction creation")
+    await ctx.author.add_roles(leader_role, reason = "Faction creation")
     await ctx.send("Done")
+    game.save()
    
 @newfac.error
-async def new_fac_error(ctx: commands.Context, error: commands.CommandError):
-    print(error)
+async def new_fac_error(ctx, error):
+    print(f"Error: {error}end")
+    print(type(error))
     if isinstance(error, commands.UnexpectedQuoteError) or isinstance(error, commands.InvalidEndOfQuotedStringError):
         await ctx.send("Invalid name, don't mess with quotes in the name")
-    elif isinstance(error, commands.CheckFailure):
-        print("In faction")
+    elif isinstance(error, CheckFailure):
+        await ctx.send("You must be factionless to use this command")
     else:
         await ctx.send(f"An error occured, try a different name")
 
@@ -373,6 +384,7 @@ async def factions(ctx):
 async def clearfacs(ctx):
     await ctx.defer()
     game = r_test.load_from_id(ctx.guild.id)
+    game.current_claims = {}
     for i in game.factions:
         for j in i.roles:
             if j.central_id != 0:
@@ -382,6 +394,7 @@ async def clearfacs(ctx):
                     print("Role deletion error")
     game.factions = []
     game.save()
+    print(game.current_claims)
     await ctx.send("Factions sucessfully cleared")
 
 @clearfacs.error
@@ -397,7 +410,7 @@ async def myfac(ctx):
             return
     await ctx.send("You are not in a faction. Use /join to join one")
     
-@slash.slash(name="dorito", description="dorito", guild_ids=[821486857367322624])
+@slash.slash(name="dorito", description="dorito", guild_ids=servers)
 async def dorito(ctx):
     embed = discord.Embed(color=0xe69701)
     embed.title="the dorito"
@@ -407,20 +420,22 @@ async def dorito(ctx):
 async def map_update(test):
     games = r_test.games()
     for i in games:
+        
         game = r_test.load_game_object(i)
-        guild = client.get_guild(game.server_id)
-        image = game.redraw_map()
-        print(image)
-        if image != "No map":
-            print("yes map")
-            image.save("test.png")
-        else:
-            print("no map")
+        if game.server_id != 810657122932883477:
             continue
+        guild = client.get_guild(game.server_id)
+
+
         for i in game.users:
-            print(i)
-            print(i.claims)
-            print(i.faction)
+            faction = game.get_faction(i.faction)
+            if faction == None:
+                continue
+            for j in i.claims:
+                game.edit_province(j, faction)
+            i.claims = []
+        game.current_claims = {}
+        game.save()
         try:
             channel_id = 0
             for i in guild.channels:
@@ -432,10 +447,18 @@ async def map_update(test):
                 channel_id = map_channel.id
             channel = guild.get_channel(channel_id)
             #channel = guild.get_channel(821486857367322629)
-            await channel.send(file=discord.File("test.png"))
+            image = game.redraw_map()
+            print(image)
+            if image != "No map":
+                print("yes map")
+                image.save("test.png")
+                await channel.send("Map Update:",file=discord.File("test.png"))
+            else:
+                print("no map")
+                continue
         except:
             print("Get channel error")
-        print(game.server_id)
+        print("Update complete!")
 
 @dev()
 @slash.slash(name="update", description="a", guild_ids=servers)
@@ -443,7 +466,7 @@ async def update(ctx):
     param = "test"
     async def filler():
         return await map_update(param)
-    cron = aiocron.crontab('* * * * * */10', func = filler, start=True)
+    cron = aiocron.crontab('*/1 * * * * ', func = filler, start=True)
     await ctx.send("done")
 
 @update.error
@@ -474,6 +497,18 @@ async def delete_game_error(ctx, error):
 async def size(ctx):
     game = r_test.load_from_id(ctx.guild.id)
     await ctx.send(f"The game size is {round(game.game_size()/1000000, 2)} MB")
+
+@slash.slash(name="current_claims", description="Shows the map of the claims made this udpate", guild_ids=servers)
+async def current_claims(ctx):
+    await ctx.defer()
+    game = r_test.load_from_id(ctx.guild.id)
+    image = game.current_claims_map()
+    if image != "No map":
+        image.save("test.png")
+        await ctx.send(file=discord.File("test.png"))
+        
+    else:
+        await ctx.send("No map found for current game. Try using /add_map first")
 
 client.run(os.environ['api'])
 asyncio.get_event_loop().run_forever()

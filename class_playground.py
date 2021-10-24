@@ -47,8 +47,9 @@ class Game:
 
     
     def map(self):
+        return Image.open(io.BytesIO(base64.b64decode(r_test.map_image(self.map_name))))
         if self.map_bytes != "":
-            return Image.open(io.BytesIO(base64.b64decode(self.map_bytes)))
+            return Image.open(io.BytesIO(base64.b64decode(r_test.map_image(self.map_name))))
         else:
             return "No map"
 
@@ -126,10 +127,32 @@ class Game:
                 #print(faction)
                 for j in coordinates:
                     image.quick_fill(temp, eval(j), tuple(faction.colors))
+        for i in self.current_claims.keys():
+            owner = self.current_claims[i]-1
+            if owner != -1:
+                coordinates = r_test.map_json(self.map_name)[f"l{i}"]["coordinates"]
+                faction = self.factions[owner]
+                #print(faction)
+                for j in coordinates:
+                    image.quick_fill(temp, eval(j), tuple(faction.colors))
         self.update_map(temp)
         print("finished redraw")
         return temp
 
+    def current_claims_map(self):
+        temp = Image.open(io.BytesIO(base64.b64decode(r_test.map_image(self.map_name))))
+        for i in self.current_claims.keys():
+            owner = self.current_claims[i]-1
+            if owner != -1:
+                coordinates = r_test.map_json(self.map_name)[f"l{i}"]["coordinates"]
+                faction = self.factions[owner]
+                #print(faction)
+                for j in coordinates:
+                    image.quick_fill(temp, eval(j), tuple(faction.colors))
+        self.update_map(temp)
+        print("finished redraw")
+        return temp
+        
     def add_faction_server(self, server_id, faction):
         if faction not in self.faction_names():
             return "Invalid Faction"
@@ -150,7 +173,6 @@ class Game:
             return "Invalid JSON"
     
     def get_user(self, id):
-        self.users=[]
         print(self.users)
         for index, i in enumerate(self.users):
             if i.id == 00:
