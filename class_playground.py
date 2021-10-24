@@ -55,7 +55,7 @@ class Game:
         if r_test.map_json(name) != "Invalid JSON" and r_test.map_image(name) != "Invalid Image":
             self.map_name = name
             self.game_json = r_test.strip_json(r_test.map_json(name))
-            self.map_bytes = r_test.map_image(name)
+            #self.map_bytes = r_test.map_image(name)
             self.save()
             return f"Sucessfully added map: {name}"
         else:
@@ -93,6 +93,21 @@ class Game:
         print("coordinates done")
         self.update_map(temp)
         return "Sucessfully claimed"
+    
+    def redraw_map(self):
+        print("began redraw")
+        temp = Image.open(io.BytesIO(base64.b64decode(r_test.map_image(self.map_name))))
+        for i in self.game_json.keys():
+            owner = self.game_json[i]-1
+            if owner != -1:
+                coordinates = r_test.map_json(self.map_name)[f"l{i}"]["coordinates"]
+                faction = self.factions[owner]
+                #print(faction)
+                for j in coordinates:
+                    image.quick_fill(temp, eval(j), tuple(faction.colors))
+        self.update_map(temp)
+        print("finished redraw")
+        return temp
 
     def add_faction_server(self, server_id, faction):
         if faction not in self.faction_names():
@@ -114,12 +129,23 @@ class Game:
             return "Invalid JSON"
     
     def get_user(self, id):
-        for i in self.users:
-            if i.discord_id == id:
+        self.users=[]
+        print(self.users)
+        for index, i in enumerate(self.users):
+            if i.id == 00:
+                    i.id = index
+            if i.discord_id == id:                
                 return i
+        print("Creating new user")
         user = User(id)
+        print(user.id)
+        user.id = len(self.users)
         self.users.append(user)
+        self.save()
         return user
+    
+    def game_size(self):
+        return len(r_test.pack(self).encode('utf-16'))
 
 """"
             
@@ -183,5 +209,6 @@ class User:
     def __init__(self, discord_id):
         self.name = ""
         self.discord_id = discord_id
+        self.id = 00
         self.claims = []
         self.faction = ""
