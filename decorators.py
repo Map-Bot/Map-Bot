@@ -1,11 +1,7 @@
 from discord.ext import commands
 import r_test
+from discord_slash.utils.manage_commands import create_choice, create_option
 
-def test_predicate():
-    async def predicate(ctx):
-        #await ctx.send("Test worked, cool")
-        return True
-    return commands.check(predicate)
 
 def get_faction(ctx):
     game = r_test.load_from_id(ctx.guild.id)

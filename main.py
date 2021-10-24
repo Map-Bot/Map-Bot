@@ -10,6 +10,7 @@ from discord_slash.utils.manage_commands import create_choice, create_option
 from discord_slash.utils.manage_components import create_button, create_actionrow, wait_for_component
 from discord_slash.model import ButtonStyle
 import class_playground
+import aiocron
 #import roles
 from decorators import *
 import r_test
@@ -197,14 +198,16 @@ async def games(ctx: commands.Context):
         embed.add_field(name="**Game Name:**", value = i)
     await ctx.send(embed=embed)
 
+
 @client.command()
 async def maps(ctx):
     pass
 
 
 @slash.slash(name="map", description="Shows the latest map", guild_ids=[821486857367322624])
-@test_predicate()
 async def map(ctx):
+    print(test)
+    await ctx.defer()
     game = r_test.load_from_id(ctx.guild.id)
     image = game.map()
     if image != "No map":
@@ -226,6 +229,7 @@ async def y(ctx: commands.Context):
 @in_fac()
 @slash.slash(name="claim", description="Claim the province with the given ID", guild_ids=[821486857367322624])
 async def claim(ctx, id):
+    await ctx.defer()
     game = r_test.load_from_id(ctx.guild.id)
     user = game.get_user(ctx.author.id)
     done = 0
@@ -250,9 +254,7 @@ async def claim(ctx, id):
     game.save()
 @claim.error
 async def claim_error(ctx: commands.Context, error):
-    if isinstance(error, commands.CheckFailure):
-        await ctx.send("You must be in a faction to use this command")
-    print(error)
+    await ctx.send("You must be in a faction to use this command")
 
 #@client.command()
 async def update_roles(ctx):
@@ -354,7 +356,47 @@ async def myfac(ctx):
             return
     await ctx.send("You are not in a faction. Use /join to join one")
     
+@slash.slash(name="dorito", description="dorito", guild_ids=[821486857367322624])
+async def dorito(ctx):
+    embed = discord.Embed(color=0xe69701)
+    embed.title="the dorito"
+    embed.set_image(url="https://media.discordapp.net/attachments/774773624396972042/776205016423464980/dorito.gif")
+    await ctx.send(embed=embed)
 
+async def map_update(test):
+    games = r_test.games()
+    for i in games:
+        game = r_test.load_game_object(i)
+        guild = client.get_guild(game.server_id)
+        image = game.map()
+        if image != "No map":
+            image.save("test.png")
+        else:
+            print("no map")
+            continue
+        try:
+            channel_id = 0
+            for i in guild.channels:
+                if "map" == i.name:
+                    channel_id = i.id
+            if channel_id == 0:
+                overwrites = {guild.default_role: discord.PermissionOverwrite(send_messages=False),guild.me: discord.PermissionOverwrite(send_messages=True)}
+                map_channel = await guild.create_text_channel("map", overwrites=overwrites)
+                channel_id = map_channel.id
+            channel = guild.get_channel(channel_id)
+
+            await channel.send(file=discord.File("test.png"))
+        except:
+            print("Get channel error")
+        print(game.server_id)
+
+
+@slash.slash(name="update", description="a", guild_ids=[821486857367322624])
+async def update(ctx , param):
+    async def fill():
+        return await map_update(param)
+    cron = aiocron.crontab('*/1 * * * * *', func = fill, start=True)
+    await ctx.send("done")
 
 client.run(os.environ['api'])
-#asyncio.get_event_loop().run_forever()
+asyncio.get_event_loop().run_forever()
