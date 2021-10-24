@@ -59,7 +59,7 @@ async def slash_setup(ctx):
     button_ctx: ComponentContext = await wait_for_component(client, components=action_row)
 
     if button_ctx.component["label"] == f"Yes, I want my game named '{message.content}'":
-        if r_test.load_from_id(ctx.guild.id) != None:
+        if r_test.load_from_id(ctx.guild.id) == None:
             game = class_playground.Game(message.content, ctx.guild.id)
             await button_ctx.edit_origin(content="Game created", components=[])
         else:
