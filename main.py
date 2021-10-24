@@ -395,7 +395,7 @@ async def map_update(test):
 async def update(ctx , param):
     async def fill():
         return await map_update(param)
-    cron = aiocron.crontab('*/1 * * * * *', func = fill, start=True)
+    cron = aiocron.crontab('*/10 * * * *', func = fill, start=True)
     await ctx.send("done")
 
 client.run(os.environ['api'])
