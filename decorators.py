@@ -2,6 +2,12 @@ from discord.ext import commands
 import r_test
 from discord_slash.utils.manage_commands import create_choice, create_option
 
+devs = [339251879273955330, 750744079079440506, 244638942169792513]
+
+def dev():
+    async def predicate(ctx):
+        return ctx.author.id in devs
+    return commands.check(predicate)
 
 def get_faction(ctx):
     game = r_test.load_from_id(ctx.guild.id)

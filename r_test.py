@@ -106,6 +106,7 @@ def map_image(name):
         return response
     else:
         return "Invalid Image"
+
 def map_json(name):
     if r.jsonget("map_jsons", Path.rootPath()) == None:
         r.jsonset("map_jsons", Path.rootPath(), {})
@@ -125,7 +126,15 @@ def load_from_id(id):
         game = unpack(games[i])
         if game.server_id == id:
             return game
-    return None
+
+def end_game(name):
+    games = r.jsonget("games", Path.rootPath())
+    if games.get(name) != None:
+        games.pop(name)
+        r.jsonset("games", Path.rootPath(), games)
+    else:
+        return "Invalid Game"
+    
 
 def games():
     return r.jsonget("games", Path.rootPath()).keys()

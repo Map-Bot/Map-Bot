@@ -20,6 +20,8 @@ class Game:
         self.map_bytes = ""
         self.map_name = ""
         self.game_json = {}
+        self.trades = {}
+        self.current_claims={}
         self.description = ""
         self.invite_link = ""
         r_test.add_game(name, self)
@@ -93,6 +95,25 @@ class Game:
         print("coordinates done")
         self.update_map(temp)
         return "Sucessfully claimed"
+
+    def claim(self, id, faction):
+        if not self.verify_id(id):
+            return "Invalid ID"
+        if self.game_json[id] != 0 or self.current_claims.get(id) != None :
+            return "Province already claimed"
+        print(self.game_json[id])
+        self.current_claims[id] = faction.id
+        coordinates = r_test.map_json(self.map_name)[f"l{id}"]["coordinates"]
+        print(faction.colors)
+        
+        temp = self.map()
+        
+        for i in coordinates:
+            image.quick_fill(temp, eval(i), tuple(faction.colors))
+        print("coordinates done")
+        self.update_map(temp)
+        return "Sucessfully claimed"
+
     
     def redraw_map(self):
         print("began redraw")
@@ -211,4 +232,6 @@ class User:
         self.discord_id = discord_id
         self.id = 00
         self.claims = []
+        self.rank = ""
+        self.money = 0
         self.faction = ""
