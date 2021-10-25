@@ -513,7 +513,7 @@ async def current_claims(ctx):
         await ctx.send("No map found for current game. Try using /add_map first")
 
 @slash.slash(name="id_map", description="Shows the id map for the current map", guild_ids=servers)
-async def id_map(ctx)
+async def id_map(ctx):
     await ctx.send("https://media.discordapp.net/attachments/878093499399041095/884572546673029151/Extremist_Map_3_Province_Map_Water_Connection_.png?width=968&height=372")
 client.run(os.environ['api'])
 asyncio.get_event_loop().run_forever()
