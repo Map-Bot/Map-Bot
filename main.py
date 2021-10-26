@@ -382,7 +382,7 @@ async def claim(ctx, id):
         user.claims.append(id)
         image = game.redraw_map()
         image.save("test.png")
-        await ctx.send(file=discord.File("test.png"))
+        await ctx.send(f"Successfully claimed province {id}"file=discord.File("test.png"))
     
     game.save()
 
@@ -456,7 +456,7 @@ async def newfac(ctx, name):
     leader_role = ctx.guild.get_role(game.factions[-1].roles[0].central_id)
     await ctx.author.add_roles(base_role, reason = "Faction creation")
     await ctx.author.add_roles(leader_role, reason = "Faction creation")
-    await ctx.send("Done")
+    await ctx.send(f"Created faction: **{name}**")
     game.save()
    
 @newfac.error
@@ -518,7 +518,7 @@ async def dorito(ctx):
 
 
 @dev()
-@slash.slash(name="update", description="*/1 * * * * *", guild_ids=servers)
+@slash.slash(name="update", description="*/1 * * * *", guild_ids=servers)
 async def update(ctx, schedule):
     game = r_test.load_from_id(ctx.guild.id)
     param = "test"
@@ -534,7 +534,7 @@ async def update_error(ctx, error):
     await ctx.send("You must be a dev to use this command")
 
 @dev()
-@slash.slash(name="end_update", description="a", guild_ids=servers)
+@slash.slash(name="end_update", description="dev only", guild_ids=servers)
 async def end_update(ctx):
     game = r_test.load_from_id(ctx.guild.id)
     game.schedule = None
