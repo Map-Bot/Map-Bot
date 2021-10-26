@@ -382,7 +382,7 @@ async def claim(ctx, id):
         user.claims.append(id)
         image = game.redraw_map()
         image.save("test.png")
-        await ctx.send(f"Successfully claimed province {id}"file=discord.File("test.png"))
+        await ctx.send(f"Successfully claimed province {id}",file=discord.File("test.png"))
     
     game.save()
 
