@@ -17,8 +17,8 @@ import r_test
 import multiprocessing as mp
 
 print(mp.cpu_count())
-servers = [821486857367322624, 810657122932883477]
-
+servers = [821486857367322624, 810657122932883477,902409343931154472]
+schedules = {}
 client = commands.Bot(command_prefix="%", intents=discord.Intents.all())
 slash = SlashCommand(client, sync_commands=True)
 
@@ -29,6 +29,59 @@ print("Discord Main")
 
 
 # https://tenor.com/view/wooo-yeah-baby-gif-18955985
+async def map_update(id):
+    games = r_test.games()
+    for i in games:
+        
+        game = r_test.load_game_object(i)
+        if game.server_id != id:
+            continue
+        guild = client.get_guild(game.server_id)
+
+
+        for i in game.users:
+            faction = game.get_faction(i.faction)
+            if faction == None:
+                continue
+            for j in i.claims:
+                game.edit_province(j, faction)
+            i.claims = []
+        game.current_claims = {}
+        game.save()
+        try:
+            channel_id = 0
+            for i in guild.channels:
+                if "map" == i.name:
+                    channel_id = i.id
+            if channel_id == 0:
+                overwrites = {guild.default_role: discord.PermissionOverwrite(send_messages=False),guild.me: discord.PermissionOverwrite(send_messages=True)}
+                map_channel = await guild.create_text_channel("map", overwrites=overwrites)
+                channel_id = map_channel.id
+            channel = guild.get_channel(channel_id)
+            #channel = guild.get_channel(821486857367322629)
+            image = game.redraw_map()
+            print(image)
+            if image != "No map":
+                print("yes map")
+                image.save("test.png")
+                await channel.send("Map Update:",file=discord.File("test.png"))
+            else:
+                print("no map")
+                continue
+        except:
+            print("Get channel error")
+        print("Update complete!")
+
+def check_update(game):
+    if schedules.get(game.name) == None:
+        print("adding scheduler")
+        param=game.server_id
+        async def filler():
+            return await map_update(param)
+        print(game.schedule)
+        schedules[game.name] = aiocron.crontab(game.schedule, func = filler, start=True)
+    
+
 
 @dev()
 @slash.slash(name="setup", description="Setup a game", guild_ids=servers)
@@ -202,20 +255,58 @@ async def leave(ctx):
     await ctx.defer()
     game = r_test.load_from_id(ctx.guild.id)
     user = game.get_user(ctx.author.id)
+    empty = True
+    faction = game.get_faction(user.faction)
+    try:
+        for i in game.users:
+            if i.faction == user.faction and i != user:
+                print("Two members")
+                empty = False
+    except:
+        print("Get faction error")
+    
+    if empty:
+        
+        buttons2 = [
+            create_button(style=ButtonStyle.green, label=f"Yes"),
+            create_button(style=ButtonStyle.red, label="No")
+        ]
+        action_row = create_actionrow(*buttons2)
+        await ctx.send(content=f"You are the last member of this faction, leaving will delete this faction, are you sure you want to leave?", components=[action_row])
+        button_ctx: ComponentContext = await wait_for_component(client, components=action_row)
+
+        if button_ctx.component["label"] == "Yes":
+            await button_ctx.edit_origin(content=f"Deleting faction: **{faction.name}**", components=[])
+            
+        elif button_ctx.component["label"] == "No":
+            await button_ctx.edit_origin(content="Ok, cancelling", components=[])
+            return        
+
+        for j in faction.roles:
+            if j.central_id != 0:
+                try:
+                    await ctx.guild.get_role(j.central_id).delete()
+                except:
+                    print("Role deletion error")
+
+        
+
     user.claims = []
     user.faction = ""
-    faction = get_faction(ctx)
-    if faction:
-        for i in ctx.author.roles:
-            if faction.name in i.name:
-                await ctx.author.remove_roles(i)
-                await ctx.send(f"You have successfully left faction: {faction.name}")
+    for i in ctx.author.roles:
+        if faction.name in i.name:
+            await ctx.author.remove_roles(i)
+                
+    await ctx.send(f"You have successfully left faction: {faction.name}")
+    game.factions.pop(faction.id-1)
     game.save()
 
 @leave.error
 async def leave_error(ctx: commands.Context, error:commands.CommandError):
-    await ctx.send("You must be in a faction to use this command")
-
+    if isinstance(error, CheckFailure):
+        await ctx.send("You must be in a faction to use this command")
+    else:
+        await ctx.send("An error occurred")
     print(error)
 
 
@@ -249,6 +340,7 @@ async def map(ctx):
     print(test)
     await ctx.defer()
     game = r_test.load_from_id(ctx.guild.id)
+    check_update(game)
     image = game.redraw_map()
     if image != "No map":
         image.save("test.png")
@@ -272,6 +364,7 @@ async def claim(ctx, id):
     await ctx.defer()
     game = r_test.load_from_id(ctx.guild.id)
     user = game.get_user(ctx.author.id)
+    check_update(game)
     done = 0
     faction = False
     for i in ctx.author.roles:
@@ -351,7 +444,9 @@ async def newfac(ctx, name):
     if game.create_faction(name) == "Faction name already exists":
         await ctx.send("Faction name already exists")
         return
+    print("begin updating roles")
     await update_roles(ctx)
+    print("finished updating roles")
     game = r_test.load_from_id(ctx.guild.id)
     print(game.factions[-1].roles)
     base_role = ctx.guild.get_role(game.factions[-1].roles[-1].central_id)
@@ -406,6 +501,7 @@ async def clearfacs_error(ctx, error):
 @slash.slash(name="myfac", description="Gives the name of the faction you are in", guild_ids=servers)
 async def myfac(ctx):
     game = r_test.load_from_id(ctx.guild.id)
+    check_update(game)
     for i in ctx.author.roles:
         if game.get_faction(i.name) != None:
             await ctx.send(i.name)
@@ -419,62 +515,38 @@ async def dorito(ctx):
     embed.set_image(url="https://media.discordapp.net/attachments/774773624396972042/776205016423464980/dorito.gif")
     await ctx.send(embed=embed)
 
-async def map_update(test):
-    games = r_test.games()
-    for i in games:
-        
-        game = r_test.load_game_object(i)
-        if game.server_id != 810657122932883477:
-            continue
-        guild = client.get_guild(game.server_id)
 
-
-        for i in game.users:
-            faction = game.get_faction(i.faction)
-            if faction == None:
-                continue
-            for j in i.claims:
-                game.edit_province(j, faction)
-            i.claims = []
-        game.current_claims = {}
-        game.save()
-        try:
-            channel_id = 0
-            for i in guild.channels:
-                if "map" == i.name:
-                    channel_id = i.id
-            if channel_id == 0:
-                overwrites = {guild.default_role: discord.PermissionOverwrite(send_messages=False),guild.me: discord.PermissionOverwrite(send_messages=True)}
-                map_channel = await guild.create_text_channel("map", overwrites=overwrites)
-                channel_id = map_channel.id
-            channel = guild.get_channel(channel_id)
-            #channel = guild.get_channel(821486857367322629)
-            image = game.redraw_map()
-            print(image)
-            if image != "No map":
-                print("yes map")
-                image.save("test.png")
-                await channel.send("Map Update:",file=discord.File("test.png"))
-            else:
-                print("no map")
-                continue
-        except:
-            print("Get channel error")
-        print("Update complete!")
 
 @dev()
-@slash.slash(name="update", description="a", guild_ids=servers)
-async def update(ctx):
+@slash.slash(name="update", description="*/1 * * * * *", guild_ids=servers)
+async def update(ctx, schedule):
+    game = r_test.load_from_id(ctx.guild.id)
     param = "test"
     async def filler():
         return await map_update(param)
-    cron = aiocron.crontab('*/1 * * * * ', func = filler, start=True)
+    game.schedule = schedule
+    check_update(game)
+    game.save()
     await ctx.send("done")
 
 @update.error
 async def update_error(ctx, error):
     await ctx.send("You must be a dev to use this command")
 
+@dev()
+@slash.slash(name="end_update", description="a", guild_ids=servers)
+async def end_update(ctx):
+    game = r_test.load_from_id(ctx.guild.id)
+    game.schedule = None
+    schedules[game.name].stop()
+    await ctx.send("All updates have been deleted")
+
+@end_update.error
+async def end_update_error(ctx, error):
+    if isinstance(error, CheckFailure):
+        await ctx.send("You must be a dev to use this command")
+    else:
+        await ctx.send("An error occurred")
 
 @dev()
 @slash.slash(name="delete_game", description="Permanently deletes the current game", guild_ids=servers)

@@ -5,6 +5,8 @@ import image
 import base64
 import io
 import random
+import threading
+import concurrent.futures
 
 class Game:
     def save(self):
@@ -21,6 +23,7 @@ class Game:
         self.map_name = ""
         self.game_json = {}
         self.trades = {}
+        self.schedule = None
         self.current_claims={}
         self.description = ""
         self.invite_link = ""
@@ -115,6 +118,13 @@ class Game:
         self.update_map(temp)
         return "Sucessfully claimed"
 
+    def add_schedule(self, cron):
+        self.schedule = cron
+        print("schedule added")
+
+    def end_schedule(self):
+        if self.schedule != None:
+            self.schedule = None
     
     def redraw_map(self):
         print("began redraw")
@@ -140,7 +150,9 @@ class Game:
         return temp
 
     def current_claims_map(self):
+        #BROKEN RIGHT NOW, IN PROGRESS
         temp = Image.open(io.BytesIO(base64.b64decode(r_test.map_image(self.map_name))))
+
         for i in self.current_claims.keys():
             owner = self.current_claims[i]-1
             if owner != -1:
@@ -152,7 +164,16 @@ class Game:
         self.update_map(temp)
         print("finished redraw")
         return temp
-        
+    
+    def fill_map(self):
+        temp = Image.open(io.BytesIO(base64.b64decode(r_test.map_image(self.map_name))))
+        data = r_test.map_json(self.map_name)
+
+        def temp_fill(coords):
+            image.quick_fill(temp, eval(coords), (0,0,255))
+        with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+            executor.map(temp_fill, coords)
+
     def add_faction_server(self, server_id, faction):
         if faction not in self.faction_names():
             return "Invalid Faction"
@@ -200,6 +221,7 @@ class Game:
 """
 
 color_list = [[0, 0, 255],[255, 128, 0],[255, 255, 0],[128, 255, 0],[0, 255, 0],[0, 255, 128],[255, 0, 0],[0, 255, 255],[128, 0, 255],[255, 0, 255]]
+
 class Faction:
     
     def __init__(self, name, faction_id):
@@ -222,7 +244,7 @@ class Faction:
             return "Faction already connected to this server"
         else:
             return "Faction already connected to another server"
-    
+
     def create_role(name):
         self.roles.append(Roles(name, len(self.roles)))
 
