@@ -104,7 +104,7 @@ class Game:
         if not self.verify_id(id):
             return "Invalid ID"
         if self.game_json[id] != 0 or self.current_claims.get(id) != None :
-            return "Province already claimed"
+            return f"Province already {id} claimed"
         print(self.game_json[id])
         self.current_claims[id] = faction.id
         coordinates = r_test.map_json(self.map_name)[f"l{id}"]["coordinates"]

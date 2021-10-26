@@ -64,7 +64,7 @@ async def map_update(id):
             if image != "No map":
                 print("yes map")
                 image.save("test.png")
-                await channel.send("Map Update:",file=discord.File("test.png"))
+                await channel.send("@everyone\nMap Update:",file=discord.File("test.png"))
             else:
                 print("no map")
                 continue
@@ -404,7 +404,11 @@ async def update_roles(ctx):
                     role = await ctx.guild.create_role(name=j.central_name, color=discord.Color.from_rgb(i.colors[0],i.colors[1],i.colors[2]))
                     j.central_id = role.id
                 elif j.central_id != 0:
-                    j.central_name = ctx.guild.get_role(j.central_id).name
+                    role=ctx.guild.get_role(j.central_id)
+                    j.central_name = role.name
+                    await role.edit(color=discord.Color.from_rgb(i.colors[0],i.colors[1],i.colors[2]))
+                    print("edited color")
+                    print(i.colors)
                     print(j.central_name)
             elif i.server_id == ctx.guild.id:
                 if j.satellite_id == 0 and j.satellite_name not in role_names:
@@ -412,8 +416,10 @@ async def update_roles(ctx):
                     role = await ctx.guild.create_role(name=j.central_name, color=discord.Color.from_rgb(i.colors[0],i.colors[1],i.colors[2]))
                     j.central_id = role.id
                 elif j.central_id != 0:
-                    j.central_name = ctx.guild.get_role(j.central_id).name
+                    role=ctx.guild.get_role(j.central_id)
+                    j.central_name = role.name
                     print(j.central_name)
+                    await role.edit(color=discord.Color.from_rgb(i.colors[0],i.colors[1],i.colors[2]))
     game.save()
     #await ctx.send(f"Roles updated: {', '.join(edited)}")
 
@@ -583,6 +589,53 @@ async def current_claims(ctx):
         
     else:
         await ctx.send("No map found for current game. Try using /add_map first")
+
+@in_fac()
+@slash.slash(name="change_faction_color", description="Changes the faction color to the given RGB values", guild_ids=servers)
+async def change_faction_color(ctx, color):
+    await ctx.defer()
+    game = r_test.load_from_id(ctx.guild.id)
+    user = game.get_user(ctx.author.id)
+    faction = game.get_faction(user.faction)
+    leader = False
+    for i in ctx.author.roles:
+        if "Leader" in i.name:
+            leader = True
+
+    if user.rank == "Leader" or leader:
+        await ctx.send("Warning, may be a little broken")
+        colors = color.strip().split(",")
+        if len(colors) != 3:
+            await ctx.send("You need exactly three values (RGB) to change the color. Try something like **0, 0, 255")
+            return
+        for index, i in enumerate(colors):
+            if not i.isdigit():
+                await ctx.send("The RGB values must be numbers")
+                return
+            if int(i) > 254 or int(i) < 1:
+                await ctx.send("The RGB values must be between 1 and 254")
+            colors[index] = int(i)
+
+        print(colors)
+        print(faction.roles[0].colors)
+        for i in faction.roles:
+            i.colors = colors
+        faction.colors = colors
+
+        game.factions[faction.id-1] = faction
+        game.save()
+        await update_roles(ctx)
+        
+        await ctx.send("Faction color updated")
+        
+    else:
+        await ctx.send("You must be the leader of your faction to use this command")
+
+@change_faction_color.error
+async def change_faction_color_error(ctx: commands.Context, error):
+    print(error)
+    if isinstance(error, CheckFailure):
+        await ctx.send("You must be in a faction to use this command")
 
 @slash.slash(name="id_map", description="Shows the id map for the current map", guild_ids=servers)
 async def id_map(ctx):
