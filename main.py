@@ -738,7 +738,7 @@ async def change_faction_color(ctx, color):
 		colors = color.strip().split(",")
 		if len(colors) != 3:
 			await ctx.send(
-			    "You need exactly three values (RGB) to change the color. Try something like **0, 0, 255"
+			    "You need exactly three values (RGB) to change the color. Try something like **0, 0, 255**"
 			)
 			return
 		for index, i in enumerate(colors):
