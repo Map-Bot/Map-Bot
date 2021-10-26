@@ -16,15 +16,16 @@ from decorators import *
 import r_test
 import multiprocessing as mp
 
-#print(mp.cpu_count())
+print(mp.cpu_count())
 servers = [821486857367322624, 810657122932883477, 902409343931154472]
+exempt = []
 schedules = {}
 client = commands.Bot(command_prefix="%", intents=discord.Intents.all())
 slash = SlashCommand(client, sync_commands=True)
 
 # Main should be used for the core, unchanging functions of the bot.
 
-#print("Discord Main")
+print("Discord Main")
 
 
 # Include hotswappable cogs code here
@@ -66,29 +67,29 @@ async def map_update(id):
 			channel = guild.get_channel(channel_id)
 			#channel = guild.get_channel(821486857367322629)
 			image = game.redraw_map()
-			#print(image)
+			print(image)
 			if image != "No map":
-				#print("yes map")
+				print("yes map")
 				image.save("test.png")
 				await channel.send("@everyone\nMap Update:",
 				                   file=discord.File("test.png"))
 			else:
-				#print("no map")
+				print("no map")
 				continue
 		except:
-			#print("Get channel error")
-		#print("Update complete!")
+			print("Get channel error")
+		print("Update complete!")
 
 
 def check_update(game):
 	if schedules.get(game.name) == None:
-		#print("adding scheduler")
+		print("adding scheduler")
 		param = game.server_id
 
 		async def filler():
 			return await map_update(param)
 
-		#print(game.schedule)
+		print(game.schedule)
 		schedules[game.name] = aiocron.crontab(game.schedule,
 		                                       func=filler,
 		                                       start=True)
@@ -213,8 +214,8 @@ async def setup(ctx: commands.Context):
 	await msg.edit(embed=embed)
 
 	def check(message):
-		#print(author)
-		#print(ctx.message.author)
+		print(author)
+		print(ctx.message.author)
 		return author == message.author
 
 	message = await client.wait_for("message", timeout=100.0, check=check)
@@ -266,7 +267,7 @@ async def setup(ctx: commands.Context):
 
 @slash_setup.error
 async def setup_error(ctx, error):
-	#print(error)
+	print(error)
 	await ctx.send("You must be a dev to use this command")
 
 
@@ -279,7 +280,7 @@ async def join(ctx, faction):
 	user = game.get_user(ctx.author.id)
 	faction_obj = game.get_faction(faction)
 	#check user isn't in faction
-	#print(faction_obj)
+	print(faction_obj)
 	if faction_obj != None:
 		role = ctx.guild.get_role(faction_obj.roles[-1].central_id)
 		await ctx.author.add_roles(role, reason="Faction join")
@@ -319,10 +320,10 @@ async def leave(ctx):
 	try:
 		for i in game.users:
 			if i.faction == user.faction and i != user:
-				#print("Two members")
+				print("Two members")
 				empty = False
 	except:
-		#print("Get faction error")
+		print("Get faction error")
 
 	if empty:
 
@@ -352,7 +353,7 @@ async def leave(ctx):
 				try:
 					await ctx.guild.get_role(j.central_id).delete()
 				except:
-					#print("Role deletion error")
+					print("Role deletion error")
 
 	user.claims = []
 	user.faction = ""
@@ -371,7 +372,7 @@ async def leave_error(ctx: commands.Context, error: commands.CommandError):
 		await ctx.send("You must be in a faction to use this command")
 	else:
 		await ctx.send("An error occurred")
-	#print(error)
+	print(error)
 
 
 @client.command()
@@ -385,7 +386,7 @@ async def test(ctx: commands.Context):
 		                                       check=check)
 	except asyncio.TimeoutError:
 		await ctx.send('The bot timed out, I tell you what')
-	#print(reaction)
+	print(reaction)
 
 
 @slash.slash(name="games",
@@ -405,7 +406,7 @@ async def maps(ctx):
 
 @slash.slash(name="map", description="Shows the latest map", guild_ids=servers)
 async def map(ctx):
-	#print(test)
+	print(test)
 	await ctx.defer()
 	game = r_test.load_from_id(ctx.guild.id)
 	check_update(game)
@@ -447,7 +448,7 @@ async def claim(ctx, id):
 		if game.get_faction(i.name) != None:
 			faction = i
 			break
-	if len(user.claims) > 1:
+	if len(user.claims) > 1 and ctx.author.id not in exempt:
 		await ctx.send("You have exceeded your maximum daily claims")
 		return
 
@@ -465,7 +466,7 @@ async def claim(ctx, id):
 
 @claim.error
 async def claim_error(ctx: commands.Context, error):
-	#print(error)
+	print(error)
 	await ctx.send("You must be in a faction to use this command")
 
 
@@ -490,11 +491,11 @@ async def update_roles(ctx):
 					j.central_name = role.name
 					await role.edit(color=discord.Color.from_rgb(
 					    i.colors[0], i.colors[1], i.colors[2]))
-					##print("edited color")
+					print("edited color")
 					if not role.hoist:
 						role.hoist = True
-					##print(i.colors)
-					#print(j.central_name)
+					print(i.colors)
+					print(j.central_name)
 			elif i.server_id == ctx.guild.id:
 				if j.satellite_id == 0 and j.satellite_name not in role_names:
 					edited.append(j.central_name)
@@ -507,7 +508,7 @@ async def update_roles(ctx):
 				elif j.central_id != 0:
 					role = ctx.guild.get_role(j.central_id)
 					j.central_name = role.name
-					#print(j.central_name)
+					print(j.central_name)
 					if not role.hoist:
 						role.hoist = True
 					await role.edit(color=discord.Color.from_rgb(
@@ -547,13 +548,13 @@ async def newfac(ctx, name):
 	if game.create_faction(name) == "Faction name already exists":
 		await ctx.send("Faction name already exists")
 		return
-	#print("begin updating roles")
+	print("begin updating roles")
 	await update_roles(ctx)
-	#print("finished updating roles")
+	print("finished updating roles")
 	game = r_test.load_from_id(ctx.guild.id)
-	#print(game.factions[-1].roles)
+	print(game.factions[-1].roles)
 	base_role = ctx.guild.get_role(game.factions[-1].roles[-1].central_id)
-	#print(game.factions[-1].roles)
+	print(game.factions[-1].roles)
 	user.faction = name
 	game.users[user.id] = user
 	leader_role = ctx.guild.get_role(game.factions[-1].roles[0].central_id)
@@ -565,8 +566,8 @@ async def newfac(ctx, name):
 
 @newfac.error
 async def new_fac_error(ctx, error):
-	#print(f"Error: {error}end")
-	#print(type(error))
+	print(f"Error: {error}end")
+	print(type(error))
 	if isinstance(error, commands.UnexpectedQuoteError) or isinstance(
 	    error, commands.InvalidEndOfQuotedStringError):
 		await ctx.send("Invalid name, don't mess with quotes in the name")
@@ -598,10 +599,10 @@ async def clearfacs(ctx):
 				try:
 					await ctx.guild.get_role(j.central_id).delete()
 				except:
-					#print("Role deletion error")
+					print("Role deletion error")
 	game.factions = []
 	game.save()
-	#print(game.current_claims)
+	print(game.current_claims)
 	await ctx.send("Factions sucessfully cleared")
 
 
@@ -683,14 +684,14 @@ async def delete_game(ctx):
 				try:
 					await ctx.guild.get_role(j.central_id).delete()
 				except:
-					#print("Role deletion error")
+					print("Role deletion error")
 	r_test.end_game(game.name)
 	await ctx.send(f"Game **{game.name}** has been deleted")
 
 
 @delete_game.error
 async def delete_game_error(ctx, error):
-	#print(error)
+	print(error)
 	await ctx.send("You must be a dev to use this command")
 
 
@@ -746,10 +747,11 @@ async def change_faction_color(ctx, color):
 				return
 			if int(i) > 254 or int(i) < 1:
 				await ctx.send("The RGB values must be between 1 and 254")
+				return
 			colors[index] = int(i)
 
-		#print(colors)
-		#print(faction.roles[0].colors)
+		print(colors)
+		print(faction.roles[0].colors)
 		for i in faction.roles:
 			i.colors = colors
 		faction.colors = colors
@@ -767,7 +769,7 @@ async def change_faction_color(ctx, color):
 
 @change_faction_color.error
 async def change_faction_color_error(ctx: commands.Context, error):
-	#print(error)
+	print(error)
 	if isinstance(error, CheckFailure):
 		await ctx.send("You must be in a faction to use this command")
 
@@ -783,7 +785,7 @@ async def manual_update(ctx):
 
 @manual_update.error
 async def manual_update_error(ctx, error):
-	#print(error)
+	print(error)
 	if isinstance(error, CheckFailure):
 		await ctx.send("You must be a dev to use this command")
 	else:
@@ -794,8 +796,9 @@ async def manual_update_error(ctx, error):
              description="Shows the id map for the current map",
              guild_ids=servers)
 async def id_map(ctx):
+	await ctx.defer()
 	await ctx.send(
-	    "https://media.discordapp.net/attachments/878093499399041095/884572546673029151/Extremist_Map_3_Province_Map_Water_Connection_.png?"
+	    "https://media.discordapp.net/attachments/878093499399041095/884572546673029151/Extremist_Map_3_Province_Map_Water_Connection_.png"
 	)
 
 
