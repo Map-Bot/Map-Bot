@@ -18,7 +18,7 @@ import multiprocessing as mp
 
 print(mp.cpu_count())
 servers = [821486857367322624, 810657122932883477, 902409343931154472]
-exempt = []
+exempt = [339251879273955330]
 schedules = {}
 client = commands.Bot(command_prefix="%", intents=discord.Intents.all())
 slash = SlashCommand(client, sync_commands=True)
@@ -410,7 +410,7 @@ async def map(ctx):
 	await ctx.defer()
 	game = r_test.load_from_id(ctx.guild.id)
 	check_update(game)
-	image = game.redraw_map()
+	image = game.map()
 	if image != "No map":
 		image.save("test.png")
 		await ctx.send(file=discord.File("test.png"))
@@ -456,7 +456,7 @@ async def claim(ctx, id):
 	await ctx.send(result)
 	if result == "Sucessfully claimed":
 		user.claims.append(id)
-		image = game.redraw_map()
+		image = game.map()
 		image.save("test.png")
 		await ctx.send(f"Successfully claimed province {id}",
 		               file=discord.File("test.png"))
