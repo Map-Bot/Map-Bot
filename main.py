@@ -742,13 +742,13 @@ async def change_faction_color(ctx, color):
 			)
 			return
 		for index, i in enumerate(colors):
-			if not i.isdigit():
+			if not i.strip().isdigit():
 				await ctx.send("The RGB values must be numbers")
 				return
 			if int(i) > 254 or int(i) < 1:
 				await ctx.send("The RGB values must be between 1 and 254")
 				return
-			colors[index] = int(i)
+			colors[index] = int(i.strip())
 
 		print(colors)
 		print(faction.roles[0].colors)
