@@ -448,7 +448,7 @@ async def claim(ctx, id):
 		if game.get_faction(i.name) != None:
 			faction = i
 			break
-	if len(user.claims) > 1 and ctx.author.id not in exempt:
+	if len(user.claims) > 3 and ctx.author.id not in exempt:
 		await ctx.send("You have exceeded your maximum daily claims")
 		return
 
