@@ -34,21 +34,22 @@ print("Discord Main")
 async def map_update(id):
 	games = r_test.games()
 	for i in games:
-
 		game = r_test.load_game_object(i)
 		if game.server_id != id:
 			continue
 		guild = client.get_guild(game.server_id)
-
+		
 		for i in game.users:
 			faction = game.get_faction(i.faction)
 			if faction == None:
 				continue
 			for j in i.claims:
+				print("redraw")
 				game.edit_province(j, faction)
 			i.claims = []
 		game.current_claims = {}
 		game.save()
+		
 		try:
 			channel_id = 0
 			for i in guild.channels:
@@ -66,8 +67,9 @@ async def map_update(id):
 				channel_id = map_channel.id
 			channel = guild.get_channel(channel_id)
 			#channel = guild.get_channel(821486857367322629)
+			
 			image = game.redraw_map()
-			print(image)
+			#print(image)
 			if image != "No map":
 				print("yes map")
 				image.save("test.png")
@@ -354,6 +356,8 @@ async def leave(ctx):
 					await ctx.guild.get_role(j.central_id).delete()
 				except:
 					print("Role deletion error")
+		
+		game.factions.pop(faction.id - 1)
 
 	user.claims = []
 	user.faction = ""
@@ -362,7 +366,7 @@ async def leave(ctx):
 			await ctx.author.remove_roles(i)
 
 	await ctx.send(f"You have successfully left faction: {faction.name}")
-	game.factions.pop(faction.id - 1)
+	
 	game.save()
 
 
@@ -711,8 +715,8 @@ async def new_claims(ctx):
 	game = r_test.load_from_id(ctx.guild.id)
 	image = game.current_claims_map()
 	if image != "No map":
-		image.save("test.png")
-		await ctx.send(file=discord.File("test.png"))
+		image.save("current.png")
+		await ctx.send(file=discord.File("current.png"))
 
 	else:
 		await ctx.send(
@@ -742,6 +746,7 @@ async def change_faction_color(ctx, color):
 			)
 			return
 		for index, i in enumerate(colors):
+			print(int(i))
 			if not i.strip().isdigit():
 				await ctx.send("The RGB values must be numbers")
 				return
@@ -801,6 +806,24 @@ async def id_map(ctx):
 	    "https://media.discordapp.net/attachments/878093499399041095/884572546673029151/Extremist_Map_3_Province_Map_Water_Connection_.png"
 	)
 
+@dev()
+@slash.slash(name="redraw_map",
+             description="Manually update the map",
+             guild_ids=servers)
+async def redraw_map(ctx):
+	game = r_test.load_from_id(ctx.guild.id)
+	await ctx.send("Redrawing")
+	game.redraw_map()
+	game.save()
+
+
+@manual_update.error
+async def manual_update_error(ctx, error):
+	print(error)
+	if isinstance(error, CheckFailure):
+		await ctx.send("You must be a dev to use this command")
+	else:
+		await ctx.send("An error has occurred")
 
 client.run(os.environ['api'])
 asyncio.get_event_loop().run_forever()

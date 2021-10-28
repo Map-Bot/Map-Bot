@@ -93,12 +93,11 @@ class Game:
 		print(self.game_json[id])
 		self.game_json[id] = faction.id
 		coordinates = r_test.map_json(self.map_name)[f"l{id}"]["coordinates"]
-		print(faction.colors)
-		temp = self.map()
+		temp = Image.open(
+		    io.BytesIO(base64.b64decode(r_test.map_image(self.map_name))))
 
 		for i in coordinates:
 			image.quick_fill(temp, eval(i), tuple(faction.colors))
-		print("coordinates done")
 		self.update_map(temp)
 		return "Sucessfully claimed"
 
