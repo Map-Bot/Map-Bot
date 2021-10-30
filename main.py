@@ -18,7 +18,7 @@ import multiprocessing as mp
 
 print(mp.cpu_count())
 servers = [821486857367322624, 810657122932883477, 902409343931154472]
-exempt = [339251879273955330]
+exempt = [339251879273955330,740630812315090984]
 schedules = {}
 client = commands.Bot(command_prefix="%", intents=discord.Intents.all())
 slash = SlashCommand(client, sync_commands=True)
