@@ -104,7 +104,7 @@ class Game:
 	def claim(self, id, faction):
 		if not self.verify_id(id):
 			return "Invalid ID"
-		if self.game_json[id] != 0 or self.current_claims.get(id) != None:
+		if self.game_json[id] != faction.id or self.current_claims.get(id) != faction.id:
 			return f"Province already {id} claimed"
 		print(self.game_json[id])
 		self.current_claims[id] = faction.id
