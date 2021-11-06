@@ -69,7 +69,6 @@ async def map_update(id):
 			#channel = guild.get_channel(821486857367322629)
 			
 			image = game.redraw_map()
-			#print(image)
 			if image != "No map":
 				print("yes map")
 				image.save("test.png")
@@ -78,7 +77,8 @@ async def map_update(id):
 			else:
 				print("no map")
 				continue
-		except:
+		except Exception as e:
+			print(e)
 			print("Get channel error")
 		print("Update complete!")
 
