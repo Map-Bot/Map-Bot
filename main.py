@@ -357,7 +357,7 @@ async def leave(ctx):
 				except:
 					print("Role deletion error")
 		
-		game.factions.pop(faction.id - 1)
+		game.factions.pop(faction.id)
 
 	user.claims = []
 	user.faction = ""
@@ -479,7 +479,7 @@ async def update_roles(ctx):
 	game = r_test.load_from_id(ctx.guild.id)
 	edited = []
 	role_names = [i.name for i in ctx.guild.roles]
-	for i in game.factions:
+	for i in game.factions.values():
 		for j in i.roles:
 			if game.server_id == ctx.guild.id:
 				if j.central_id == 0 and j.central_name not in role_names:
@@ -556,12 +556,12 @@ async def newfac(ctx, name):
 	await update_roles(ctx)
 	print("finished updating roles")
 	game = r_test.load_from_id(ctx.guild.id)
-	print(game.factions[-1].roles)
-	base_role = ctx.guild.get_role(game.factions[-1].roles[-1].central_id)
+	print(game.factions[game.factions.keys()[-1]].roles)
+	base_role = ctx.guild.get_role(game.factions[game.factions.keys()[-1]].roles[-1].central_id)
 	print(game.factions[-1].roles)
 	user.faction = name
 	game.users[user.id] = user
-	leader_role = ctx.guild.get_role(game.factions[-1].roles[0].central_id)
+	leader_role = ctx.guild.get_role(game.factions[game.factions.keys()[-1]].roles[0].central_id)
 	await ctx.author.add_roles(base_role, reason="Faction creation")
 	await ctx.author.add_roles(leader_role, reason="Faction creation")
 	await ctx.send(f"Created faction: **{name}**")
@@ -597,14 +597,14 @@ async def clearfacs(ctx):
 	await ctx.defer()
 	game = r_test.load_from_id(ctx.guild.id)
 	game.current_claims = {}
-	for i in game.factions:
+	for i in game.factions.values():
 		for j in i.roles:
 			if j.central_id != 0:
 				try:
 					await ctx.guild.get_role(j.central_id).delete()
 				except:
 					print("Role deletion error")
-	game.factions = []
+	game.factions = {}
 	game.save()
 	print(game.current_claims)
 	await ctx.send("Factions sucessfully cleared")
@@ -682,7 +682,7 @@ async def end_update_error(ctx, error):
              guild_ids=servers)
 async def delete_game(ctx):
 	game = r_test.load_from_id(ctx.guild.id)
-	for i in game.factions:
+	for i in game.factions.values():
 		for j in i.roles:
 			if j.central_id != 0:
 				try:
@@ -761,7 +761,7 @@ async def change_faction_color(ctx, color):
 			i.colors = colors
 		faction.colors = colors
 
-		game.factions[faction.id - 1] = faction
+		game.factions[faction.id] = faction
 		game.save()
 		await update_roles(ctx)
 

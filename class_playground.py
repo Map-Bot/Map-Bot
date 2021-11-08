@@ -17,7 +17,7 @@ class Game:
 		self.name = name
 		self.central = central
 		self.server_id = server_id
-		self.factions = []
+		self.factions = {}
 		self.servers = []
 		self.users = []
 		self.map_bytes = ""
@@ -28,6 +28,7 @@ class Game:
 		self.current_claims = {}
 		self.description = ""
 		self.invite_link = ""
+		self.faction_id_counter = 0
 		r_test.add_game(name, self)
 
 	def faction_names(self):
@@ -35,14 +36,16 @@ class Game:
 		return output
 
 	def get_faction(self, name):
-		output = [i for i in self.factions if i.name == name]
+		output = [i for i in self.factions.keys() if self.factions[i].name == name]
 		if output != []:
 			return output[0]
 
 	def create_faction(self, name):
 		if name not in self.faction_names():
-			faction = Faction(name, len(self.factions) + 1)
-			self.factions.append(faction)
+			self.faction_id_counter += 1
+			faction = Faction(name, faction_id_counter)
+			self.factions[self.faction_id_counter] = faction
+			
 			self.save()
 			return "Faction successfully created"
 		else:
@@ -185,7 +188,7 @@ class Game:
 	def add_faction_server(self, server_id, faction):
 		if faction not in self.faction_names():
 			return "Invalid Faction"
-		target_faction = [i for i in self.factions if i.name == faction][0]
+		target_faction = self.get_faction(faction)
 
 		if target_faction.connect_server(server_id) != None:
 			return target_faction.connect_server(server_id)
