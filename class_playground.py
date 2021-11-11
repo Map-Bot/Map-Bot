@@ -32,21 +32,25 @@ class Game:
 		r_test.add_game(name, self)
 
 	def faction_names(self):
-		output = [i.name for i in self.factions]
+		output = [self.factions[i].name for i in list(self.factions.keys())]
 		return output
 
 	def get_faction(self, name):
-		output = [i for i in self.factions.keys() if self.factions[i].name == name]
+		output = [self.factions[i] for i in list(self.factions.keys()) if self.factions[i].name == name]
+		print("OUTPUT")
+		print(output)
 		if output != []:
 			return output[0]
 
 	def create_faction(self, name):
 		if name not in self.faction_names():
+
 			self.faction_id_counter += 1
-			faction = Faction(name, faction_id_counter)
+			faction = Faction(name, self.faction_id_counter)
 			self.factions[self.faction_id_counter] = faction
-			
+			print("done")
 			self.save()
+			
 			return "Faction successfully created"
 		else:
 			return "Faction name already exists"
@@ -105,6 +109,8 @@ class Game:
 		return "Sucessfully claimed"
 
 	def claim(self, id, faction):
+		print("CLAIMING")
+		print(faction)
 		if not self.verify_id(id):
 			return "Invalid ID"
 		if self.game_json[id] == faction.id or self.current_claims.get(id) == faction.id:
@@ -135,8 +141,8 @@ class Game:
 		temp = Image.open(
 		    io.BytesIO(base64.b64decode(r_test.map_image(self.map_name))))
 		for i in self.game_json.keys():
-			owner = self.game_json[i] - 1
-			if owner != -1:
+			owner = self.game_json[i]
+			if owner != 0:
 				coordinates = r_test.map_json(
 				    self.map_name)[f"l{i}"]["coordinates"]
 				faction = self.factions[owner]
@@ -144,8 +150,8 @@ class Game:
 				for j in coordinates:
 					image.quick_fill(temp, eval(j), tuple(faction.colors))
 		for i in self.current_claims.keys():
-			owner = self.current_claims[i] - 1
-			if owner != -1:
+			owner = self.current_claims[i]
+			if owner != 0:
 				coordinates = r_test.map_json(
 				    self.map_name)[f"l{i}"]["coordinates"]
 				faction = self.factions[owner]
@@ -244,12 +250,12 @@ class Faction:
 		self.users = []
 		self.claims = {}
 		try:
-			self.colors = color_list[faction_id - 1]
+			self.colors = color_list[faction_id]
 		except:
 			self.colors = [
-			    random.randint(0, 255),
-			    random.randint(0, 255),
-			    random.randint(0, 255)
+			    random.randint(1, 254),
+			    random.randint(1, 254),
+			    random.randint(1, 254)
 			]
 		self.id = faction_id
 		self.roles = [

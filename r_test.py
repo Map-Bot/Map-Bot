@@ -138,5 +138,6 @@ def end_game(name):
 
 def games():
     return r.jsonget("games", Path.rootPath()).keys()
+
 #print(r.jsonget("test2", Path('.startDate')))
 

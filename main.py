@@ -15,6 +15,7 @@ import aiocron
 from decorators import *
 import r_test
 import multiprocessing as mp
+import random
 
 print(mp.cpu_count())
 servers = [821486857367322624, 810657122932883477, 902409343931154472]
@@ -356,7 +357,12 @@ async def leave(ctx):
 					await ctx.guild.get_role(j.central_id).delete()
 				except:
 					print("Role deletion error")
-		
+		for i in list(game.game_json.keys()):
+			if game.game_json[i] == faction.id:
+				game.game_json[i] = 0
+		for i in list(game.current_claims.keys()):
+			if game.current_claims[i] == faction.id:
+				game.current_claims.pop(i)
 		game.factions.pop(faction.id)
 
 	user.claims = []
@@ -479,7 +485,7 @@ async def update_roles(ctx):
 	game = r_test.load_from_id(ctx.guild.id)
 	edited = []
 	role_names = [i.name for i in ctx.guild.roles]
-	for i in game.factions.values():
+	for i in list(game.factions.values()):
 		for j in i.roles:
 			if game.server_id == ctx.guild.id:
 				if j.central_id == 0 and j.central_name not in role_names:
@@ -556,12 +562,14 @@ async def newfac(ctx, name):
 	await update_roles(ctx)
 	print("finished updating roles")
 	game = r_test.load_from_id(ctx.guild.id)
-	print(game.factions[game.factions.keys()[-1]].roles)
-	base_role = ctx.guild.get_role(game.factions[game.factions.keys()[-1]].roles[-1].central_id)
-	print(game.factions[-1].roles)
+	print(game.factions[list(game.factions.keys())[-1]].roles)
+	print(list(game.factions.keys()))
+	print(list(game.factions.keys())[-1])
+	base_role = ctx.guild.get_role(game.factions[list(game.factions.keys())[-1]].roles[-1].central_id)
 	user.faction = name
+	user.rank = "leader"
 	game.users[user.id] = user
-	leader_role = ctx.guild.get_role(game.factions[game.factions.keys()[-1]].roles[0].central_id)
+	leader_role = ctx.guild.get_role(game.factions[list(game.factions.keys())[-1]].roles[0].central_id)
 	await ctx.author.add_roles(base_role, reason="Faction creation")
 	await ctx.author.add_roles(leader_role, reason="Faction creation")
 	await ctx.send(f"Created faction: **{name}**")
@@ -570,7 +578,7 @@ async def newfac(ctx, name):
 
 @newfac.error
 async def new_fac_error(ctx, error):
-	print(f"Error: {error}end")
+	print(f"Error: {error}  end")
 	print(type(error))
 	if isinstance(error, commands.UnexpectedQuoteError) or isinstance(
 	    error, commands.InvalidEndOfQuotedStringError):
@@ -597,7 +605,7 @@ async def clearfacs(ctx):
 	await ctx.defer()
 	game = r_test.load_from_id(ctx.guild.id)
 	game.current_claims = {}
-	for i in game.factions.values():
+	for i in list(game.factions.values()):
 		for j in i.roles:
 			if j.central_id != 0:
 				try:
@@ -682,7 +690,7 @@ async def end_update_error(ctx, error):
              guild_ids=servers)
 async def delete_game(ctx):
 	game = r_test.load_from_id(ctx.guild.id)
-	for i in game.factions.values():
+	for i in list(game.factions.values()):
 		for j in i.roles:
 			if j.central_id != 0:
 				try:
@@ -825,5 +833,146 @@ async def manual_update_error(ctx, error):
 	else:
 		await ctx.send("An error has occurred")
 
+@slash.slash(name="get_connected", description="Get the ids of all provinces connected to the province with the given id", guild_ids=servers)
+async def get_connected(ctx, id):
+	game = r_test.load_from_id(ctx.guild.id)
+	map_data = r_test.map_json(game.map_name)
+	if map_data != "Invalid JSON":
+		data = map_data.get("l"+id)
+		if data != None:
+			result = []
+			for i in data["neighbors"]:
+				if "l" in i:
+					result.append(i[1:])
+				else:
+					result.append(f"{i[1:]} (water)")
+			await ctx.send(f'Connected IDs for Province {id}:\n{", ".join(result)}')
+
+@slash.slash(name="unclaim", description="Unclaims a province with the given ID that you have claimed this update", guild_ids=servers)
+async def unclaim(ctx, id):
+	game = r_test.load_from_id(ctx.guild.id)
+	user = game.get_user(ctx.author.id)
+	await ctx.defer()
+	if id in user.claims:
+		user.claims.remove(id)
+		game.current_claims.pop(id)
+		game.save()
+		await ctx.send(f"Successfully unclaimed Province {id}")
+	else:
+		await ctx.send("Invalid ID. Make sure that the ID exists and you claimed it this update")
+
+@slash.subcommand(base="trade", name="propose", description="Propose a new trade", guild_ids=servers)
+async def trade_propose(ctx, faction, offer, request):
+	game = r_test.load_from_id(ctx.guild.id)
+	user = game.get_user(ctx.author.id)
+	user_fac_obj = game.get_faction(faction)
+	fac_obj = game.get_faction(faction)
+	if fac_obj == None:
+		await ctx.send("Invalid faction")
+		return
+	if user_fac_obj == fac_obj:
+		await ctx.send("You cannot send a trade to your own faction")
+		#return
+	print(offer.split(","))
+	offer_list = []
+	request_list = []
+	for i in offer.split(","):
+		id = i.strip()
+		if id.lower() == "none":
+			offer_list = ["none"]
+			break
+		if id.isdigit():
+			if game.game_json.get(id) != None:
+				if id in offer_list:
+					await ctx.send(f"You can't offer Province ID: {id} twice. Make sure you have no duplicates in your offer(s) and request(s)")
+					return
+				offer_list.append(id)
+			else:
+				await ctx.send(f"Province ID: {id} does not exist")
+				return
+		else:
+			await ctx.send(f"Invalid offer input: {i}")
+			return
+
+	for i in request.split(","):
+		id = i.strip()
+		if id.lower() == "none":
+			if offer_list == ["none"]:
+				await ctx.send("Something must be traded, cannot request empty trades")
+				return
+			request_list = ["none"]
+			break
+		if id.isdigit():
+			if game.game_json.get(id) != None:
+				if id in offer_list:
+					await ctx.send(f"You can't offer and request Province ID: {id}. Make sure you have no duplicates in your offer(s) and request(s)")
+					return
+				if id in request_list:
+					await ctx.send(f"You can't request Province ID: {id} twice. Make sure you have no duplicates in your offer(s) and request(s)")
+					return					
+				request_list.append(id)
+			else:
+				await ctx.send(f"Province ID: {id} does not exist")
+				return			
+		else:
+			await ctx.send(f"Invalid request input: {i}")
+			return
+			
+	trade_id = str(random.randint(1111,9999))
+	while game.trades.get(trade_id) != None:
+		trade_id = str(random.randint(1111,9999))
+	offer_list.sort()
+	request_list.sort()
+	game.trades[trade_id] = {"From":user_fac_obj.id, "To":fac_obj.id, "Offering":offer_list, "Requesting":request_list}
+
+	await ctx.send("Trade listed")
+	await ctx.send(str(game.trades))
+	game.save()
+
+
+@slash.subcommand(base="trade", name="accept", description="Accept a trade", guild_ids=servers)
+async def trade_accept(ctx, trade_id):
+	game = r_test.load_from_id(ctx.guild.id)
+	user = game.get_user(ctx.author.id)
+	faction = game.get_faction(user.faction)
+	trade = game.trades.get(trade_id)
+	
+	if trade == None:
+		await ctx.send("Trade ID does not exist")
+		return
+
+	if user.rank != "leader":
+		await ctx.send("You must be a faction leader to accept trades")
+		return
+
+	if trade["To"] != faction.id:
+		await ctx.send("You must be in the target faction to accept this trade")
+		return
+
+	errors_offer=[]
+	errors_request=[]
+	for i in trade["Offering"]:
+		if game.game_json[i] != trade["From"]:
+			errors_offer.append(i)
+
+	for i in trade["Requesting"]:
+		if game.game_json[i] != trade["To"]:
+			errors_request.append(i)
+
+	if len(errors_offer) + len(errors_request) > 0:
+		message = ""
+		if len(errors_offer) > 0:
+			message += f"\nOffering faction does not own province ID(s): {', '.join(errors_offer)}"
+		if len(errors_request) > 0:
+			message += f"\nYour faction does not own province ID(s): {', '.join(errors_request)}"
+		await ctx.send(f"Cannot accept trade, see the following errors:{message}")
+
+	game.save()
+
+"""
+	if game.game_json.get(id) != fac_obj.id:
+		print(game.game_json.get(id))
+		print(fac_obj.id)
+		await ctx.send("Province not owned")"""
 client.run(os.environ['api'])
 asyncio.get_event_loop().run_forever()
