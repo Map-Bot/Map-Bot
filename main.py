@@ -923,7 +923,11 @@ async def trade_propose(ctx, faction, offer, request):
 		else:
 			await ctx.send(f"Invalid request input: {i}")
 			return
-			
+	
+	for i in list(game.trades.keys()):
+		if game.trades[i]["Offering"] == offer_list and game.trades[i]["Requesting"] == request_list:
+			await ctx.send(f"Cannot create a duplicate trade. ")
+
 	trade_id = str(random.randint(1111,9999))
 	while game.trades.get(trade_id) != None:
 		trade_id = str(random.randint(1111,9999))
