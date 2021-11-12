@@ -16,6 +16,10 @@ from decorators import *
 import r_test
 import multiprocessing as mp
 import random
+from PIL import Image
+import io
+import base64
+import image
 
 print(mp.cpu_count())
 servers = [821486857367322624, 810657122932883477, 902409343931154472]
@@ -33,6 +37,7 @@ print("Discord Main")
 
 # https://tenor.com/view/wooo-yeah-baby-gif-18955985
 async def map_update(id):
+	print("UPDATING MAP")
 	games = r_test.games()
 	for i in games:
 		game = r_test.load_game_object(i)
@@ -41,7 +46,7 @@ async def map_update(id):
 		guild = client.get_guild(game.server_id)
 		
 		for i in game.users:
-			faction = game.get_faction(i.faction)
+			faction = game.get_faction(name=i.faction)
 			if faction == None:
 				continue
 			for j in i.claims:
@@ -85,6 +90,7 @@ async def map_update(id):
 
 
 def check_update(game):
+	print("CHECKING UPDATE")
 	if schedules.get(game.name) == None:
 		print("adding scheduler")
 		param = game.server_id
@@ -281,7 +287,7 @@ async def setup_error(ctx, error):
 async def join(ctx, faction):
 	game = r_test.load_from_id(ctx.guild.id)
 	user = game.get_user(ctx.author.id)
-	faction_obj = game.get_faction(faction)
+	faction_obj = game.get_faction(name=faction)
 	#check user isn't in faction
 	print(faction_obj)
 	if faction_obj != None:
@@ -319,7 +325,7 @@ async def leave(ctx):
 	game = r_test.load_from_id(ctx.guild.id)
 	user = game.get_user(ctx.author.id)
 	empty = True
-	faction = game.get_faction(user.faction)
+	faction = game.get_faction(name=user.faction)
 	try:
 		for i in game.users:
 			if i.faction == user.faction and i != user:
@@ -455,14 +461,14 @@ async def claim(ctx, id):
 	done = 0
 	faction = False
 	for i in ctx.author.roles:
-		if game.get_faction(i.name) != None:
+		if game.get_faction(name=i.name) != None:
 			faction = i
 			break
 	if len(user.claims) > 9 and ctx.author.id not in exempt:
 		await ctx.send("You have exceeded your maximum daily claims")
 		return
 
-	result = game.claim(id, game.get_faction(faction.name))
+	result = game.claim(id, game.get_faction(name=faction.name))
 	await ctx.send(result)
 	if result == "Sucessfully claimed":
 		user.claims.append(id)
@@ -630,7 +636,7 @@ async def myfac(ctx):
 	game = r_test.load_from_id(ctx.guild.id)
 	check_update(game)
 	for i in ctx.author.roles:
-		if game.get_faction(i.name) != None:
+		if game.get_faction(name=i.name) != None:
 			await ctx.send(i.name)
 			return
 	await ctx.send("You are not in a faction. Use /join to join one")
@@ -739,7 +745,7 @@ async def change_faction_color(ctx, color):
 	await ctx.defer()
 	game = r_test.load_from_id(ctx.guild.id)
 	user = game.get_user(ctx.author.id)
-	faction = game.get_faction(user.faction)
+	faction = game.get_faction(name=user.faction)
 	leader = False
 	for i in ctx.author.roles:
 		if "Leader" in i.name:
@@ -865,8 +871,8 @@ async def unclaim(ctx, id):
 async def trade_propose(ctx, faction, offer, request):
 	game = r_test.load_from_id(ctx.guild.id)
 	user = game.get_user(ctx.author.id)
-	user_fac_obj = game.get_faction(faction)
-	fac_obj = game.get_faction(faction)
+	user_fac_obj = game.get_faction(name=user.faction)
+	fac_obj = game.get_faction(name=faction)
 	if fac_obj == None:
 		await ctx.send("Invalid faction")
 		return
@@ -929,26 +935,16 @@ async def trade_propose(ctx, faction, offer, request):
 	await ctx.send(str(game.trades))
 	game.save()
 
-
-@slash.subcommand(base="trade", name="accept", description="Accept a trade", guild_ids=servers)
-async def trade_accept(ctx, trade_id):
-	game = r_test.load_from_id(ctx.guild.id)
-	user = game.get_user(ctx.author.id)
-	faction = game.get_faction(user.faction)
-	trade = game.trades.get(trade_id)
-	
+def trade_check(trade, user, faction, game):
 	if trade == None:
-		await ctx.send("Trade ID does not exist")
-		return
-
+		return "Trade ID does not exist"
+		
 	if user.rank != "leader":
-		await ctx.send("You must be a faction leader to accept trades")
-		return
-
+		return "You must be a faction leader to accept trades"
+		
 	if trade["To"] != faction.id:
-		await ctx.send("You must be in the target faction to accept this trade")
-		return
-
+		return "You must be in the target faction to accept this trade"
+		
 	errors_offer=[]
 	errors_request=[]
 	for i in trade["Offering"]:
@@ -965,14 +961,83 @@ async def trade_accept(ctx, trade_id):
 			message += f"\nOffering faction does not own province ID(s): {', '.join(errors_offer)}"
 		if len(errors_request) > 0:
 			message += f"\nYour faction does not own province ID(s): {', '.join(errors_request)}"
-		await ctx.send(f"Cannot accept trade, see the following errors:{message}")
+		return f"Cannot accept trade, see the following errors:{message}"
 
+@slash.subcommand(base="trade", name="preview", description="Look at a trade", guild_ids=servers)
+async def trade_preview(ctx, trade_id):
+	game = r_test.load_from_id(ctx.guild.id)
+	user = game.get_user(ctx.author.id)
+	faction = game.get_faction(name=user.faction)
+	trade = game.trades.get(trade_id)
+
+	await ctx.defer()
+	result = trade_check(trade, user, faction, game)
+	if result != None:
+		await ctx.send(result)
+		return
+
+	temp = Image.open(io.BytesIO(base64.b64decode(r_test.map_image(game.map_name))))
+	
+	color = tuple(game.get_faction(id=trade["From"]).colors)
+	map_json = r_test.map_json(game.map_name)
+	for i in trade["Offering"]:
+		print(i)
+		coordinates=map_json[f"l{i}"]["coordinates"]
+		for j in coordinates:
+			image.quick_fill(temp, eval(j), color)
+	
+	color = tuple(game.get_faction(id=trade["To"]).colors)
+	for i in trade["Requesting"]:
+		coordinates=map_json[f"l{i}"]["coordinates"]
+		for j in coordinates:
+			image.quick_fill(temp, eval(j), color)
+	
+	temp.save("trade.png")
+	await ctx.send(file=discord.File("trade.png"))
 	game.save()
 
-"""
-	if game.game_json.get(id) != fac_obj.id:
-		print(game.game_json.get(id))
-		print(fac_obj.id)
-		await ctx.send("Province not owned")"""
+@slash.subcommand(base="trade", name="accept", description="Accept a trade", guild_ids=servers)
+async def trade_accept(ctx, trade_id):
+	game = r_test.load_from_id(ctx.guild.id)
+	user = game.get_user(ctx.author.id)
+	faction = game.get_faction(name=user.faction)
+	trade = game.trades.get(trade_id)
+
+	await ctx.defer()
+	result = trade_check(trade, user, faction, game)
+	if result != None:
+		await ctx.send(result)
+		return
+	print("offering")
+	for i in trade["Offering"]:
+		print(i)
+		print(trade["To"])
+		game.game_json[i] = trade["To"]
+	print("requesting")
+	for i in trade["Requesting"]:
+		print(i)
+		print(trade["To"])
+		game.game_json[i] = trade["From"]
+	game.trades.pop(trade_id)
+	temp=game.redraw_map()
+	temp.save("map.png")
+	await ctx.send(file=discord.File("map.png"))
+	game.save()
+
+@slash.subcommand(base="trade", name="view", description="View trades", guild_ids=servers)
+async def trade_view(ctx):
+	game = r_test.load_from_id(ctx.guild.id)	
+	user = game.get_user(ctx.author.id)
+	faction = game.get_faction(name=user.faction)
+	embed = discord.Embed(color=0x1111ee)
+	for i in list(game.trades.keys()):
+		trade = game.trades[i]
+		if trade["From"] == faction.id or trade["To"] == faction.id:
+			embed.add_field(name=f"Trade ID: {i}", value=f"From: {game.get_faction(id=trade['From']).name}\nTo: {game.get_faction(id=trade['To']).name}\nOffering: {', '.join(trade['Offering'])}\nRequesting: {', '.join(trade['Requesting'])}")
+	await ctx.send(embed=embed)
+	
+	
+	
+
 client.run(os.environ['api'])
 asyncio.get_event_loop().run_forever()

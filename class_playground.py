@@ -24,7 +24,7 @@ class Game:
 		self.map_name = ""
 		self.game_json = {}
 		self.trades = {}
-		self.schedule = None
+		self.schedule = "* 8 * * *"
 		self.current_claims = {}
 		self.description = ""
 		self.invite_link = ""
@@ -35,8 +35,12 @@ class Game:
 		output = [self.factions[i].name for i in list(self.factions.keys())]
 		return output
 
-	def get_faction(self, name):
-		output = [self.factions[i] for i in list(self.factions.keys()) if self.factions[i].name == name]
+	def get_faction(self, name=None, id=None):
+		if name != None:
+			output = [self.factions[i] for i in list(self.factions.keys()) if self.factions[i].name == name]
+
+		elif id != None:
+			output = [self.factions[i] for i in list(self.factions.keys()) if self.factions[i].id == id]
 		print("OUTPUT")
 		print(output)
 		if output != []:
@@ -91,7 +95,7 @@ class Game:
 			return True
 		else:
 			return False
-
+	
 	def edit_province(self, id, faction):
 		if not self.verify_id(id):
 			return "Invalid ID"
@@ -176,7 +180,7 @@ class Game:
 				#print(faction)
 				for j in coordinates:
 					image.quick_fill(temp, eval(j), tuple(faction.colors))
-		self.update_map(temp)
+		#self.update_map(temp)
 		print("finished redraw")
 		return temp
 
