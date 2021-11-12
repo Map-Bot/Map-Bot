@@ -78,7 +78,7 @@ async def map_update(id):
 			if image != "No map":
 				print("yes map")
 				image.save("test.png")
-				await channel.send("@everyone\nMap Update:",
+				await channel.send("everyone\nMap Update:",
 				                   file=discord.File("test.png"))
 			else:
 				print("no map")
@@ -1036,8 +1036,71 @@ async def trade_view(ctx):
 			embed.add_field(name=f"Trade ID: {i}", value=f"From: {game.get_faction(id=trade['From']).name}\nTo: {game.get_faction(id=trade['To']).name}\nOffering: {', '.join(trade['Offering'])}\nRequesting: {', '.join(trade['Requesting'])}")
 	await ctx.send(embed=embed)
 	
+@slash.slash(name="attack", description="Attack the target province", guild_ids=servers)
+async def attack(ctx, attacker, target):
+	game = r_test.load_from_id(ctx.guild.id)
+	user = game.get_user(ctx.author.id)
+	faction = game.get_faction(name=user.faction)
+	target_owner = game.game_json.get(target)
+	if target_owner == None:
+		await ctx.send("Invalid target ID")
+		return
+	if target_owner == 0:
+		await ctx.send("You cannot attack an empty province")
+		return
+	if game.game_json.get(attacker) != faction.id:
+		await ctx.send("You must own the attacking province")
+		return
+	target_full = r_test.map_json(game.map_name)[f"l{target}"]
+	print(target_full)
+	neighbor_ids = [i[1:] for i in target_full["neighbors"] if "l" in i]
+	defense_count = 0
+	for i in neighbor_ids:
+		if game.game_json.get(i) == target_owner:
+			defense_count += 1
+
+	attacker_full = r_test.map_json(game.map_name)[f"l{attacker}"]
+	neighbor_ids = [i[1:] for i in attacker_full["neighbors"] if "l" in i]
+	attack_count = 0
 	
+	for i in neighbor_ids:
+		if game.game_json.get(i) == faction.id:
+			attack_count += 1
 	
+	if attack_count == 0:
+		await ctx.send("You must own at least one neighboring province in order to attack")
+		return
+
+	
+	await ctx.send(f"**Attacking province {target} from province {attacker}**\nAttacker Count: {attack_count}\nDefense Count: {defense_count}")
+	attack_dice = []
+	defense_dice = []
+	for i in range(attack_count):
+		attack_dice.append(random.randint(1,6))
+	for i in range(defense_count + 1):
+		defense_dice.append(random.randint(1,6))
+	attack_dice.sort(reverse=True)
+	defense_dice.sort(reverse=True)
+	await ctx.send(f"Attack Dice: {', '.join(attack_dice)}\nDefense Dice: {', '.join(defense_dice)}")
+	while len(defense_dice) > 0 and len(attack_dice) > 0:
+		if defense_dice[0] >= attack_dice[0]:
+			attack_dice = attack_dice[1:]
+		else:
+			defense_dice = defense_dice[1:]
+		await ctx.send(f"Attack Dice: {', '.join(attack_dice)}\nDefense Dice: {', '.join(defense_dice)}")
+
+	if len(defense_dice) == 0:
+		await ctx.send(f"You won! You now own province {target}")
+		game.game_json[target] = faction.id
+	else:
+		await ctx.send(f"You lost. You have lost province {attacker}")
+		game.game_json[attacker] = target_owner
+
+	temp=game.redraw_map()
+	temp.save("map.png")
+	await ctx.send(file=discord.File("map.png"))
+	game.save()
+
 
 client.run(os.environ['api'])
 asyncio.get_event_loop().run_forever()
