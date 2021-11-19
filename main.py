@@ -1086,12 +1086,6 @@ async def attack(ctx, attacker, target):
 	attack_dice.sort(reverse=True)
 	defense_dice.sort(reverse=True)
 	await ctx.send(f"Attack Dice: {', '.join(attack_dice)}\nDefense Dice: {', '.join(defense_dice)}")
-	while len(defense_dice) > 0 and len(attack_dice) > 0:
-		if defense_dice[0] >= attack_dice[0]:
-			attack_dice = attack_dice[1:]
-		else:
-			defense_dice = defense_dice[1:]
-		await ctx.send(f"Attack Dice: {', '.join(attack_dice)} Total: {sum(attack_dice)}(\nDefense Dice: {', '.join(defense_dice)} Total: {sum(defense_dice)}")
 
 	if sum(defense_dice) < sum(attack_dice):
 		await ctx.send(f"You won! You now own province {target}")
