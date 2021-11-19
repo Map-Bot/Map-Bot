@@ -1091,9 +1091,9 @@ async def attack(ctx, attacker, target):
 			attack_dice = attack_dice[1:]
 		else:
 			defense_dice = defense_dice[1:]
-		await ctx.send(f"Attack Dice: {', '.join(attack_dice)}\nDefense Dice: {', '.join(defense_dice)}")
+		await ctx.send(f"Attack Dice: {', '.join(attack_dice)} Total: {sum(attack_dice)}(\nDefense Dice: {', '.join(defense_dice)} Total: {sum(defense_dice)}")
 
-	if len(defense_dice) == 0:
+	if sum(defense_dice) < sum(attack_dice):
 		await ctx.send(f"You won! You now own province {target}")
 		game.game_json[target] = faction.id
 	else:
