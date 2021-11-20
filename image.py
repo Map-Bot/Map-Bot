@@ -5,9 +5,9 @@ def snapshot(img, base_coords):
 	for index, i in enumerate(area):
 		if i < 0:
 			area[index] = 0
-	area = tuple(area)
-	print(area)
-	img2 = img.crop(area)
+	area2 = tuple(area)
+	print(area2)
+	img2 = img.crop(area2)
 	img2.save("snapshot.png")
 	
 def quick_fill(image_reference, xy, value):

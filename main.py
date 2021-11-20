@@ -1110,7 +1110,7 @@ async def complete_attack(ctx, id):
 	game.attacks.pop(id)
 	temp=game.redraw_map()
 	temp.save("map.png")
-	await ctx.send(embed=embed)
+	await ctx.send(embed=embed,file=discord.File("snapshot.png"))
 	game.save()
 
 @slash.subcommand(base="engage",name="commence", description="Attack the target province", guild_ids=servers)
@@ -1219,9 +1219,8 @@ async def engage_info(ctx, id):
 	base_coords = eval(base_coords)
 	img = game.map()
 	image.snapshot(img, base_coords)
-	img.save("snapshot.png")
 	embed.set_image(url="attachment://snapshot.png")
-	await ctx.send(embed=embed)
+	await ctx.send(embed=embed, file=discord.File("snapshot.png"))
 	
 @dev()
 @slash.slash(name="delete_attack", description=":troll:", guild_ids=servers)
