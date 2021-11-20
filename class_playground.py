@@ -27,6 +27,7 @@ class Game:
 		self.schedule = "* 8 * * *"
 		self.current_claims = {}
 		self.description = ""
+		self.action_limit = 1
 		self.invite_link = ""
 		self.faction_id_counter = 0
 		self.attacks={}
@@ -118,7 +119,7 @@ class Game:
 		print(faction)
 		if not self.verify_id(id):
 			return "Invalid ID"
-		if self.game_json[id] == faction.id or self.current_claims.get(id) == faction.id:
+		if self.game_json[id] == faction.id or self.current_claims.get(id) == faction.id or self.game_json[id] != 0:
 			return f"Province already {id} claimed"
 		print(self.game_json[id])
 		self.current_claims[id] = faction.id
@@ -308,6 +309,7 @@ class User:
 		self.name = ""
 		self.discord_id = discord_id
 		self.id = 00
+		self.actions = 0
 		self.claims = []
 		self.rank = ""
 		self.money = 0

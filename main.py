@@ -38,8 +38,8 @@ print("Discord Main")
 async def map_update(id):
 	print("UPDATING MAP")
 	games = r_test.games()
-	for i in games:
-		game = r_test.load_game_object(i)
+	for game_it in games:
+		game = r_test.load_game_object(game_it)
 		if game.server_id != id:
 			continue
 		guild = client.get_guild(game.server_id)
@@ -52,15 +52,19 @@ async def map_update(id):
 				print("redraw")
 				game.edit_province(j, faction)
 			i.claims = []
+			i.actions = 0
 		game.current_claims = {}
 		game.save()
 		
 		try:
-			channel_id = 0
+			battle_channel_id = None
+			channel_id = None
 			for i in guild.channels:
 				if "map" == i.name:
 					channel_id = i.id
-			if channel_id == 0:
+				if "battle-log" ==i.name:
+					battle_channel_id = i.id
+			if channel_id == None:
 				overwrites = {
 				    guild.default_role:
 				    discord.PermissionOverwrite(send_messages=False),
@@ -70,8 +74,17 @@ async def map_update(id):
 				map_channel = await guild.create_text_channel(
 				    "map", overwrites=overwrites)
 				channel_id = map_channel.id
+			if battle_channel_id == None:
+				overwrites = {
+				    guild.default_role:
+				    discord.PermissionOverwrite(send_messages=False),
+				    guild.me:
+				    discord.PermissionOverwrite(send_messages=True)
+				}
+				battle_channel = await guild.create_text_channel(
+				    "battle-log", overwrites=overwrites)
+				battle_channel_id = battle_channel.id				
 			channel = guild.get_channel(channel_id)
-			#channel = guild.get_channel(821486857367322629)
 			
 			image = game.redraw_map()
 			if image != "No map":
@@ -85,6 +98,27 @@ async def map_update(id):
 		except Exception as e:
 			print(e)
 			print("Get channel error")
+		battle_channel = guild.get_channel(battle_channel_id)
+		"""for attack in game.attacks:
+		attack_info = game.attacks.get(attack)
+		attack_dice = []
+		defense_dice = []
+		for i in range(len(attack_info["attackers"])):
+			attack_dice.append(random.randint(1,6))
+		for i in range(len(attack_info["defenders"])):
+			defense_dice.append(random.randint(1,6))
+		attack_dice.sort(reverse=True)
+		defense_dice.sort(reverse=True)
+
+		await ctx.send(f"Attack Dice Rolls: `{', '.join(str(i) for i in attack_dice)}` Total: {sum(attack_dice)}\nDefense Dice Rolls: `{', '.join(str(i) for i in defense_dice)}` Total: {sum(defense_dice)}")
+
+		if sum(defense_dice) < sum(attack_dice):
+			await ctx.send(f"You won! You now own province {id}")
+			game.game_json[id] = faction.id
+		else:
+			await ctx.send(f"You lost")
+	
+		game.attacks.pop(id)"""
 		print("Update complete!")
 
 
@@ -1039,7 +1073,47 @@ async def trade_view(ctx):
 			embed.add_field(name=f"Trade ID: {i}", value=f"From: {game.get_faction(id=trade['From']).name}\nTo: {game.get_faction(id=trade['To']).name}\nOffering: {', '.join(trade['Offering'])}\nRequesting: {', '.join(trade['Requesting'])}")
 	await ctx.send(embed=embed)
 	
-@slash.slash(name="attack", description="Attack the target province", guild_ids=servers)
+async def complete_attack(ctx, id):
+	game = r_test.load_from_id(ctx.guild.id)
+	print(game.attacks)
+	print(game.attacks.get(id))
+	attack_info = game.attacks.get(id)
+	if len(attack_info["attackers"]) != attack_info["max_attackers"] or len(attack_info["defenders"]) != attack_info["max_defenders"]:
+		return
+	attack_dice = []
+	defense_dice = []
+	for i in range(attack_info["max_attackers"]):
+		attack_dice.append(random.randint(1,6))
+	for i in range(attack_info["max_defenders"]):
+		defense_dice.append(random.randint(1,6))
+	attack_dice.sort(reverse=True)
+	defense_dice.sort(reverse=True)
+
+	win = False
+	embed = discord.Embed(title="**BATTLE RESULTS**", color = 0x5ac30a)
+	embed.add_field(name="***Defender Victory!***",value=f"The attackers were repealed in a glorious defense of province {id}!")
+	embed.set_thumbnail(url="https://cdn2.iconfinder.com/data/icons/rpg-fantasy-game-skill-ui/512/game_skill_ui_guard_shield_broken_sword-512.png")
+	if sum(defense_dice) < sum(attack_dice):
+		game.game_json[id] = game.game_json[attack_info["attacking_province"]]
+		win = True
+		embed = discord.Embed(title="**BATTLE RESULTS**", color = 0xf92424)
+		embed.set_thumbnail(url="https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fclipart-library.com%2Fimg1%2F1063584.png&f=1&nofb=1")
+		embed.add_field(name="***Attacker Victory!***", value=f"A righteous victory over the enemy was achieved at province {id}!")
+	
+	embed.add_field(name="Attack Dice", value=f"Attack Dice Rolls: `{', '.join(str(i) for i in attack_dice)}` Total: {sum(attack_dice)}", inline=False)
+	embed.add_field(name="Defense Dice", value=f"Defense Dice Rolls: `{', '.join(str(i) for i in defense_dice)}` Total: {sum(defense_dice)}", inline=False)
+	base_coords = r_test.map_json(game.map_name)[f"l{id}"]["coordinates"][0]
+	base_coords = eval(base_coords)
+	img = game.map()
+	image.snapshot(img, base_coords)
+	embed.set_image(url="attachment://snapshot.png")
+	game.attacks.pop(id)
+	temp=game.redraw_map()
+	temp.save("map.png")
+	await ctx.send(embed=embed)
+	game.save()
+
+@slash.subcommand(base="engage",name="commence", description="Attack the target province", guild_ids=servers)
 async def attack(ctx, attacker, target):
 	game = r_test.load_from_id(ctx.guild.id)
 	user = game.get_user(ctx.author.id)
@@ -1052,12 +1126,20 @@ async def attack(ctx, attacker, target):
 		await ctx.send("You cannot attack an empty province")
 		return
 	if game.game_json.get(attacker) != faction.id:
+		print(f"attacker {faction.id}")
+		print(f"Real Owner {game.game_json.get(attacker)}")
 		await ctx.send("You must own the attacking province")
+		return
+	if user.actions >= game.action_limit:
+		await ctx.send("You have used up all of your actions for this update period")
+		return
+	if game.attacks.get(target) != None:
+		await ctx.send("This province is already being attacked")
 		return
 	target_full = r_test.map_json(game.map_name)[f"l{target}"]
 	print(target_full)
 	neighbor_ids = [i[1:] for i in target_full["neighbors"] if "l" in i]
-	defense_count = 0
+	defense_count = 1
 	for i in neighbor_ids:
 		if game.game_json.get(i) == target_owner:
 			defense_count += 1
@@ -1074,30 +1156,89 @@ async def attack(ctx, attacker, target):
 		await ctx.send("You must own at least one neighboring province in order to attack")
 		return
 
+	game.attacks[f"{target}"] = {"attacking_province": attacker, "defending_province": target,"attackers":[user.discord_id], "defenders":[0], "max_attackers":attack_count, "max_defenders":defense_count, "instigator": user.discord_id}
+	user.actions += 1
+	await ctx.send(f"**Attacking province {target} from province {attacker}**\nMaximum Attackers: {attack_count}\nMaximum Defenders: {defense_count} \nPings: <@&{faction.roles[-1].role_id}>")
+	game.save()
+	await complete_attack(ctx, target)
+
+
+@slash.subcommand(base="engage",name="join", description="Become an attacaker or defender of the given province", guild_ids=servers)
+async def engage(ctx, id):
+	game = r_test.load_from_id(ctx.guild.id)
+	user = game.get_user(ctx.author.id)
+	faction = game.get_faction(name=user.faction)
+	attacker_or_defender = None
+	attack_info = game.attacks.get(id)
+	if attack_info == None:
+		await ctx.send("Invalid Province ID, make sure that ID exists and is being attacked")
+		return
 	
-	await ctx.send(f"**Attacking province {target} from province {attacker}**\nAttacker Count: {attack_count}\nDefense Count: {defense_count}")
-	attack_dice = []
-	defense_dice = []
-	for i in range(attack_count):
-		attack_dice.append(random.randint(1,6))
-	for i in range(defense_count + 1):
-		defense_dice.append(random.randint(1,6))
-	attack_dice.sort(reverse=True)
-	defense_dice.sort(reverse=True)
-	await ctx.send(f"Attack Dice: {', '.join(attack_dice)}\nDefense Dice: {', '.join(defense_dice)}")
+	if faction.id == game.game_json.get(id):
+		attacker_or_defender = "defender"
+		if user.discord_id in attack_info["defenders"]:
+			await ctx.send("You are already defending")
+			return
+		if len(attack_info["defenders"]) >= attack_info["max_defenders"]:
+			await ctx.send("You cannot engage in this defense, there is already the maximum number of defenders engaged")
+			return
+	elif faction.id == game.game_json.get(attack_info["attacking_province"]):
+		attacker_or_defender = "attacker"
+		if user.discord_id in attack_info["attackers"]:
+			await ctx.send("You are already attacking")
+			return
+		if len(attack_info["attackers"]) >= attack_info["max_attackers"]:
+			await ctx.send("You cannot engage in this attack, there is already the maximum number of attackers engaged")
+			return
+	if attacker_or_defender is None:
+		await ctx.send("You must be in either the attacking or defending faction to engage")
+		return
 
-	if sum(defense_dice) < sum(attack_dice):
-		await ctx.send(f"You won! You now own province {target}")
-		game.game_json[target] = faction.id
-	else:
-		await ctx.send(f"You lost. You have lost province {attacker}")
-		game.game_json[attacker] = target_owner
+	if user.actions >= game.action_limit:
+		await ctx.send("You have used up all of your actions for this update period")
+	
+	game.attacks[id][f"{attacker_or_defender}s"].append(user.discord_id)
+	user.actions += 1
+	await ctx.send(f'Successfully became {attacker_or_defender} for province {id}.\nNew Totals:\nAttackers Committted: {len(game.attacks[id]["attackers"])}, Max Attackers: {attack_info["max_attackers"]}\nCurrent Defenders: {len(game.attacks[id]["defenders"])}, Max Defenders: {attack_info["max_attackers"]}')
+	game.save()
+	await complete_attack(ctx, id)
 
-	temp=game.redraw_map()
-	temp.save("map.png")
-	await ctx.send(file=discord.File("map.png"))
+@slash.subcommand(base="engage", name="info", description="See the info of a battle", guild_ids=servers)
+async def engage_info(ctx, id):
+	game = r_test.load_from_id(ctx.guild.id)
+	attack_info = game.attacks.get(id)
+	if attack_info == None:
+		await ctx.send("Invalid Province ID, make sure that ID exists and is being attacked")
+		return
+	embed = discord.Embed(title="**BATTLE INFORMATION**",color=0xd8320b)
+	embed.add_field(name="Defenders Committed", value=f'{len(game.attacks[id]["defenders"])} of {attack_info["max_defenders"]} allowed', inline=False)
+	embed.add_field(name="Attackers Committed", value=f'{len(game.attacks[id]["attackers"])} of {attack_info["max_attackers"]} allowed', inline=False)
+	embed.set_footer(text="Defenders have a base defense of 1 and may exceed what their province limit would otherwise allow by one.")
+	base_coords = r_test.map_json(game.map_name)[f"l{id}"]["coordinates"][0]
+	print(eval(base_coords))
+	base_coords = eval(base_coords)
+	img = game.map()
+	image.snapshot(img, base_coords)
+	img.save("snapshot.png")
+	embed.set_image(url="attachment://snapshot.png")
+	await ctx.send(embed=embed)
+	
+@dev()
+@slash.slash(name="delete_attack", description=":troll:", guild_ids=servers)
+async def delete_attack(ctx, id):
+	game = r_test.load_from_id(ctx.guild.id)
+	if game.attacks.get(id)!=None:
+		game.attacks.pop(id)
+	await ctx.send("done")
 	game.save()
 
-
+@dev()
+@slash.slash(name="edit_max_actions", description="Self explanitory", guild_ids=servers)
+async def edit_max_actions(ctx, max):
+	game=r_test.load_from_id(ctx.guild.id)
+	game.action_limit = int(max)
+	await ctx.send(f"New max: {max}")
+	game.save()
+	
 client.run(os.environ['api'])
 asyncio.get_event_loop().run_forever()

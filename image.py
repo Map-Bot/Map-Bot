@@ -1,4 +1,15 @@
-
+def snapshot(img, base_coords):
+	width=175
+	height=175
+	area = [int(base_coords[0])-width, int(base_coords[1])-height, int(base_coords[0])+width, base_coords[1]+height]
+	for index, i in enumerate(area):
+		if i < 0:
+			area[index] = 0
+	area = tuple(area)
+	print(area)
+	img2 = img.crop(area)
+	img2.save("snapshot.png")
+	
 def quick_fill(image_reference, xy, value):
     if 0 <= xy[0] < image_reference.size[0] and 0 <= xy[1] < image_reference.size[1] and value != image_reference.getpixel(xy):
         _quick_fill(image_reference, xy[0], xy[1], value, image_reference.getpixel(xy))
