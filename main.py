@@ -21,7 +21,7 @@ import base64
 import image
 
 #print(mp.cpu_count())
-servers = [828422029618446399]
+servers = [828422029618446399,810657122932883477]
 exempt = [339251879273955330,740630812315090984]
 schedules = {}
 client = commands.Bot(command_prefix="%", intents=discord.Intents.all())
