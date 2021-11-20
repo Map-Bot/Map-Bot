@@ -14,15 +14,14 @@ import class_playground
 import aiocron
 from decorators import *
 import r_test
-import multiprocessing as mp
 import random
 from PIL import Image
 import io
 import base64
 import image
 
-print(mp.cpu_count())
-servers = [821486857367322624, 810657122932883477, 902409343931154472,828422029618446399]
+#print(mp.cpu_count())
+servers = [828422029618446399]
 exempt = [339251879273955330,740630812315090984]
 schedules = {}
 client = commands.Bot(command_prefix="%", intents=discord.Intents.all())

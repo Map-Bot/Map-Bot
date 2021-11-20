@@ -29,6 +29,7 @@ class Game:
 		self.description = ""
 		self.invite_link = ""
 		self.faction_id_counter = 0
+		self.attacks={}
 		r_test.add_game(name, self)
 
 	def faction_names(self):
