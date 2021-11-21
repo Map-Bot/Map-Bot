@@ -86,10 +86,10 @@ async def map_update(id):
 				battle_channel_id = battle_channel.id				
 			channel = guild.get_channel(channel_id)
 			
-			image = game.redraw_map()
-			if image != "No map":
+			map_result = game.redraw_map()
+			if map_result != "No map":
 				print("yes map")
-				image.save("test.png")
+				map_result.save("test.png")
 				await channel.send("everyone\nMap Update:",
 				                   file=discord.File("test.png"))
 			else:
@@ -98,27 +98,43 @@ async def map_update(id):
 		except Exception as e:
 			print(e)
 			print("Get channel error")
+
+		print("getting battle channel")
 		battle_channel = guild.get_channel(battle_channel_id)
-		"""for attack in game.attacks:
-		attack_info = game.attacks.get(attack)
-		attack_dice = []
-		defense_dice = []
-		for i in range(len(attack_info["attackers"])):
-			attack_dice.append(random.randint(1,6))
-		for i in range(len(attack_info["defenders"])):
-			defense_dice.append(random.randint(1,6))
-		attack_dice.sort(reverse=True)
-		defense_dice.sort(reverse=True)
-
-		await ctx.send(f"Attack Dice Rolls: `{', '.join(str(i) for i in attack_dice)}` Total: {sum(attack_dice)}\nDefense Dice Rolls: `{', '.join(str(i) for i in defense_dice)}` Total: {sum(defense_dice)}")
-
-		if sum(defense_dice) < sum(attack_dice):
-			await ctx.send(f"You won! You now own province {id}")
-			game.game_json[id] = faction.id
-		else:
-			await ctx.send(f"You lost")
-	
-		game.attacks.pop(id)"""
+		print(battle_channel.name)
+		temp_keys = list(game.attacks.keys())
+		for attack in temp_keys:
+			print(attack)
+			attack_info = game.attacks.get(attack)
+			attack_dice = []
+			defense_dice = []
+			for i in range(len(attack_info["attackers"])):
+				attack_dice.append(random.randint(1,6))
+			for i in range(len(attack_info["defenders"])):
+				defense_dice.append(random.randint(1,6))
+			attack_dice.sort(reverse=True)
+			defense_dice.sort(reverse=True)
+		
+			embed = discord.Embed(title="**BATTLE RESULTS**", color = 0x5ac30a)
+			embed.add_field(name="***Defender Victory!***",value=f"The attackers were repealed in a glorious defense of province {attack}!")
+			embed.set_thumbnail(url="https://cdn2.iconfinder.com/data/icons/rpg-fantasy-game-skill-ui/512/game_skill_ui_guard_shield_broken_sword-512.png")
+			if sum(defense_dice) < sum(attack_dice):
+				game.game_json[attack] = game.game_json[attack_info["attacking_province"]]
+				win = True
+				embed = discord.Embed(title="**BATTLE RESULTS**", color = 0xf92424)
+				embed.set_thumbnail(url="https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fclipart-library.com%2Fimg1%2F1063584.png&f=1&nofb=1")
+				embed.add_field(name="***Attacker Victory!***", value=f"A righteous victory over the enemy was achieved at province {attack}!")
+			embed.add_field(name="Attack Dice", value=f"Attack Dice Rolls: `{', '.join(str(i) for i in attack_dice)}`\nTotal: {sum(attack_dice)}", inline=False)
+			embed.add_field(name="Defense Dice", value=f"Defense Dice Rolls: `{', '.join(str(i) for i in defense_dice)}`\nTotal: {sum(defense_dice)}", inline=False)
+			base_coords = r_test.map_json(game.map_name)[f"l{attack}"]["coordinates"][0]
+			base_coords = eval(base_coords)
+			print(base_coords)
+			img = game.map()
+			image.snapshot(img, base_coords)
+			embed.set_image(url="attachment://snapshot.png")
+			print("sending")
+			await battle_channel.send(embed=embed, file=discord.File("snapshot.png"))
+			game.attacks.pop(attack)
 		print("Update complete!")
 
 
@@ -973,6 +989,7 @@ async def trade_propose(ctx, faction, offer, request):
 	game.save()
 
 def trade_check(trade, user, faction, game):
+	
 	if trade == None:
 		return "Trade ID does not exist"
 		
@@ -981,7 +998,13 @@ def trade_check(trade, user, faction, game):
 		
 	if trade["To"] != faction.id:
 		return "You must be in the target faction to accept this trade"
-		
+	attack_list = list(game.attacks.keys())
+	for i in trade["Offering"]:
+		if str(i) in attack_list:
+			return "You cannot traded a province that is being attacked"
+	for i in trade["Requesting"]:
+		if str(i) in attack_list:
+			return "You cannot traded a province that is being attacked"
 	errors_offer=[]
 	errors_request=[]
 	for i in trade["Offering"]:
@@ -1089,7 +1112,6 @@ async def complete_attack(ctx, id):
 	attack_dice.sort(reverse=True)
 	defense_dice.sort(reverse=True)
 
-	win = False
 	embed = discord.Embed(title="**BATTLE RESULTS**", color = 0x5ac30a)
 	embed.add_field(name="***Defender Victory!***",value=f"The attackers were repealed in a glorious defense of province {id}!")
 	embed.set_thumbnail(url="https://cdn2.iconfinder.com/data/icons/rpg-fantasy-game-skill-ui/512/game_skill_ui_guard_shield_broken_sword-512.png")
@@ -1100,8 +1122,8 @@ async def complete_attack(ctx, id):
 		embed.set_thumbnail(url="https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fclipart-library.com%2Fimg1%2F1063584.png&f=1&nofb=1")
 		embed.add_field(name="***Attacker Victory!***", value=f"A righteous victory over the enemy was achieved at province {id}!")
 	
-	embed.add_field(name="Attack Dice", value=f"Attack Dice Rolls: `{', '.join(str(i) for i in attack_dice)}` Total: {sum(attack_dice)}", inline=False)
-	embed.add_field(name="Defense Dice", value=f"Defense Dice Rolls: `{', '.join(str(i) for i in defense_dice)}` Total: {sum(defense_dice)}", inline=False)
+	embed.add_field(name="Attack Dice", value=f"Attack Dice Rolls: `{', '.join(str(i) for i in attack_dice)}`\nTotal: {sum(attack_dice)}", inline=False)
+	embed.add_field(name="Defense Dice", value=f"Defense Dice Rolls: `{', '.join(str(i) for i in defense_dice)}`\nTotal: {sum(defense_dice)}", inline=False)
 	base_coords = r_test.map_json(game.map_name)[f"l{id}"]["coordinates"][0]
 	base_coords = eval(base_coords)
 	img = game.map()

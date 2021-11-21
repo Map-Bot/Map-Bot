@@ -1,4 +1,5 @@
 def snapshot(img, base_coords):
+	print('beginning snapshot')
 	width=175
 	height=175
 	area = [int(base_coords[0])-width, int(base_coords[1])-height, int(base_coords[0])+width, base_coords[1]+height]
@@ -6,7 +7,7 @@ def snapshot(img, base_coords):
 		if i < 0:
 			area[index] = 0
 	area2 = tuple(area)
-	print(area2)
+	print(f"Final area coords: {area2}")
 	img2 = img.crop(area2)
 	img2.save("snapshot.png")
 	
