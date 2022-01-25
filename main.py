@@ -803,8 +803,14 @@ async def dorito(ctx):
 
 @slash.slash(name="log", description="Uploads the log for debugging", guild_ids=servers)
 async def log_command(ctx):
+	
+	with open('logfile.log', 'r') as fin:
+    data = fin.read().splitlines(True)
+	with open('logfile.log', 'w') as fout:
+    fout.writelines(data[7:])
 	file = discord.File("logfile.log")
 	await ctx.send("Here's the log", file=file)
+	
 	with open("logfile.log", 'r+') as fp:
     # read an store all lines into list
 		lines = fp.readlines()
