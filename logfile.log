@@ -1,13 +1,16 @@
-WARNING 2022-01-25 12:59:55,592 - PyNaCl is not installed, voice will NOT be supported
-INFO 2022-01-25 12:59:55,596 - logging in using static token
-INFO 2022-01-25 12:59:55,867 - Shard ID None has sent the IDENTIFY payload.
-INFO 2022-01-25 12:59:56,018 - Shard ID None has connected to Gateway: ["gateway-prd-main-1jq6",{"micros":104083,"calls":["discord-sessions-green-prd-2-139",{"micros":102902,"calls":["start_session",{"micros":92812,"calls":["discord-api-56d7f485bd-6ppc8",{"micros":83630,"calls":["get_user",{"micros":5727},"add_authorized_ip",{"micros":7483},"get_guilds",{"micros":14942},"coros_wait",{"micros":2}]}]},"guilds_connect",{"micros":1,"calls":[]},"presence_connect",{"micros":1408,"calls":[]}]}]}] (Session ID: 0315d35066d7d2049d64dcdf6ee598c0).
-INFO 2022-01-25 12:59:58,065 - Syncing commands...
-INFO 2022-01-25 12:59:58,484 - Syncing permissions...
-INFO 2022-01-25 12:59:58,484 - Completed syncing all commands!
-INFO 2022-01-25 13:00:45,567 - 
-COMMAND NAME: join
-COMMAND INFO: Target Faction Name: Liftocratic Gov-mt - Faction Object: <class_playground.Faction object at 0x7f877c63c880>
+WARNING 2022-01-25 13:04:26,846 - PyNaCl is not installed, voice will NOT be supported
+INFO 2022-01-25 13:04:26,849 - logging in using static token
+INFO 2022-01-25 13:04:27,103 - Shard ID None has sent the IDENTIFY payload.
+INFO 2022-01-25 13:04:27,267 - Shard ID None has connected to Gateway: ["gateway-prd-main-409b",{"micros":114889,"calls":["discord-sessions-green-prd-2-53",{"micros":109813,"calls":["start_session",{"micros":78480,"calls":["discord-api-56d7f485bd-2klqd",{"micros":72646,"calls":["get_user",{"micros":12788},"add_authorized_ip",{"micros":5204},"get_guilds",{"micros":12479},"coros_wait",{"micros":1}]}]},"guilds_connect",{"micros":2,"calls":[]},"presence_connect",{"micros":24633,"calls":[]}]}]}] (Session ID: 79c34be9deb179225584eed5b4decdac).
+INFO 2022-01-25 13:04:29,319 - Syncing commands...
+INFO 2022-01-25 13:04:29,972 - Syncing permissions...
+INFO 2022-01-25 13:04:29,972 - Completed syncing all commands!
+INFO 2022-01-25 13:04:30,932 - 
+COMMAND NAME: delete_fac
+COMMAND INFO: Target Faction: Delete Me
 USER INFO:
-User Object: <class_playground.User object at 0x7f877c6f6070> - User Object Name: Connor13 - User Faction:  - User Actions: 0
-INFO 2022-01-25 13:00:45,568 - Target Faction Name: Liftocratic Gov-mt
+User Object: <class_playground.User object at 0x7f9e5c89f610> - User Object Name: Connor13 - User Faction:  - User Actions: 0
+ERROR 2022-01-25 13:04:30,933 - Role deletion error for role: None
+ERROR 2022-01-25 13:04:30,933 - Role deletion error for role: None
+ERROR 2022-01-25 13:04:30,933 - Role deletion error for role: None
+ERROR 2022-01-25 13:04:30,933 - Role deletion error for role: None

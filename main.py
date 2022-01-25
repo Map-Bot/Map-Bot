@@ -747,10 +747,10 @@ async def delete_fac(ctx, faction):
 		log.warning(f"Target Faction Result: {faction_obj} - Target Faction Name: {faction} - Game Factions: {game.factions}")
 		return
 	log.debug(f"DELETE FAC USER FACTION INFO")
-	for i in game.users:
+	for i in list(game.users.values()):
 		log.debug(f"User Name: {i.name} - User Faction: {i.faction}")
 		if isinstance(i.faction,class_playground.Faction):
-			if i.faction.id == facation_obj.id:
+			if i.faction.id == faction_obj.id:
 				i.faction = ""
 	for i in faction_obj.roles:
 			if i.central_id != 0:
@@ -758,10 +758,10 @@ async def delete_fac(ctx, faction):
 					await ctx.guild.get_role(i.central_id).delete()
 				except:
 					log.error(f"Role deletion error for role: {ctx.guild.get_role(i.central_id)}")
-	for i in list(game.current_claims.keys):
+	for i in list(game.current_claims.keys()):
 		if game.current_claims[i] == faction_obj.id:
 			game.curent_claims.pop(i)
-	for i in list(game.game_json.keys):
+	for i in list(game.game_json.keys()):
 		if game.game_json[i] == faction_obj.id:
 			game.game_json.pop(i)
 	game.factions.pop(faction_obj.id)
