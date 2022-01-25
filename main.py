@@ -38,7 +38,9 @@ print("Discord Main")
 def user_log(game, user, command_name, command_info):
 	log.info(f"\nCOMMAND NAME: {command_name}\nCOMMAND INFO: {command_info}\nUSER INFO:\nUser Object: {user} - User Object Name: {user.name} - User Faction: {user.faction} - User Actions: {user.actions}")
 	if isinstance(user.faction, class_playground.Faction):
-		log.info(f"User Faction ID: {user.faction.id} ")
+		pass
+		#this little shit causes so many problems
+		#log.info(f"User Faction ID: {user.faction.id} ")
 async def fix_shit(game, discord_user):
 	print("factions---------------------")
 	print(game.factions)
