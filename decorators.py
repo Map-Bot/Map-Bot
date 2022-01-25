@@ -9,24 +9,26 @@ def dev():
         return ctx.author.id in devs
     return commands.check(predicate)
 
-def get_faction(ctx):
+def get_faction(ctx, id):
     game = r_test.load_from_id(ctx.guild.id)
     for i in ctx.author.roles:
         value = game.get_faction(i.name)
         if value != None:
-            print("GETTING USER HERE")
+            print(f"GETTING USER HERE: {ctx.author.id}")
             user = game.get_user(ctx.author.id)
-						
-            user.faction = value.name
-            game.users[ctx.author.id] = user
+            user.faction = value
+            print(ctx.author)
+            game.users[id] = user
+            
             game.save()
-            return value
-    game.users[ctx.author.id].faction = ""
+            return value 
+    game.users[id].faction = ""
+    print("No Faction Found")
     game.save()
 
 def in_fac():
     async def predicate(ctx):
-        faction = get_faction(ctx)
+        faction = get_faction(ctx,ctx.author.id)
         if faction == None:
             return False
         return True
@@ -35,7 +37,8 @@ def in_fac():
 
 def not_in_fac():
     async def predicate(ctx):
-        faction = get_faction(ctx)
+        #it works, dont touch
+        faction = get_faction(ctx,ctx.author.id)
         if faction != None:
             return False
         return True

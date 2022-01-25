@@ -227,11 +227,13 @@ class Game:
 	def get_user(self, id):
 		#print("USER LIST")
 		#print(self.users)
+		print("get_user func")
 		if self.users.get(id) == None:
 			user = User(id)
 			self.users[id] = user
 			self.save()
-		print(self.users[id].id)
+		#print(self.users[id].id)
+		print("done with get_user")
 		return self.users[id]
 
 	def game_size(self):

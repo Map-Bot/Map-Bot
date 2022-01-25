@@ -36,7 +36,9 @@ slash = SlashCommand(client, sync_commands=True)
 
 print("Discord Main")
 def user_log(game, user, command_name, info):
-	log.info(f"\nCOMMAND NAME: {command_name}\nCOMMAND INFO: {info}\nUSER INFO:\nUser Object: {user} - User Object Name: {user.name} - User Faction: {user.faction} - User Faction ID: {user.faction.id} - User Actions: {user.actions}")
+	log.info(f"\nCOMMAND NAME: {command_name}\nCOMMAND INFO: {info}\nUSER INFO:\nUser Object: {user} - User Object Name: {user.name} - User Faction: {user.faction} - User Actions: {user.actions}")
+	if isinstance(user.faction, class_playground.Faction):
+		log.inf(f"User Faction ID: {user.faction.id} ")
 async def fix_shit(game, discord_user):
 	print("factions---------------------")
 	print(game.factions)
@@ -364,7 +366,6 @@ async def join(ctx, faction):
 	user = game.get_user(ctx.author.id)
 	faction_obj = game.get_faction(name=faction)
 	#check user isn't in faction
-	log.info(f"\nCOMMAND INFO:\nCommand: Join - Target Faction Object: {faction_obj}")
 	user_log(game, user, "join", f"Target Faction Name: {faction} - Faction Object: {faction_obj}")
 
 	if faction_obj != None:
@@ -384,11 +385,14 @@ async def join(ctx, faction):
 
 @join.error
 async def join_error(ctx, error):
+	log.error(error)
 	await ctx.send("You must be factionless to use this command")
 
 
 @client.command()
 async def user(ctx):
+	print(ctx.author)
+	print(ctx.author.id)
 	game = r_test.load_from_id(ctx.guild.id)
 	user = game.get_user(ctx.author.id)
 	await ctx.send(user)
@@ -401,19 +405,26 @@ async def user(ctx):
 async def leave(ctx):
 	await ctx.defer()
 	game = r_test.load_from_id(ctx.guild.id)
+
 	user = game.users[ctx.author.id]
-	user_log(game, user, "leave", f"N/A")
+	
 	empty = True
 	faction = user.faction
-	if isinstance(faction, str):
+	if not isinstance(faction, class_playground.Faction):
 		faction = game.get_faction(name=faction)
+	print(user.faction)
 	print(faction)
+	mems = 0
+	for i in faction.roles:
+		mems += len(ctx.guild.get_role(i.central_id).members)
+	if mems > 1:
+		print(f"Members: {mems}")
+		empty = False
 	#try:
 	for i in list(game.users.values()):
-		print(i)
-		
+		print(i.faction)
 		if isinstance(i.faction, class_playground.Faction):
-
+			print(i.faction.name)
 			if i.faction.name == user.faction and i != user:
 				print("Two members")
 				empty = False
@@ -461,7 +472,6 @@ async def leave(ctx):
 	user.claims = []
 	user.faction = ""
 	for i in ctx.author.roles:
-		
 		if i.name in total_names:
 			print(f"Removing Role: {i.name}")
 			await ctx.author.remove_roles(i)
@@ -470,6 +480,7 @@ async def leave(ctx):
 	await ctx.send(f"You have successfully left faction: {faction.name}")
 	print("Done")
 	game.save()
+	#user_log(game, user, "leave", f"N/A")
 
 
 @leave.error
@@ -722,6 +733,43 @@ async def clearfacs(ctx):
 async def clearfacs_error(ctx, error):
 	await ctx.send("You must be a dev to use this command")
 
+@dev()
+@slash.slash(name="delete_fac",
+             description="Deletes selected faction",
+             guild_ids=servers)
+async def delete_fac(ctx, faction):
+	game = r_test.load_from_id(ctx.guild.id)
+	user = game.get_user(ctx.author.id)
+	user_log(game, user, "delete_fac", f"Target Faction: {faction}")
+	faction_obj = game.get_faction(name=faction)
+	if not faction_obj:
+		await ctx.send("Target faction must exist. Make sure you spelled it right")
+		log.warning(f"Target Faction Result: {faction_obj} - Target Faction Name: {faction} - Game Factions: {game.factions}")
+		return
+	log.debug(f"DELETE FAC USER FACTION INFO")
+	for i in game.users:
+		log.debug(f"User Name: {i.name} - User Faction: {i.faction}")
+		if isinstance(i.faction,class_playground.Faction):
+			if i.faction.id == facation_obj.id:
+				i.faction = ""
+	for i in faction_obj.roles:
+			if i.central_id != 0:
+				try:
+					await ctx.guild.get_role(i.central_id).delete()
+				except:
+					log.error(f"Role deletion error for role: {ctx.guild.get_role(i.central_id)}")
+	for i in list(game.current_claims.keys):
+		if game.current_claims[i] == faction_obj.id:
+			game.curent_claims.pop(i)
+	for i in list(game.game_json.keys):
+		if game.game_json[i] == faction_obj.id:
+			game.game_json.pop(i)
+	game.factions.pop(faction_obj.id)
+	game.save()
+	await ctx.send(f"Faction **{faction}** successfully deleted")
+	
+
+
 
 @slash.slash(name="myfac",
              description="Gives the name of the faction you are in",
@@ -740,6 +788,8 @@ async def myfac(ctx):
 
 @slash.slash(name="dorito", description="dorito", guild_ids=servers)
 async def dorito(ctx):
+	print(ctx.author)
+	print(ctx.author.id)
 	game = r_test.load_from_id(ctx.guild.id)
 	user = game.get_user(ctx.author.id)
 	user_log(game, user, "dorito", "DORITO")
