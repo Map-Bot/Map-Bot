@@ -416,9 +416,11 @@ async def leave(ctx):
 	print(faction)
 	mems = 0
 	for i in faction.roles:
+		log.debug(f"Members list for role name: {ctx.guild.get_role(i.central_id).name}\n{ctx.guild.get_role(i.central_id).members}")
 		mems += len(ctx.guild.get_role(i.central_id).members)
 	if mems > 1:
 		print(f"Members: {mems}")
+		log.info(f"Members left in faction: {mems}")
 		empty = False
 	#try:
 	for i in list(game.users.values()):
@@ -760,7 +762,7 @@ async def delete_fac(ctx, faction):
 					log.error(f"Role deletion error for role: {ctx.guild.get_role(i.central_id)}")
 	for i in list(game.current_claims.keys()):
 		if game.current_claims[i] == faction_obj.id:
-			game.curent_claims.pop(i)
+			game.current_claims.pop(i)
 	for i in list(game.game_json.keys()):
 		if game.game_json[i] == faction_obj.id:
 			game.game_json.pop(i)
@@ -806,17 +808,11 @@ async def log_command(ctx):
 	
 	with open('logfile.log', 'r') as fin:
 		data = fin.read().splitlines(True)
-	with open('logfile.log', 'w') as fout:
+	with open('shortlog.log', 'w') as fout:
 		fout.writelines(data[7:])
-	file = discord.File("logfile.log")
+	file = discord.File("shortlog.log")
 	await ctx.send("Here's the log", file=file)
 
-	with open("logfile.log", 'r+') as fp:
-    # read an store all lines into list
-		lines = fp.readlines()
-		fp.seek(0)
-		fp.truncate()
-		fp.writelines(lines[7:])
 
 
 @dev()
