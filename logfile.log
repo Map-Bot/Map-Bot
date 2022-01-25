@@ -1,39 +1,6 @@
-WARNING 2022-01-25 13:19:41,122 - PyNaCl is not installed, voice will NOT be supported
-INFO 2022-01-25 13:19:41,125 - logging in using static token
-INFO 2022-01-25 13:19:41,504 - Shard ID None has sent the IDENTIFY payload.
-INFO 2022-01-25 13:19:41,606 - Shard ID None has connected to Gateway: ["gateway-prd-main-c6n8",{"micros":61801,"calls":["discord-sessions-green-prd-2-140",{"micros":60951,"calls":["start_session",{"micros":39272,"calls":["discord-api-56d7f485bd-rsbxc",{"micros":35429,"calls":["get_user",{"micros":2685},"add_authorized_ip",{"micros":1329},"get_guilds",{"micros":6203},"coros_wait",{"micros":1}]}]},"guilds_connect",{"micros":2,"calls":[]},"presence_connect",{"micros":20720,"calls":[]}]}]}] (Session ID: 1ea3c6eafdbc22229c142d34a2e148ee).
-INFO 2022-01-25 13:19:43,648 - Syncing commands...
-INFO 2022-01-25 13:19:44,164 - Syncing permissions...
-INFO 2022-01-25 13:19:44,164 - Completed syncing all commands!
-INFO 2022-01-25 13:19:45,709 - 
+INFO 2022-01-25 13:21:26,410 - 
 COMMAND NAME: dorito
 COMMAND INFO: DORITO
 USER INFO:
-User Object: <class_playground.User object at 0x7f81e1c29970> - User Object Name: Connor13 - User Faction: <class_playground.Faction object at 0x7f81e1c299d0> - User Actions: 0
-ERROR 2022-01-25 13:19:45,710 - An exception has occurred while executing command `dorito`:
-Traceback (most recent call last):
-  File "/opt/virtualenvs/python3/lib/python3.8/site-packages/discord_slash/client.py", line 1353, in invoke_command
-    await func.invoke(ctx, **args)
-  File "/opt/virtualenvs/python3/lib/python3.8/site-packages/discord_slash/model.py", line 210, in invoke
-    return await self.func(*args, **kwargs)
-  File "main.py", line 795, in dorito
-    user_log(game, user, "dorito", "DORITO")
-  File "main.py", line 41, in user_log
-    log.inf(f"User Faction ID: {user.faction.id} ")
-AttributeError: 'Logger' object has no attribute 'inf'
-INFO 2022-01-25 13:19:52,372 - 
-COMMAND NAME: dorito
-COMMAND INFO: DORITO
-USER INFO:
-User Object: <class_playground.User object at 0x7f81e04c32b0> - User Object Name: Connor13 - User Faction: <class_playground.Faction object at 0x7f81e04c32e0> - User Actions: 0
-ERROR 2022-01-25 13:19:52,372 - An exception has occurred while executing command `dorito`:
-Traceback (most recent call last):
-  File "/opt/virtualenvs/python3/lib/python3.8/site-packages/discord_slash/client.py", line 1353, in invoke_command
-    await func.invoke(ctx, **args)
-  File "/opt/virtualenvs/python3/lib/python3.8/site-packages/discord_slash/model.py", line 210, in invoke
-    return await self.func(*args, **kwargs)
-  File "main.py", line 795, in dorito
-    user_log(game, user, "dorito", "DORITO")
-  File "main.py", line 41, in user_log
-    log.inf(f"User Faction ID: {user.faction.id} ")
-AttributeError: 'Logger' object has no attribute 'inf'
+User Object: <class_playground.User object at 0x7f3d42b156d0> - User Object Name: Connor13 - User Faction: <class_playground.Faction object at 0x7f3d42b15a00> - User Actions: 0
+INFO 2022-01-25 13:21:26,410 - User Faction ID: 20 

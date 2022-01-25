@@ -808,7 +808,7 @@ async def log_command(ctx):
 		lines = fp.readlines()
 		fp.seek(0)
 		fp.truncate()
-		fp.writelines(lines[6:])
+		fp.writelines(lines[7:])
 	file = discord.File("logfile.log")
 	await ctx.send("Here's the log", file=file)
 
