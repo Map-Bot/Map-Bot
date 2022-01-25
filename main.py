@@ -35,10 +35,10 @@ slash = SlashCommand(client, sync_commands=True)
 # Main should be used for the core, unchanging functions of the bot.
 
 print("Discord Main")
-def user_log(game, user, command_name, info):
-	log.info(f"\nCOMMAND NAME: {command_name}\nCOMMAND INFO: {info}\nUSER INFO:\nUser Object: {user} - User Object Name: {user.name} - User Faction: {user.faction} - User Actions: {user.actions}")
+def user_log(game, user, command_name, command_info):
+	log.info(f"\nCOMMAND NAME: {command_name}\nCOMMAND INFO: {command_info}\nUSER INFO:\nUser Object: {user} - User Object Name: {user.name} - User Faction: {user.faction} - User Actions: {user.actions}")
 	if isinstance(user.faction, class_playground.Faction):
-		log.inf(f"User Faction ID: {user.faction.id} ")
+		log.info(f"User Faction ID: {user.faction.id} ")
 async def fix_shit(game, discord_user):
 	print("factions---------------------")
 	print(game.factions)
@@ -639,7 +639,7 @@ async def update_roles(ctx):
 	#await ctx.send(f"Roles updated: {', '.join(edited)}")
 
 
-#@not_in_fac()
+@not_in_fac()
 #@has_permissions(manage_channels=True, manage_roles=True)
 @slash.slash(name="newfac",
              description="Create a new faction with the provided name",
@@ -801,6 +801,16 @@ async def dorito(ctx):
 	)
 	await ctx.send(embed=embed)
 
+@slash.slash(name="log", description="Uploads the log for debugging", guild_ids=servers)
+async def log_command(ctx):
+	with open("logfile.log", 'r+') as fp:
+    # read an store all lines into list
+		lines = fp.readlines()
+		fp.seek(0)
+		fp.truncate()
+		fp.writelines(lines[6:])
+	file = discord.File("logfile.log")
+	await ctx.send("Here's the log", file=file)
 
 @dev()
 @slash.slash(name="update", description="*/1 * * * *", guild_ids=servers)
