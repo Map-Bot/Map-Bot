@@ -409,7 +409,7 @@ async def leave(ctx):
 	game = r_test.load_from_id(ctx.guild.id)
 
 	user = game.users[ctx.author.id]
-	
+	user_log(game, user, "leave", f"N/A")
 	empty = True
 	faction = user.faction
 	if not isinstance(faction, class_playground.Faction):
@@ -484,7 +484,7 @@ async def leave(ctx):
 	await ctx.send(f"You have successfully left faction: {faction.name}")
 	print("Done")
 	game.save()
-	#user_log(game, user, "leave", f"N/A")
+
 
 
 @leave.error
@@ -614,6 +614,8 @@ async def update_roles(ctx):
 					j.central_id = role.id
 				elif j.central_id != 0:
 					role = ctx.guild.get_role(j.central_id)
+					if not role:
+						continue
 					j.central_name = role.name
 					await role.edit(color=discord.Color.from_rgb(
 					    i.colors[0], i.colors[1], i.colors[2]))
@@ -633,6 +635,8 @@ async def update_roles(ctx):
 					j.central_id = role.id
 				elif j.central_id != 0:
 					role = ctx.guild.get_role(j.central_id)
+					if not role:
+						continue
 					j.central_name = role.name
 					print(j.central_name)
 					if not role.hoist:

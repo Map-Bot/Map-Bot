@@ -11,7 +11,9 @@ def dev():
 
 def get_faction(ctx, id):
     game = r_test.load_from_id(ctx.guild.id)
+    print(ctx.author.roles)
     for i in ctx.author.roles:
+        print("stupid")
         value = game.get_faction(i.name)
         if value != None:
             print(f"GETTING USER HERE: {ctx.author.id}")

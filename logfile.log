@@ -1,7 +1,19 @@
-WARNING 2022-01-25 13:42:47,309 - PyNaCl is not installed, voice will NOT be supported
-INFO 2022-01-25 13:42:47,312 - logging in using static token
-INFO 2022-01-25 13:42:47,597 - Shard ID None has sent the IDENTIFY payload.
-INFO 2022-01-25 13:42:47,726 - Shard ID None has connected to Gateway: ["gateway-prd-main-0k83",{"micros":87355,"calls":["discord-sessions-green-prd-2-20",{"micros":86288,"calls":["start_session",{"micros":40658,"calls":["discord-api-56d7f485bd-66h47",{"micros":37447,"calls":["get_user",{"micros":3390},"add_authorized_ip",{"micros":2334},"get_guilds",{"micros":5171},"coros_wait",{"micros":1}]}]},"guilds_connect",{"micros":2,"calls":[]},"presence_connect",{"micros":9578,"calls":[]}]}]}] (Session ID: d37b51b081f437fc56e93fe6195dfb54).
-INFO 2022-01-25 13:42:49,756 - Syncing commands...
-INFO 2022-01-25 13:42:50,276 - Syncing permissions...
-INFO 2022-01-25 13:42:50,276 - Completed syncing all commands!
+WARNING 2022-01-25 14:13:13,913 - PyNaCl is not installed, voice will NOT be supported
+INFO 2022-01-25 14:13:13,917 - logging in using static token
+INFO 2022-01-25 14:13:14,173 - Shard ID None has sent the IDENTIFY payload.
+INFO 2022-01-25 14:13:14,296 - Shard ID None has connected to Gateway: ["gateway-prd-main-x9p8",{"micros":64219,"calls":["discord-sessions-green-prd-2-73",{"micros":61069,"calls":["start_session",{"micros":59957,"calls":["discord-api-56d7f485bd-8gfvs",{"micros":55186,"calls":["get_user",{"micros":5944},"add_authorized_ip",{"micros":3594},"get_guilds",{"micros":10231},"coros_wait",{"micros":1}]}]},"guilds_connect",{"micros":2,"calls":[]},"presence_connect",{"micros":1,"calls":[]}]}]}] (Session ID: 36543ad5afab08ca7b8934af72ae022c).
+INFO 2022-01-25 14:13:16,345 - Syncing commands...
+INFO 2022-01-25 14:13:16,860 - Syncing permissions...
+INFO 2022-01-25 14:13:16,860 - Completed syncing all commands!
+INFO 2022-01-25 14:13:19,579 - 
+COMMAND NAME: claim
+COMMAND INFO: Target ID: 1336
+USER INFO:
+User Object: <class_playground.User object at 0x7f309c87e730> - User Object Name: Garfield - User Faction: <class_playground.Faction object at 0x7f309c8dc430> - User Actions: 0
+INFO 2022-01-25 14:13:21,811 - User Claims: ['1336']
+INFO 2022-01-25 14:13:24,294 - 
+COMMAND NAME: claim
+COMMAND INFO: Target ID: 1756
+USER INFO:
+User Object: <class_playground.User object at 0x7f309c7d9940> - User Object Name: Hallo123 - User Faction: <class_playground.Faction object at 0x7f309c7d93a0> - User Actions: 0
+INFO 2022-01-25 14:13:26,160 - User Claims: ['1757', '1756']
