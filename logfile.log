@@ -1,0 +1,7 @@
+WARNING 2022-01-25 11:58:44,721 - PyNaCl is not installed, voice will NOT be supported
+INFO 2022-01-25 11:58:44,726 - logging in using static token
+INFO 2022-01-25 11:58:44,977 - Shard ID None has sent the IDENTIFY payload.
+INFO 2022-01-25 11:58:45,121 - Shard ID None has connected to Gateway: ["gateway-prd-main-dbgz",{"micros":102039,"calls":["discord-sessions-green-prd-2-77",{"micros":99825,"calls":["start_session",{"micros":46713,"calls":["discord-api-56d7f485bd-hns25",{"micros":39893,"calls":["get_user",{"micros":4760},"add_authorized_ip",{"micros":3358},"get_guilds",{"micros":4425},"coros_wait",{"micros":2}]}]},"guilds_connect",{"micros":2,"calls":[]},"presence_connect",{"micros":31005,"calls":[]}]}]}] (Session ID: e45ecf27a6a95c9f146883a52628ddc7).
+INFO 2022-01-25 11:58:47,148 - Syncing commands...
+INFO 2022-01-25 11:58:47,765 - Syncing permissions...
+INFO 2022-01-25 11:58:47,765 - Completed syncing all commands!

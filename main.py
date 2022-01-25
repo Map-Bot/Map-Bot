@@ -19,10 +19,15 @@ from PIL import Image
 import io
 import base64
 import image
-
+import logging
+Log_Format = "%(levelname)s %(asctime)s - %(message)s"
+os.environ['TZ'] = 'PST8PDT'
+time.tzset()
+logging.basicConfig(filename = "logfile.log", filemode = "w", format = Log_Format, level = logging.INFO)
+log = logging.getLogger("my-logger")
 #print(mp.cpu_count())
 servers = [828422029618446399,810657122932883477]
-exempt = [339251879273955330,740630812315090984]
+exempt = [339251879273955330,740630812315090984,811024803292905532]
 schedules = {}
 client = commands.Bot(command_prefix="%", intents=discord.Intents.all())
 slash = SlashCommand(client, sync_commands=True)
@@ -30,27 +35,47 @@ slash = SlashCommand(client, sync_commands=True)
 # Main should be used for the core, unchanging functions of the bot.
 
 print("Discord Main")
-
-
+def user_log(game, user, command_name, info):
+	log.info(f"\nCOMMAND NAME: {command_name}\nCOMMAND INFO: {info}\nUSER INFO:\nUser Object: {user} - User Object Name: {user.name} - User Faction: {user.faction} - User Faction ID: {user.faction.id} - User Actions: {user.actions}")
+async def fix_shit(game, discord_user):
+	print("factions---------------------")
+	print(game.factions)
+	for i in discord_user.roles:
+		result = game.get_faction(i.name)
+		if result:
+			game.users[discord_user.id].faction = result
+			game.users[discord_user.id].name = discord_user.name
+			game.save()
 # Include hotswappable cogs code here
 
 # https://tenor.com/view/wooo-yeah-baby-gif-18955985
 async def map_update(id):
+	log.info("Updating the map")
 	print("UPDATING MAP")
 	games = r_test.games()
 	for game_it in games:
 		game = r_test.load_game_object(game_it)
+		log.debug(f"GAME JSON: {game.game_json}")
 		if game.server_id != id:
 			continue
 		guild = client.get_guild(game.server_id)
-		
-		for i in game.users:
+		#log.info(f"Game User List: {game.users.values()}")
+		log.debug(f"USER VALUES: {game.users}")
+		for temp in game.users:
+			i = game.users[temp]
+			print(temp)
+			print(i)
+			print(i.faction)
 			faction = game.get_faction(name=i.faction)
 			if faction == None:
-				continue
+				pass
+			log.info(f"Claim list for user {i.name}: {i.claims}")
+			#log.info(f"User Object Info: {dir(i)}")
 			for j in i.claims:
 				print("redraw")
-				game.edit_province(j, faction)
+				log.info(f"-----EDITED PROVINCE: {j} NEW OWNER: {i.faction.name}------")
+				log.debug(f"RESULT OF PROVINCE EDIT: {game.edit_province(j, i.faction)}")
+
 			i.claims = []
 			i.actions = 0
 		game.current_claims = {}
@@ -135,6 +160,7 @@ async def map_update(id):
 			print("sending")
 			await battle_channel.send(embed=embed, file=discord.File("snapshot.png"))
 			game.attacks.pop(attack)
+		game.save()
 		print("Update complete!")
 
 
@@ -338,12 +364,15 @@ async def join(ctx, faction):
 	user = game.get_user(ctx.author.id)
 	faction_obj = game.get_faction(name=faction)
 	#check user isn't in faction
-	print(faction_obj)
+	log.info(f"\nCOMMAND INFO:\nCommand: Join - Target Faction Object: {faction_obj}")
+	user_log(game, user, "join", f"Target Faction Name: {faction} - Faction Object: {faction_obj}")
+
 	if faction_obj != None:
+		log.info(f"Target Faction Name: {faction_obj.name}")
 		role = ctx.guild.get_role(faction_obj.roles[-1].central_id)
 		await ctx.author.add_roles(role, reason="Faction join")
 		user.faction = faction
-		game.users[user.id].faction = faction
+		game.users[user.id].faction = faction_obj
 		faction_obj.users.append(user)
 		await ctx.send(
 		    f"You have sucessfully joined the faction **{faction}**, you now have the role  '{faction_obj.roles[-1].central_name}'"
@@ -372,19 +401,26 @@ async def user(ctx):
 async def leave(ctx):
 	await ctx.defer()
 	game = r_test.load_from_id(ctx.guild.id)
-	user = game.get_user(ctx.author.id)
+	user = game.users[ctx.author.id]
+	user_log(game, user, "leave", f"N/A")
 	empty = True
-	faction = game.get_faction(name=user.faction)
-	try:
-		for i in game.users:
-			if i.faction == user.faction and i != user:
+	faction = user.faction
+	if isinstance(faction, str):
+		faction = game.get_faction(name=faction)
+	print(faction)
+	#try:
+	for i in list(game.users.values()):
+		print(i)
+		
+		if isinstance(i.faction, class_playground.Faction):
+
+			if i.faction.name == user.faction and i != user:
 				print("Two members")
 				empty = False
-	except:
-		print("Get faction error")
+	#except:
+		#print("Get faction error")
 
 	if empty:
-
 		buttons2 = [
 		    create_button(style=ButtonStyle.green, label=f"Yes"),
 		    create_button(style=ButtonStyle.red, label="No")
@@ -396,7 +432,6 @@ async def leave(ctx):
 		    components=[action_row])
 		button_ctx: ComponentContext = await wait_for_component(
 		    client, components=action_row)
-
 		if button_ctx.component["label"] == "Yes":
 			await button_ctx.edit_origin(
 			    content=f"Deleting faction: **{faction.name}**", components=[])
@@ -419,15 +454,21 @@ async def leave(ctx):
 			if game.current_claims[i] == faction.id:
 				game.current_claims.pop(i)
 		game.factions.pop(faction.id)
-
+	central_role_names = [i.central_name for i in faction.roles]
+	satellite_role_names = [i.satellite_name for i in faction.roles]
+	total_names = central_role_names + satellite_role_names
+	print(f"Role Names: {total_names}")
 	user.claims = []
 	user.faction = ""
 	for i in ctx.author.roles:
-		if faction.name in i.name:
+		
+		if i.name in total_names:
+			print(f"Removing Role: {i.name}")
 			await ctx.author.remove_roles(i)
-
+			print("Done removing")
+	print("sending message")
 	await ctx.send(f"You have successfully left faction: {faction.name}")
-	
+	print("Done")
 	game.save()
 
 
@@ -471,7 +512,6 @@ async def maps(ctx):
 
 @slash.slash(name="map", description="Shows the latest map", guild_ids=servers)
 async def map(ctx):
-	print(test)
 	await ctx.defer()
 	game = r_test.load_from_id(ctx.guild.id)
 	check_update(game)
@@ -498,18 +538,22 @@ async def y(ctx: commands.Context):
 	await ctx.send("https://tenor.com/view/wooo-yeah-baby-gif-18955985")
 
 
-@in_fac()
+#@in_fac()
 @slash.slash(name="claim",
              description="Claim the province with the given ID",
              guild_ids=servers)
 async def claim(ctx, id):
 	await ctx.defer()
+	
 	game = r_test.load_from_id(ctx.guild.id)
 	user = game.get_user(ctx.author.id)
 	check_update(game)
+	await fix_shit(game, ctx.author)
+	user_log(game, user, "claim", f"Target ID: {id}")
 	done = 0
 	faction = False
 	for i in ctx.author.roles:
+		#log.info(f"User Role Object: {i}, Name: {i.name}, Get Faction Result: {game.get_faction(name=i.name)}")
 		if game.get_faction(name=i.name) != None:
 			faction = i
 			break
@@ -520,13 +564,15 @@ async def claim(ctx, id):
 	result = game.claim(id, game.get_faction(name=faction.name))
 	await ctx.send(result)
 	if result == "Sucessfully claimed":
-		user.claims.append(id)
+		game.users[ctx.author.id].claims.append(id)
+		log.info(f"User Claims: {game.users[ctx.author.id].claims}")
+		game.save()
 		image = game.map()
 		image.save("test.png")
 		await ctx.send(f"Successfully claimed province {id}",
 		               file=discord.File("test.png"))
 
-	game.save()
+	
 
 
 @claim.error
@@ -582,7 +628,7 @@ async def update_roles(ctx):
 	#await ctx.send(f"Roles updated: {', '.join(edited)}")
 
 
-@not_in_fac()
+#@not_in_fac()
 #@has_permissions(manage_channels=True, manage_roles=True)
 @slash.slash(name="newfac",
              description="Create a new faction with the provided name",
@@ -592,7 +638,7 @@ async def newfac(ctx, name):
 	game = r_test.load_from_id(ctx.guild.id)
 	user = game.get_user(ctx.author.id)
 	await ctx.defer()
-
+	user_log(game, user, "newfac", f"New Faction Name: {name}")
 	if len(name) > 20 or len(name) < 1:
 		await ctx.send(
 		    "Faction name must be less than or equal to 20 characters and greater than zero"
@@ -617,9 +663,6 @@ async def newfac(ctx, name):
 	await update_roles(ctx)
 	print("finished updating roles")
 	game = r_test.load_from_id(ctx.guild.id)
-	print(game.factions[list(game.factions.keys())[-1]].roles)
-	print(list(game.factions.keys()))
-	print(list(game.factions.keys())[-1])
 	base_role = ctx.guild.get_role(game.factions[list(game.factions.keys())[-1]].roles[-1].central_id)
 	user.faction = name
 	user.rank = "leader"
@@ -633,6 +676,8 @@ async def newfac(ctx, name):
 
 @newfac.error
 async def new_fac_error(ctx, error):
+	log.error(f"Decorator Error: {error}")
+	log.error(type(error))
 	print(f"Error: {error}  end")
 	print(type(error))
 	if isinstance(error, commands.UnexpectedQuoteError) or isinstance(
@@ -683,6 +728,8 @@ async def clearfacs_error(ctx, error):
              guild_ids=servers)
 async def myfac(ctx):
 	game = r_test.load_from_id(ctx.guild.id)
+	user = game.get_user(ctx.author.id)
+	user_log(game, user, "myfac", "N/A")
 	check_update(game)
 	for i in ctx.author.roles:
 		if game.get_faction(name=i.name) != None:
@@ -693,6 +740,9 @@ async def myfac(ctx):
 
 @slash.slash(name="dorito", description="dorito", guild_ids=servers)
 async def dorito(ctx):
+	game = r_test.load_from_id(ctx.guild.id)
+	user = game.get_user(ctx.author.id)
+	user_log(game, user, "dorito", "DORITO")
 	embed = discord.Embed(color=0xe69701)
 	embed.title = "the dorito"
 	embed.set_image(
@@ -794,6 +844,7 @@ async def change_faction_color(ctx, color):
 	await ctx.defer()
 	game = r_test.load_from_id(ctx.guild.id)
 	user = game.get_user(ctx.author.id)
+	user_log(game, user, "change_faction_color", f"New Color: {color}")
 	faction = game.get_faction(name=user.faction)
 	leader = False
 	for i in ctx.author.roles:
@@ -875,6 +926,7 @@ async def id_map(ctx):
              guild_ids=servers)
 async def redraw_map(ctx):
 	game = r_test.load_from_id(ctx.guild.id)
+	log.info(game.game_json)
 	await ctx.send("Redrawing")
 	game.redraw_map()
 	game.save()
@@ -907,6 +959,7 @@ async def get_connected(ctx, id):
 async def unclaim(ctx, id):
 	game = r_test.load_from_id(ctx.guild.id)
 	user = game.get_user(ctx.author.id)
+	user_log(game, user, "unclaim", f"Target Province: {id}")
 	await ctx.defer()
 	if id in user.claims:
 		user.claims.remove(id)
@@ -920,7 +973,8 @@ async def unclaim(ctx, id):
 async def trade_propose(ctx, faction, offer, request):
 	game = r_test.load_from_id(ctx.guild.id)
 	user = game.get_user(ctx.author.id)
-	user_fac_obj = game.get_faction(name=user.faction)
+	user_log(game, user, "trade propose", f"Target Faction: {faction} - Offer: {offer} - Request: {request}")
+	user_fac_obj = user.faction
 	fac_obj = game.get_faction(name=faction)
 	if fac_obj == None:
 		await ctx.send("Invalid faction")
@@ -1027,9 +1081,10 @@ def trade_check(trade, user, faction, game):
 async def trade_preview(ctx, trade_id):
 	game = r_test.load_from_id(ctx.guild.id)
 	user = game.get_user(ctx.author.id)
+	
 	faction = game.get_faction(name=user.faction)
 	trade = game.trades.get(trade_id)
-
+	user_log(game, user, "trade preview", f"Trade ID: {trade_id} - Trade Info: {trade}")
 	await ctx.defer()
 	result = trade_check(trade, user, faction, game)
 	if result != None:
@@ -1060,9 +1115,10 @@ async def trade_preview(ctx, trade_id):
 async def trade_accept(ctx, trade_id):
 	game = r_test.load_from_id(ctx.guild.id)
 	user = game.get_user(ctx.author.id)
+	
 	faction = game.get_faction(name=user.faction)
 	trade = game.trades.get(trade_id)
-
+	user_log(game, user, "trade accept", f"Trade ID: {trade_id} - Trade Info: {trade}")
 	await ctx.defer()
 	result = trade_check(trade, user, faction, game)
 	if result != None:
@@ -1088,6 +1144,7 @@ async def trade_accept(ctx, trade_id):
 async def trade_view(ctx):
 	game = r_test.load_from_id(ctx.guild.id)	
 	user = game.get_user(ctx.author.id)
+	user_log(game, user, "trade view", f"Trade List: {game.trades}")
 	faction = game.get_faction(name=user.faction)
 	embed = discord.Embed(color=0x1111ee)
 	for i in list(game.trades.keys()):
@@ -1101,6 +1158,7 @@ async def complete_attack(ctx, id):
 	print(game.attacks)
 	print(game.attacks.get(id))
 	attack_info = game.attacks.get(id)
+	log.info(f'ATTACK INFO: {attack_info}')
 	if len(attack_info["attackers"]) != attack_info["max_attackers"] or len(attack_info["defenders"]) != attack_info["max_defenders"]:
 		return
 	attack_dice = []
@@ -1121,7 +1179,7 @@ async def complete_attack(ctx, id):
 		embed = discord.Embed(title="**BATTLE RESULTS**", color = 0xf92424)
 		embed.set_thumbnail(url="https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fclipart-library.com%2Fimg1%2F1063584.png&f=1&nofb=1")
 		embed.add_field(name="***Attacker Victory!***", value=f"A righteous victory over the enemy was achieved at province {id}!")
-	
+	game.save()
 	embed.add_field(name="Attack Dice", value=f"Attack Dice Rolls: `{', '.join(str(i) for i in attack_dice)}`\nTotal: {sum(attack_dice)}", inline=False)
 	embed.add_field(name="Defense Dice", value=f"Defense Dice Rolls: `{', '.join(str(i) for i in defense_dice)}`\nTotal: {sum(defense_dice)}", inline=False)
 	base_coords = r_test.map_json(game.map_name)[f"l{id}"]["coordinates"][0]
@@ -1139,13 +1197,26 @@ async def complete_attack(ctx, id):
 async def attack(ctx, attacker, target):
 	game = r_test.load_from_id(ctx.guild.id)
 	user = game.get_user(ctx.author.id)
-	faction = game.get_faction(name=user.faction)
+	user_log(game, user, "engage commence", f"Attacking Province: {attacker} - Target Province: {target}")
+	await fix_shit(game, ctx.author)
+	faction = user.faction
 	target_owner = game.game_json.get(target)
+	log.info(f"\nCOMMAND INFO:\nCommand: engage commence - Target Faction Province: {target}")
+	log.info(f"Target Owner: {target_owner}")
+	log.debug(f"Current Claims: {game.current_claims}")
+	#for i in game.factions:
+	#	log.info(f"Iteration: {i}")
+	#	log.info(f"Faction: {game.factions[i]}")
+	#	log.info(f"Faction Name: {game.factions[i].name}")
+	
 	if target_owner == None:
 		await ctx.send("Invalid target ID")
 		return
 	if target_owner == 0:
 		await ctx.send("You cannot attack an empty province")
+		return
+	if target_owner == faction.id:
+		await ctx.send("You cannot attack your own province")
 		return
 	if game.game_json.get(attacker) != faction.id:
 		print(f"attacker {faction.id}")
@@ -1189,7 +1260,8 @@ async def attack(ctx, attacker, target):
 async def engage(ctx, id):
 	game = r_test.load_from_id(ctx.guild.id)
 	user = game.get_user(ctx.author.id)
-	faction = game.get_faction(name=user.faction)
+	await fix_shit(game, ctx.author)
+	faction = user.faction
 	attacker_or_defender = None
 	attack_info = game.attacks.get(id)
 	if attack_info == None:
@@ -1215,7 +1287,7 @@ async def engage(ctx, id):
 	if attacker_or_defender is None:
 		await ctx.send("You must be in either the attacking or defending faction to engage")
 		return
-
+	user_log(game, user, "engage join", f"Target Province: {id} - Attacker or Defender: {attacker_or_defender}")
 	if user.actions >= game.action_limit:
 		await ctx.send("You have used up all of your actions for this update period")
 	
@@ -1248,9 +1320,11 @@ async def engage_info(ctx, id):
 @slash.slash(name="delete_attack", description=":troll:", guild_ids=servers)
 async def delete_attack(ctx, id):
 	game = r_test.load_from_id(ctx.guild.id)
+	user = game.get_user(ctx.author.id)
 	if game.attacks.get(id)!=None:
 		game.attacks.pop(id)
-	await ctx.send("done")
+	await ctx.send(f"Deleted Attack ID: {id}")
+	user_log(game, user, "delete_attack", f"Attack ID: {id}")
 	game.save()
 
 @dev()

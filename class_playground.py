@@ -9,6 +9,7 @@ import threading
 import concurrent.futures
 
 
+
 class Game:
 	def save(self):
 		r_test.save_game(self.name, self)
@@ -19,7 +20,7 @@ class Game:
 		self.server_id = server_id
 		self.factions = {}
 		self.servers = []
-		self.users = []
+		self.users = {}
 		self.map_bytes = ""
 		self.map_name = ""
 		self.game_json = {}
@@ -39,13 +40,17 @@ class Game:
 
 	def get_faction(self, name=None, id=None):
 		if name != None:
+			for i in list(self.factions.keys()):
+				if self.factions[i].name == name:
+					print(f"A FACTION: {self.factions[i].name}|")
+				#print(f"{name}|")
 			output = [self.factions[i] for i in list(self.factions.keys()) if self.factions[i].name == name]
 
 		elif id != None:
 			output = [self.factions[i] for i in list(self.factions.keys()) if self.factions[i].id == id]
 		print("OUTPUT")
 		print(output)
-		if output != []:
+		if len(output)!=0:
 			return output[0]
 
 	def create_faction(self, name):
@@ -69,7 +74,6 @@ class Game:
 
 		return Image.open(io.BytesIO(base64.b64decode(self.map_bytes)))
 		
-
 	#return "No map"
 
 	def add_map(self, name):
@@ -145,16 +149,21 @@ class Game:
 	def redraw_map(self):
 		print("began redraw")
 		temp = Image.open(
-		    io.BytesIO(base64.b64decode(r_test.map_image(self.map_name))))
+		    io.BytesIO(base64.b64decode(r_test.map_image(self.map_name)))).convert('RGB')
 		for i in self.game_json.keys():
 			owner = self.game_json[i]
 			if owner != 0:
 				coordinates = r_test.map_json(
 				    self.map_name)[f"l{i}"]["coordinates"]
-				faction = self.factions[owner]
-				#print(faction)
+				print(coordinates)
+				if self.factions.get(owner):
+					faction = self.factions[owner]
+				else:
+					continue
 				for j in coordinates:
+					print(faction.colors)
 					image.quick_fill(temp, eval(j), tuple(faction.colors))
+					
 		for i in self.current_claims.keys():
 			owner = self.current_claims[i]
 			if owner != 0:
@@ -204,7 +213,6 @@ class Game:
 
 		if target_faction.connect_server(server_id) != None:
 			return target_faction.connect_server(server_id)
-
 		self.servers.append(server_id)
 		return "Faction server successfully added"
 
@@ -217,19 +225,14 @@ class Game:
 			return "Invalid JSON"
 
 	def get_user(self, id):
-		print(self.users)
-		for index, i in enumerate(self.users):
-			if i.id == 00:
-				i.id = index
-			if i.discord_id == id:
-				return i
-		print("Creating new user")
-		user = User(id)
-		print(user.id)
-		user.id = len(self.users)
-		self.users.append(user)
-		self.save()
-		return user
+		#print("USER LIST")
+		#print(self.users)
+		if self.users.get(id) == None:
+			user = User(id)
+			self.users[id] = user
+			self.save()
+		print(self.users[id].id)
+		return self.users[id]
 
 	def game_size(self):
 		return len(r_test.pack(self).encode('utf-16'))

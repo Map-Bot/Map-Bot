@@ -2,7 +2,7 @@ from discord.ext import commands
 import r_test
 from discord_slash.utils.manage_commands import create_choice, create_option
 
-devs = [339251879273955330, 750744079079440506, 244638942169792513]
+devs = [339251879273955330, 750744079079440506, 244638942169792513,811024803292905532]
 
 def dev():
     async def predicate(ctx):
@@ -14,7 +14,15 @@ def get_faction(ctx):
     for i in ctx.author.roles:
         value = game.get_faction(i.name)
         if value != None:
+            print("GETTING USER HERE")
+            user = game.get_user(ctx.author.id)
+						
+            user.faction = value.name
+            game.users[ctx.author.id] = user
+            game.save()
             return value
+    game.users[ctx.author.id].faction = ""
+    game.save()
 
 def in_fac():
     async def predicate(ctx):
