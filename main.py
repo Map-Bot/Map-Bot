@@ -936,11 +936,13 @@ async def change_faction_color(ctx, color):
 		if not i.strip().isdigit():
 			await ctx.send(embed=error_embed("The RGB values must be numbers"))
 			return
-		if int(i) > 254 or int(i) < 1:
-			await ctx.send(embed=error_embed("The RGB values must be between 1 and 254"))
+		if int(i) > 255 or int(i) < 0:
+			await ctx.send(embed=error_embed("The RGB values must be between 0 and 255"))
 			return
 		colors[index] = int(i.strip())
-
+	if colors == [0,0,0] or colors == [255,255,255]:
+		await ctx.send(embed=error_embed("You cannot change your faction color to black or white"))
+		return	
 	print(colors)
 	for i in faction.roles:
 		i.colors = colors
