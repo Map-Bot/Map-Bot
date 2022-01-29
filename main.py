@@ -51,7 +51,8 @@ async def fix_shit(game, discord_user):
 			game.save()
 # Include hotswappable cogs code here
 
-def 
+def error_embed(title, content):
+	pass
 # https://tenor.com/view/wooo-yeah-baby-gif-18955985
 async def map_update(id):
 	log.info("Updating the map")
@@ -421,7 +422,7 @@ async def leave(ctx):
 	for i in faction.roles:
 		log.info(f"Members list for role name: {ctx.guild.get_role(i.central_id).name}\n{ctx.guild.get_role(i.central_id).members}")
 		mems += len(ctx.guild.get_role(i.central_id).members)
-	if mems > 1:
+	if mems > 2:
 		print(f"Members: {mems}")
 		log.info(f"Members left in faction: {mems}")
 		empty = False
