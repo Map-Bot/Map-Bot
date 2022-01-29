@@ -1468,7 +1468,7 @@ async def promote(ctx, target_user):
 	await ctx.guild.get_member(int(sliced_user)).add_roles(role)
 	role2 = ctx.guild.get_role(user.faction.roles[target_perms-1].central_id)
 	await ctx.guild.get_member(int(sliced_user)).remove_roles(role2)
-	await ctx.send(f"{target_user} has now been promoted to {role.name}")
+	await ctx.send(embed=success_embed(f"{target_user} has now been promoted to {role.name}"))
 
 @in_fac()
 @midrank()
@@ -1522,7 +1522,7 @@ async def demote(ctx, target_user):
 	await ctx.guild.get_member(int(sliced_user)).add_roles(role)
 	role2 = ctx.guild.get_role(user.faction.roles[target_perms-1].central_id)
 	await ctx.guild.get_member(int(sliced_user)).remove_roles(role2)
-	await ctx.send(f"{target_user} has now been demoted to {role.name}")
+	await ctx.send(embed=success_embed(f"{target_user} has now been demoted to {role.name}"))
 
 @in_fac()
 @midrank()
@@ -1561,7 +1561,7 @@ async def accept(ctx, target_user):
 	await ctx.guild.get_member(int(sliced_user)).add_roles(role)
 	role = ctx.guild.get_role(user.faction.roles[-1].central_id)
 	await ctx.guild.get_member(int(sliced_user)).remove_roles(role)
-	await ctx.send(f"{target_user} has been accepted into {user.faction.name}")
+	await ctx.send(embed=success_embed(f"{target_user} has been accepted into {user.faction.name}"))
 	game.save()
 @accept.error
 async def accept_error(ctx, error):
