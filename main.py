@@ -52,7 +52,7 @@ async def fix_shit(game, discord_user):
 # Include hotswappable cogs code here
 
 def error_embed(content, title="Attention!"):
-	embed = discord.Embed(title=f"**{title}**", color=0xf1ad02,description="content")
+	embed = discord.Embed(title=f"**{title}**", color=0xf1ad02,description=content)
 	embed.set_thumbnail(url="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.freepngimg.com%2Fthumb%2Femoji%2F81186-triangle-danger-text-area-sign-messaging-emoji.png&f=1&nofb=1")
 	return embed
 # https://tenor.com/view/wooo-yeah-baby-gif-18955985
