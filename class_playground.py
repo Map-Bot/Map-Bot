@@ -19,6 +19,7 @@ class Game:
 		self.central = central
 		self.server_id = server_id
 		self.factions = {}
+		self.faction_limit = 20
 		self.servers = []
 		self.users = {}
 		self.map_bytes = ""
@@ -271,9 +272,12 @@ class Faction:
 		self.id = faction_id
 		self.roles = [
 		    Roles(f"{name} Leader", 1, self),
-		    Roles(f"{name} Midrank", 2, self),
-		    Roles(f"{name} Member", 3, self),
-		    Roles(f"{name}", 3, self)
+            Roles(f"{name} Lieutenant", 2, self),
+		    Roles(f"{name} Upper Midrank", 3, self),
+			Roles(f"{name} Midrank", 4, self),
+		    Roles(f"{name} Member", 5, self),
+		    Roles(f"{name}", 6, self),
+			Roles(f"{name} Applicant", 7, self)
 		]
 
 	def connect_server(self, id):
@@ -289,6 +293,8 @@ class Faction:
 		self.roles.append(Roles(name, len(self.roles)))
 
 	def find_role(discord_id):
+		print(self)
+		print(self.roles)
 		for i in self.roles:
 			if i.central_discord_id or i.satellite_discord_id == discord_id:
 				return i
@@ -301,7 +307,7 @@ class Roles:
 	def __init__(self, name, id, faction):
 		self.central_name = name
 		self.satellite_name = name
-		self.role_id = id
+		self.perm_id = id
 		self.faction = faction.name
 		self.central_id = 0
 		self.satellite_id = 0

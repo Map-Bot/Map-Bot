@@ -1,19 +1,7 @@
-WARNING 2022-01-25 14:13:13,913 - PyNaCl is not installed, voice will NOT be supported
-INFO 2022-01-25 14:13:13,917 - logging in using static token
-INFO 2022-01-25 14:13:14,173 - Shard ID None has sent the IDENTIFY payload.
-INFO 2022-01-25 14:13:14,296 - Shard ID None has connected to Gateway: ["gateway-prd-main-x9p8",{"micros":64219,"calls":["discord-sessions-green-prd-2-73",{"micros":61069,"calls":["start_session",{"micros":59957,"calls":["discord-api-56d7f485bd-8gfvs",{"micros":55186,"calls":["get_user",{"micros":5944},"add_authorized_ip",{"micros":3594},"get_guilds",{"micros":10231},"coros_wait",{"micros":1}]}]},"guilds_connect",{"micros":2,"calls":[]},"presence_connect",{"micros":1,"calls":[]}]}]}] (Session ID: 36543ad5afab08ca7b8934af72ae022c).
-INFO 2022-01-25 14:13:16,345 - Syncing commands...
-INFO 2022-01-25 14:13:16,860 - Syncing permissions...
-INFO 2022-01-25 14:13:16,860 - Completed syncing all commands!
-INFO 2022-01-25 14:13:19,579 - 
-COMMAND NAME: claim
-COMMAND INFO: Target ID: 1336
-USER INFO:
-User Object: <class_playground.User object at 0x7f309c87e730> - User Object Name: Garfield - User Faction: <class_playground.Faction object at 0x7f309c8dc430> - User Actions: 0
-INFO 2022-01-25 14:13:21,811 - User Claims: ['1336']
-INFO 2022-01-25 14:13:24,294 - 
-COMMAND NAME: claim
-COMMAND INFO: Target ID: 1756
-USER INFO:
-User Object: <class_playground.User object at 0x7f309c7d9940> - User Object Name: Hallo123 - User Faction: <class_playground.Faction object at 0x7f309c7d93a0> - User Actions: 0
-INFO 2022-01-25 14:13:26,160 - User Claims: ['1757', '1756']
+WARNING 2022-01-28 16:50:27,779 - PyNaCl is not installed, voice will NOT be supported
+INFO 2022-01-28 16:50:27,782 - logging in using static token
+INFO 2022-01-28 16:50:28,079 - Shard ID None has sent the IDENTIFY payload.
+INFO 2022-01-28 16:50:28,245 - Shard ID None has connected to Gateway: ["gateway-prd-main-382p",{"micros":124845,"calls":["discord-sessions-green-prd-2-86",{"micros":123736,"calls":["start_session",{"micros":91909,"calls":["api-prd-main-8dvm",{"micros":81195,"calls":["get_user",{"micros":4306},"add_authorized_ip",{"micros":7248},"get_guilds",{"micros":11183},"coros_wait",{"micros":2}]}]},"guilds_connect",{"micros":2,"calls":[]},"presence_connect",{"micros":1,"calls":[]}]}]}] (Session ID: 2a840d4456d485c1f56f93ea390836cc).
+INFO 2022-01-28 16:50:30,277 - Syncing commands...
+INFO 2022-01-28 16:50:30,921 - Syncing permissions...
+INFO 2022-01-28 16:50:30,922 - Completed syncing all commands!

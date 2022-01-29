@@ -26,14 +26,13 @@ time.tzset()
 logging.basicConfig(filename = "logfile.log", filemode = "w", format = Log_Format, level = logging.INFO)
 log = logging.getLogger("my-logger")
 #print(mp.cpu_count())
-servers = [828422029618446399,810657122932883477]
+servers = [828422029618446399,810657122932883477,935758410090160159]
 exempt = [339251879273955330,740630812315090984,811024803292905532]
 schedules = {}
 client = commands.Bot(command_prefix="%", intents=discord.Intents.all())
 slash = SlashCommand(client, sync_commands=True)
 
 # Main should be used for the core, unchanging functions of the bot.
-
 print("Discord Main")
 def user_log(game, user, command_name, command_info):
 	log.info(f"\nCOMMAND NAME: {command_name}\nCOMMAND INFO: {command_info}\nUSER INFO:\nUser Object: {user} - User Object Name: {user.name} - User Faction: {user.faction} - User Actions: {user.actions}")
@@ -360,25 +359,26 @@ async def setup_error(ctx, error):
 
 
 @not_in_fac()
-@slash.slash(name="join",
-             description="Join the stated faction",
+@slash.slash(name="Apply",
+             description="Apply to the stated faction",
              guild_ids=servers)
 async def join(ctx, faction):
 	game = r_test.load_from_id(ctx.guild.id)
 	user = game.get_user(ctx.author.id)
 	faction_obj = game.get_faction(name=faction)
 	#check user isn't in faction
-	user_log(game, user, "join", f"Target Faction Name: {faction} - Faction Object: {faction_obj}")
+	user_log(game, user, "apply", f"Target Faction Name: {faction} - Faction Object: {faction_obj}")
 
 	if faction_obj != None:
 		log.info(f"Target Faction Name: {faction_obj.name}")
 		role = ctx.guild.get_role(faction_obj.roles[-1].central_id)
 		await ctx.author.add_roles(role, reason="Faction join")
-		user.faction = faction
+		user.faction = faction_obj
 		game.users[user.id].faction = faction_obj
+		game.users[user.id].rank = faction_obj.roles[-1].central_id
 		faction_obj.users.append(user)
 		await ctx.send(
-		    f"You have sucessfully joined the faction **{faction}**, you now have the role  '{faction_obj.roles[-1].central_name}'"
+		    f"You have sucessfully applied the faction **{faction}**, you now have the role  '{faction_obj.roles[-1].central_name}\n<@&{faction_obj.roles[2].central_id}>'"
 		)
 		game.save()
 	else:
@@ -553,7 +553,7 @@ async def y(ctx: commands.Context):
 	await ctx.send("https://tenor.com/view/wooo-yeah-baby-gif-18955985")
 
 
-#@in_fac()
+@in_fac()
 @slash.slash(name="claim",
              description="Claim the province with the given ID",
              guild_ids=servers)
@@ -572,7 +572,7 @@ async def claim(ctx, id):
 		if game.get_faction(name=i.name) != None:
 			faction = i
 			break
-	if len(user.claims) > 9 and ctx.author.id not in exempt:
+	if len(user.claims) >= game.action_limit and ctx.author.id not in exempt:
 		await ctx.send("You have exceeded your maximum daily claims")
 		return
 
@@ -682,9 +682,9 @@ async def newfac(ctx, name):
 	await update_roles(ctx)
 	print("finished updating roles")
 	game = r_test.load_from_id(ctx.guild.id)
-	base_role = ctx.guild.get_role(game.factions[list(game.factions.keys())[-1]].roles[-1].central_id)
-	user.faction = name
-	user.rank = "leader"
+	base_role = ctx.guild.get_role(game.factions[list(game.factions.keys())[-1]].roles[-2].central_id)
+	user.faction = list(game.factions.keys())[-1]
+	user.rank = game.factions[list(game.factions.keys())[-1]].roles[0].central_id
 	game.users[user.id] = user
 	leader_role = ctx.guild.get_role(game.factions[list(game.factions.keys())[-1]].roles[0].central_id)
 	await ctx.author.add_roles(base_role, reason="Faction creation")
@@ -906,6 +906,7 @@ async def new_claims(ctx):
 
 
 @in_fac()
+@leader()
 @slash.slash(name="change_faction_color",
              description="Changes the faction color to the given RGB values",
              guild_ids=servers)
@@ -916,43 +917,38 @@ async def change_faction_color(ctx, color):
 	user_log(game, user, "change_faction_color", f"New Color: {color}")
 	faction = game.get_faction(name=user.faction)
 	leader = False
-	for i in ctx.author.roles:
-		if "Leader" in i.name:
-			leader = True
 
-	if user.rank == "Leader" or leader:
-		await ctx.send("Warning, may be a little broken")
-		colors = color.strip().split(",")
-		if len(colors) != 3:
-			await ctx.send(
-			    "You need exactly three values (RGB) to change the color. Try something like **0, 0, 255**"
-			)
-			return
-		for index, i in enumerate(colors):
-			print(int(i))
-			if not i.strip().isdigit():
-				await ctx.send("The RGB values must be numbers")
-				return
-			if int(i) > 254 or int(i) < 1:
-				await ctx.send("The RGB values must be between 1 and 254")
-				return
-			colors[index] = int(i.strip())
 
-		print(colors)
-		print(faction.roles[0].colors)
-		for i in faction.roles:
-			i.colors = colors
-		faction.colors = colors
-
-		game.factions[faction.id] = faction
-		game.save()
-		await update_roles(ctx)
-
-		await ctx.send("Faction color updated")
-
-	else:
+	await ctx.send("Warning, may be a little broken")
+	colors = color.strip().split(",")
+	if len(colors) != 3:
 		await ctx.send(
-		    "You must be the leader of your faction to use this command")
+			"You need exactly three values (RGB) to change the color. Try something like **0, 0, 255**"
+		)
+		return
+	for index, i in enumerate(colors):
+		print(int(i))
+		if not i.strip().isdigit():
+			await ctx.send("The RGB values must be numbers")
+			return
+		if int(i) > 254 or int(i) < 1:
+			await ctx.send("The RGB values must be between 1 and 254")
+			return
+		colors[index] = int(i.strip())
+
+	print(colors)
+	print(faction.roles[0].colors)
+	for i in faction.roles:
+		i.colors = colors
+	faction.colors = colors
+
+	game.factions[faction.id] = faction
+	game.save()
+	await update_roles(ctx)
+
+	await ctx.send("Faction color updated")
+	await ctx.send(
+		"You must be the leader of your faction to use this command")
 
 
 @change_faction_color.error
@@ -1038,6 +1034,7 @@ async def unclaim(ctx, id):
 	else:
 		await ctx.send("Invalid ID. Make sure that the ID exists and you claimed it this update")
 
+@upper_midrank()
 @slash.subcommand(base="trade", name="propose", description="Propose a new trade", guild_ids=servers)
 async def trade_propose(ctx, faction, offer, request):
 	game = r_test.load_from_id(ctx.guild.id)
@@ -1112,12 +1109,9 @@ async def trade_propose(ctx, faction, offer, request):
 	game.save()
 
 def trade_check(trade, user, faction, game):
-	
 	if trade == None:
 		return "Trade ID does not exist"
 		
-	if user.rank != "leader":
-		return "You must be a faction leader to accept trades"
 		
 	if trade["To"] != faction.id:
 		return "You must be in the target faction to accept this trade"
@@ -1180,6 +1174,7 @@ async def trade_preview(ctx, trade_id):
 	await ctx.send(file=discord.File("trade.png"))
 	game.save()
 
+@upper_midrank()
 @slash.subcommand(base="trade", name="accept", description="Accept a trade", guild_ids=servers)
 async def trade_accept(ctx, trade_id):
 	game = r_test.load_from_id(ctx.guild.id)
@@ -1403,6 +1398,147 @@ async def edit_max_actions(ctx, max):
 	game.action_limit = int(max)
 	await ctx.send(f"New max: {max}")
 	game.save()
-	
+
+@in_fac()
+@midrank()
+@slash.slash(name="promote", description="Promotes the pinged user", guild_ids=servers)
+async def promote(ctx, target_user):
+	game = r_test.load_from_id(ctx.guild.id)
+	user = game.get_user(ctx.author.id)
+	user_log(game, user, "promote", f"Target User: {target_user[3:-1]}")
+	print(target_user[3:-1])
+	print(game.users)
+	try:
+		target = game.users.get(int(target_user[3:-1]))
+	except:
+		await ctx.send("Invalid target user")
+	print(target)
+	if not target:
+		await ctx.send("Invalid target user")
+	print(target.faction)
+	print(user.faction)
+	if target.faction != user.faction:
+		await ctx.send("Target user must be in your faction")
+	role_dict={}
+	user_perms = 10
+	target_perms = 10
+	for i in user.faction.roles:
+		role_dict[i.central_id] = i.perm_id
+		role_dict[i.satellite_id] = i.perm_id
+	print("Testing 2")
+	for i in ctx.guild.get_member(int(target_user[3:-1])).roles:
+		id_result = role_dict.get(i.id)
+		if id_result:
+			if id_result < target_perms:
+				target_perms = id_result
+	for i in ctx.author.roles:
+		id_result = role_dict.get(i.id)
+		if id_result:
+			if id_result < user_perms:
+				user_perms = id_result
+	print(user_perms)
+	print(target_perms)
+	if target_perms == 2:
+		await ctx.send("You cannot swap leadership yet")
+		return
+	if user_perms >= target_perms:
+		await ctx.send("You cannot promote someone at or above your rank")
+		return
+	role = ctx.guild.get_role(user.faction.roles[target_perms-2].central_id)
+	await ctx.guild.get_member(int(target_user[3:-1])).add_roles(role)
+	role2 = ctx.guild.get_role(user.faction.roles[target_perms-1].central_id)
+	await ctx.guild.get_member(int(target_user[3:-1])).remove_roles(role2)
+	await ctx.send(f"{target_user} has now been promoted to {role.name}")
+
+@in_fac()
+@midrank()
+@slash.slash(name="demote", description="Promotes the pinged user", guild_ids=servers)
+async def demote(ctx, target_user):
+	game = r_test.load_from_id(ctx.guild.id)
+	user = game.get_user(ctx.author.id)
+	user_log(game, user, "demote", f"Target User: {target_user[3:-1]}")
+	print(target_user[3:-1])
+	print(game.users)
+	try:
+		target = game.users.get(int(target_user[3:-1]))
+	except:
+		await ctx.send("Invalid target user")
+	print(target)
+	if not target:
+		await ctx.send("Invalid target user")
+	print(target.faction)
+	print(user.faction)
+	if target.faction != user.faction:
+		await ctx.send("Target user must be in your faction")
+	role_dict={}
+	user_perms = 10
+	target_perms = 10
+	for i in user.faction.roles:
+		role_dict[i.central_id] = i.perm_id
+		role_dict[i.satellite_id] = i.perm_id
+	print("Testing 2")
+	for i in ctx.guild.get_member(int(target_user[3:-1])).roles:
+		id_result = role_dict.get(i.id)
+		if id_result:
+			if id_result < target_perms:
+				target_perms = id_result
+	for i in ctx.author.roles:
+		id_result = role_dict.get(i.id)
+		if id_result:
+			if id_result < user_perms:
+				user_perms = id_result
+	print(user_perms)
+	print(target_perms)
+	if target_perms > 5:
+		await ctx.send("You cannot demote a simple member yet")
+		return
+	if user_perms >= target_perms:
+		await ctx.send("You cannot demote someone at or above your rank")
+		return
+	role = ctx.guild.get_role(user.faction.roles[target_perms].central_id)
+	await ctx.guild.get_member(int(target_user[3:-1])).add_roles(role)
+	role2 = ctx.guild.get_role(user.faction.roles[target_perms-1].central_id)
+	await ctx.guild.get_member(int(target_user[3:-1])).remove_roles(role2)
+	await ctx.send(f"{target_user} has now been demoted to {role.name}")
+
+@in_fac()
+@midrank()
+@slash.slash(name="accept", description="Accepts the pinged user", guild_ids=servers)
+async def accept(ctx, target_user):
+	game = r_test.load_from_id(ctx.guild.id)
+	user = game.get_user(ctx.author.id)
+	user_log(game, user, "accept", f"Target User: {target_user[3:-1]}")
+	print(target_user[3:-1])
+	print(game.users)
+	try:
+		target = game.users.get(int(target_user[3:-1]))
+	except:
+		await ctx.send("Invalid target user")
+	print(target)
+	if not target:
+		await ctx.send("Invalid target user")
+	print(target.faction)
+	print(user.faction)
+	role = ctx.guild.get_role(user.faction.roles[-2].central_id)
+	target_discord_user = ctx.guild.get_member(int(target_user[3:-1]))
+	if role in target_discord_user.roles:
+		await ctx.send("You cannot accept someone already in your faction")
+		return
+	target.rank = user.faction.roles[-2].central_id
+	game.users[target_user[3:-1]] = target
+	await ctx.guild.get_member(int(target_user[3:-1])).add_roles(role)
+	role = ctx.guild.get_role(user.faction.roles[-1].central_id)
+	await ctx.guild.get_member(int(target_user[3:-1])).remove_roles(role)
+	await ctx.send(target.rank)
+	game.save()
+@accept.error
+async def new_fac_error(ctx, error):
+	log.error(f"Accept Error: {error}")
+	log.error(type(error))
+	print(type(error))
+	if isinstance(error, CheckFailure):
+		await ctx.send("You must be a midrank or higher to accept applicants")
+	else:
+		await ctx.send(f"An error occured, try a different name")
 client.run(os.environ['api'])
 asyncio.get_event_loop().run_forever()

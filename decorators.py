@@ -1,8 +1,8 @@
 from discord.ext import commands
 import r_test
 from discord_slash.utils.manage_commands import create_choice, create_option
-
-devs = [339251879273955330, 750744079079440506, 244638942169792513,811024803292905532]
+import class_playground
+devs = [339251879273955330, 750744079079440506, 244638942169792513, 811024803292905532]
 
 def dev():
     async def predicate(ctx):
@@ -12,16 +12,17 @@ def dev():
 def get_faction(ctx, id):
     game = r_test.load_from_id(ctx.guild.id)
     print(ctx.author.roles)
+    user = game.get_user(ctx.author.id)
     for i in ctx.author.roles:
         print("stupid")
         value = game.get_faction(i.name)
         if value != None:
+            print("found")
             print(f"GETTING USER HERE: {ctx.author.id}")
-            user = game.get_user(ctx.author.id)
+            
             user.faction = value
             print(ctx.author)
             game.users[id] = user
-            
             game.save()
             return value 
     game.users[id].faction = ""
@@ -45,7 +46,71 @@ def not_in_fac():
             return False
         return True
     return commands.check(predicate)
+
+def get_perms(ctx):
+    game = r_test.load_from_id(ctx.guild.id)
+    user = game.get_user(ctx.author.id)
+    faction = get_faction(ctx,ctx.author.id)
+    if not faction:
+        return
+    perms = 5
+    role_dict = {}
+    if not isinstance(faction, class_playground.Faction):
+        print("NO FACTION")
+        return
+    print("Testing 1")
+    for i in faction.roles:
+        role_dict[i.central_id] = i.perm_id
+        role_dict[i.satellite_id] = i.perm_id
+    print("Testing 2")
+    for i in ctx.author.roles:
+        id_result = role_dict.get(i.id)
+        if id_result:
+            if id_result < perms:
+                perms = id_result
+    print("Testing 3")
+    return perms
     
+def leader():
+    async def predicate(ctx):
+        result = get_perms(ctx)
+        if not result:
+            return False
+        if result < 2:
+            return True
+        else:
+            return False
+    return commands.check(predicate)
+def lieutenant():
+    async def predicate(ctx):
+        result = get_perms(ctx)
+        if not result:
+            return False
+        if result < 3:
+            return True
+        else:
+            return False
+    return commands.check(predicate)
+def upper_midrank():
+    async def predicate(ctx):
+        result = get_perms(ctx)
+        if not result:
+            return False
+        if result < 4:
+            return True
+        else:
+            return False
+    return commands.check(predicate)
+def midrank():
+    async def predicate(ctx):
+        result = get_perms(ctx)
+        if not result:
+            return False
+        if result < 5:
+            return True
+        else:
+            return False
+    return commands.check(predicate)
 """
 def not_in_fac():
     async def predicate(ctx):
