@@ -51,8 +51,10 @@ async def fix_shit(game, discord_user):
 			game.save()
 # Include hotswappable cogs code here
 
-def error_embed(title, content):
-	pass
+def error_embed(content, title="Attention!"):
+	embed = discord.Embed(title=f"**{title}**", color=0xf1ad02,description="content")
+	embed.set_thumbnail(url="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.freepngimg.com%2Fthumb%2Femoji%2F81186-triangle-danger-text-area-sign-messaging-emoji.png&f=1&nofb=1")
+	return embed
 # https://tenor.com/view/wooo-yeah-baby-gif-18955985
 async def map_update(id):
 	log.info("Updating the map")
@@ -668,7 +670,7 @@ async def newfac(ctx, name):
 	forbidden_characters = ["%", "Admin", "/", "\'", "\"", "."]
 	for i in forbidden_characters:
 		if i.lower() in name.lower():
-			await ctx.send(f"Invalid character: '{i}'")
+			await ctx.send(embed=error_embed( f"You cannot have the character **{i}** in your faction name",title="Invalid Character"))
 			return
 	role_names = []
 	for i in ctx.guild.roles:
@@ -703,11 +705,11 @@ async def new_fac_error(ctx, error):
 	print(type(error))
 	if isinstance(error, commands.UnexpectedQuoteError) or isinstance(
 	    error, commands.InvalidEndOfQuotedStringError):
-		await ctx.send("Invalid name, don't mess with quotes in the name")
+		await ctx.send(embed=error_embed("Don't mess with quotes in the name" , title="Invalid Name"))
 	elif isinstance(error, CheckFailure):
-		await ctx.send("You must be factionless to use this command")
+		await ctx.send(embed=error_embed("You must be factionless to use this command"))
 	else:
-		await ctx.send(f"An error occured, try a different name")
+		await ctx.send(embed=error_embed("An error occured, try a different name or contact Connor"))
 
 
 @slash.slash(name="factions",
@@ -716,7 +718,6 @@ async def new_fac_error(ctx, error):
 async def factions(ctx):
 	game = r_test.load_from_id(ctx.guild.id)
 	await ctx.send(str(game.faction_names()))
-
 
 @dev()
 @slash.slash(name="clearfacs",
@@ -917,29 +918,28 @@ async def change_faction_color(ctx, color):
 	game = r_test.load_from_id(ctx.guild.id)
 	user = game.get_user(ctx.author.id)
 	user_log(game, user, "change_faction_color", f"New Color: {color}")
-	faction = game.get_faction(name=user.faction)
+	faction = user.faction
 	leader = False
 
 
 	await ctx.send("Warning, may be a little broken")
 	colors = color.strip().split(",")
 	if len(colors) != 3:
-		await ctx.send(
+		await ctx.send(embed=error_embed(
 			"You need exactly three values (RGB) to change the color. Try something like **0, 0, 255**"
-		)
+		))
 		return
 	for index, i in enumerate(colors):
 		print(int(i))
 		if not i.strip().isdigit():
-			await ctx.send("The RGB values must be numbers")
+			await ctx.send(embed=error_embed("The RGB values must be numbers"))
 			return
 		if int(i) > 254 or int(i) < 1:
-			await ctx.send("The RGB values must be between 1 and 254")
+			await ctx.send(embed=error_embed("The RGB values must be between 1 and 254"))
 			return
 		colors[index] = int(i.strip())
 
 	print(colors)
-	print(faction.roles[0].colors)
 	for i in faction.roles:
 		i.colors = colors
 	faction.colors = colors
@@ -1041,7 +1041,7 @@ async def unclaim(ctx, id):
 		game.save()
 		await ctx.send(f"Successfully unclaimed Province {id}",file=discord.File("test.png"))
 	else:
-		await ctx.send("Invalid ID. Make sure that the ID exists and you claimed it this update")
+		await ctx.send(embed=error_embed(f"**{id}** is an invalid ID. Make sure that the ID exists and you claimed it this update", title="Invalid ID"))
 
 @upper_midrank()
 @slash.subcommand(base="trade", name="propose", description="Propose a new trade", guild_ids=servers)
@@ -1052,11 +1052,11 @@ async def trade_propose(ctx, faction, offer, request):
 	user_fac_obj = user.faction
 	fac_obj = game.get_faction(name=faction)
 	if fac_obj == None:
-		await ctx.send("Invalid faction")
+		await ctx.send(embed=error_embed("Invalid target faction"))
 		return
 	if user_fac_obj == fac_obj:
-		await ctx.send("You cannot send a trade to your own faction")
-		#return
+		await ctx.send(embed=error_embed("You cannot send a trade to your own faction"))
+		return
 	print(offer.split(","))
 	offer_list = []
 	request_list = []
@@ -1068,38 +1068,38 @@ async def trade_propose(ctx, faction, offer, request):
 		if id.isdigit():
 			if game.game_json.get(id) != None:
 				if id in offer_list:
-					await ctx.send(f"You can't offer Province ID: {id} twice. Make sure you have no duplicates in your offer(s) and request(s)")
+					await ctx.send(embed=error_embed(f"You can't offer Province ID: {id} twice. Make sure you have no duplicates in your offer(s) and request(s)"))
 					return
 				offer_list.append(id)
 			else:
-				await ctx.send(f"Province ID: {id} does not exist")
+				await ctx.send(embed=error_embed(f"Province ID: {id} does not exist"))
 				return
 		else:
-			await ctx.send(f"Invalid offer input: {i}")
+			await ctx.send(embed=error_embed(f"Invalid offer input: {i}"))
 			return
 
 	for i in request.split(","):
 		id = i.strip()
 		if id.lower() == "none":
 			if offer_list == ["none"]:
-				await ctx.send("Something must be traded, cannot request empty trades")
+				await ctx.send(embed=error_embed("Something must be traded, cannot request empty trades"))
 				return
 			request_list = ["none"]
 			break
 		if id.isdigit():
 			if game.game_json.get(id) != None:
 				if id in offer_list:
-					await ctx.send(f"You can't offer and request Province ID: {id}. Make sure you have no duplicates in your offer(s) and request(s)")
+					await ctx.send(embed=error_embed(f"You can't offer and request Province ID: {id}. Make sure you have no duplicates in your offer(s) and request(s)"))
 					return
 				if id in request_list:
-					await ctx.send(f"You can't request Province ID: {id} twice. Make sure you have no duplicates in your offer(s) and request(s)")
+					await ctx.send(embed=error_embed(f"You can't request Province ID: {id} twice. Make sure you have no duplicates in your offer(s) and request(s)"))
 					return					
 				request_list.append(id)
 			else:
-				await ctx.send(f"Province ID: {id} does not exist")
+				await ctx.send(embed=error_embed(f"Province ID: {id} does not exist"))
 				return			
 		else:
-			await ctx.send(f"Invalid request input: {i}")
+			await ctx.send(embed=error_embed(f"Invalid request input: {i}"))
 			return
 	
 	for i in list(game.trades.keys()):
@@ -1283,13 +1283,13 @@ async def attack(ctx, attacker, target):
 	#	log.info(f"Faction Name: {game.factions[i].name}")
 	
 	if target_owner == None:
-		await ctx.send("Invalid target ID")
+		await ctx.send(embed=error_embed("Invalid target ID"))
 		return
 	if target_owner == 0:
-		await ctx.send("You cannot attack an empty province")
+		await ctx.send(embed=error_embed("You cannot attack an empty province"))
 		return
 	if target_owner == faction.id:
-		await ctx.send("You cannot attack your own province")
+		await ctx.send(embed=error_embed("You cannot attack your own province"))
 		return
 	if game.game_json.get(attacker) != faction.id:
 		print(f"attacker {faction.id}")
@@ -1297,10 +1297,10 @@ async def attack(ctx, attacker, target):
 		await ctx.send("You must own the attacking province")
 		return
 	if user.actions >= game.action_limit:
-		await ctx.send("You have used up all of your actions for this update period")
+		await ctx.send(embed=error_embed("You have used up all of your actions for this update period"))
 		return
 	if game.attacks.get(target) != None:
-		await ctx.send("This province is already being attacked")
+		await ctx.send(embed=error_embed("This province is already being attacked"))
 		return
 	target_full = r_test.map_json(game.map_name)[f"l{target}"]
 	print(target_full)
@@ -1319,7 +1319,7 @@ async def attack(ctx, attacker, target):
 			attack_count += 1
 	
 	if attack_count == 0:
-		await ctx.send("You must own at least one neighboring province in order to attack")
+		await ctx.send(embed=error_embed("You must own at least one neighboring province in order to attack"))
 		return
 
 	game.attacks[f"{target}"] = {"attacking_province": attacker, "defending_province": target,"attackers":[user.discord_id], "defenders":[0], "max_attackers":attack_count, "max_defenders":defense_count, "instigator": user.discord_id}
@@ -1338,31 +1338,31 @@ async def engage(ctx, id):
 	attacker_or_defender = None
 	attack_info = game.attacks.get(id)
 	if attack_info == None:
-		await ctx.send("Invalid Province ID, make sure that ID exists and is being attacked")
+		await ctx.send(embed=error_embed("Invalid Province ID, make sure that ID exists and is being attacked"))
 		return
 	
 	if faction.id == game.game_json.get(id):
 		attacker_or_defender = "defender"
 		if user.discord_id in attack_info["defenders"]:
-			await ctx.send("You are already defending")
+			await ctx.send(embed=error_embed("You are already defending"))
 			return
 		if len(attack_info["defenders"]) >= attack_info["max_defenders"]:
-			await ctx.send("You cannot engage in this defense, there is already the maximum number of defenders engaged")
+			await ctx.send(embed=error_embed("You cannot engage in this defense, there is already the maximum number of defenders engaged"))
 			return
 	elif faction.id == game.game_json.get(attack_info["attacking_province"]):
 		attacker_or_defender = "attacker"
 		if user.discord_id in attack_info["attackers"]:
-			await ctx.send("You are already attacking")
+			await ctx.send(embed=error_embed("You are already attacking"))
 			return
 		if len(attack_info["attackers"]) >= attack_info["max_attackers"]:
-			await ctx.send("You cannot engage in this attack, there is already the maximum number of attackers engaged")
+			await ctx.send(embed=error_embed("You cannot engage in this attack, there is already the maximum number of attackers engaged"))
 			return
 	if attacker_or_defender is None:
-		await ctx.send("You must be in either the attacking or defending faction to engage")
+		await ctx.send(embed=error_embed("You must be in either the attacking or defending faction to engage"))
 		return
 	user_log(game, user, "engage join", f"Target Province: {id} - Attacker or Defender: {attacker_or_defender}")
 	if user.actions >= game.action_limit:
-		await ctx.send("You have used up all of your actions for this update period")
+		await ctx.send(embed=error_embed("You have used up all of your actions for this update period"))
 	
 	game.attacks[id][f"{attacker_or_defender}s"].append(user.discord_id)
 	user.actions += 1
@@ -1375,7 +1375,7 @@ async def engage_info(ctx, id):
 	game = r_test.load_from_id(ctx.guild.id)
 	attack_info = game.attacks.get(id)
 	if attack_info == None:
-		await ctx.send("Invalid Province ID, make sure that ID exists and is being attacked")
+		await ctx.send(embed=error_embed("Invalid Province ID, make sure that ID exists and is being attacked"))
 		return
 	embed = discord.Embed(title="**BATTLE INFORMATION**",color=0xd8320b)
 	embed.add_field(name="Defenders Committed", value=f'{len(game.attacks[id]["defenders"])} of {attack_info["max_defenders"]} allowed', inline=False)
@@ -1422,14 +1422,14 @@ async def promote(ctx, target_user):
 	try:
 		target = game.users.get(int(sliced_user))
 	except:
-		await ctx.send("Invalid target user")
+		await ctx.send(embed=error_embed(f"{target_user} is not a valid target user. Make sure you typed everything correctly and try again or contact Connor",title="Invalid Target User"))
 	print(target)
 	if not target:
-		await ctx.send("Invalid target user")
+		await ctx.send(embed=error_embed(f"{target_user} is not a valid target user. Make sure you typed everything correctly and try again or contact Connor",title="Invalid Target User"))
 	print(target.faction)
 	print(user.faction)
 	if target.faction != user.faction:
-		await ctx.send("Target user must be in your faction")
+		await ctx.send(embed=error_embed("Target user must be in your faction"))
 	role_dict={}
 	user_perms = 10
 	target_perms = 10
@@ -1450,10 +1450,10 @@ async def promote(ctx, target_user):
 	print(user_perms)
 	print(target_perms)
 	if target_perms == 2:
-		await ctx.send("You cannot swap leadership yet")
+		await ctx.send(embed=error_embed("You cannot swap leadership yet"))
 		return
 	if user_perms >= target_perms:
-		await ctx.send("You cannot promote someone at or above your rank")
+		await ctx.send(embed=error_embed("You cannot promote someone at or above your rank"))
 		return
 	role = ctx.guild.get_role(user.faction.roles[target_perms-2].central_id)
 	await ctx.guild.get_member(int(sliced_user)).add_roles(role)
@@ -1476,14 +1476,14 @@ async def demote(ctx, target_user):
 	try:
 		target = game.users.get(int(sliced_user))
 	except:
-		await ctx.send("Invalid target user")
+		await ctx.send(embed=error_embed(f"{target_user} is not a valid target user. Make sure you typed everything correctly and try again or contact Connor",title="Invalid Target User"))
 	print(target)
 	if not target:
-		await ctx.send("Invalid target user")
+		await ctx.send(embed=error_embed(f"{target_user} is not a valid target user. Make sure you typed everything correctly and try again or contact Connor",title="Invalid Target User"))
 	print(target.faction)
 	print(user.faction)
 	if target.faction != user.faction:
-		await ctx.send("Target user must be in your faction")
+		await ctx.send(embed=error_embed("Target user must be in your faction",title="Invalid Target User"))
 	role_dict={}
 	user_perms = 10
 	target_perms = 10
@@ -1504,10 +1504,10 @@ async def demote(ctx, target_user):
 	print(user_perms)
 	print(target_perms)
 	if target_perms > 5:
-		await ctx.send("You cannot demote a simple member yet")
+		await ctx.send(embed=error_embed("You cannot demote a simple member yet"))
 		return
 	if user_perms >= target_perms:
-		await ctx.send("You cannot demote someone at or above your rank")
+		await ctx.send(embed=error_embed("You cannot demote someone at or above your rank"))
 		return
 	role = ctx.guild.get_role(user.faction.roles[target_perms].central_id)
 	await ctx.guild.get_member(int(sliced_user)).add_roles(role)
@@ -1532,18 +1532,18 @@ async def accept(ctx, target_user):
 		log.info(f"Target user result: {target} - target user id: {int(sliced_user)}")
 		log.info(f"Game Users: {game.users}")
 	except:
-		await ctx.send("Invalid target user")
+		await ctx.send(embed=error_embed(f"{target_user} is not a valid target user. Make sure you typed everything correctly and try again or contact Connor",title="Invalid Target User"))
 		return
 	print(target)
 	if not target:
-		await ctx.send("Invalid target user")
+		await ctx.send(embed=error_embed(f"{target_user} is not a valid target user. Make sure you typed everything correctly and try again or contact Connor",title="Invalid Target User"))
 		return
 	print(target.faction)
 	print(user.faction)
 	role = ctx.guild.get_role(user.faction.roles[-2].central_id)
 	target_discord_user = ctx.guild.get_member(int(sliced_user))
 	if role in target_discord_user.roles:
-		await ctx.send("You cannot accept someone already in your faction")
+		await ctx.send(embed=error_embed("You cannot accept someone already in your faction"))
 		return
 	target.rank = user.faction.roles[-2].central_id
 	game.users[sliced_user] = target
@@ -1555,13 +1555,13 @@ async def accept(ctx, target_user):
 	await ctx.send(f"{target_user} has been accepted into {user.faction.name}")
 	game.save()
 @accept.error
-async def new_fac_error(ctx, error):
+async def accept_error(ctx, error):
 	log.error(f"Accept Error: {error}")
 	log.error(type(error))
 	print(type(error))
 	if isinstance(error, CheckFailure):
-		await ctx.send("You must be a midrank or higher to accept applicants")
+		await ctx.send(embed=error_embed("You must be a midrank or higher to accept applicants",title="Invalid Ranking"))
 	else:
-		await ctx.send(f"An error occured, try a different name")
+		await ctx.send(embed=error_embed("An error occured, try a different name"))
 client.run(os.environ['api'])
 asyncio.get_event_loop().run_forever()

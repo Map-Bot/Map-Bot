@@ -1,30 +1,4 @@
-WARNING 2022-01-29 13:25:15,330 - PyNaCl is not installed, voice will NOT be supported
-INFO 2022-01-29 13:25:15,349 - logging in using static token
-INFO 2022-01-29 13:25:15,624 - Shard ID None has sent the IDENTIFY payload.
-INFO 2022-01-29 13:25:15,798 - Shard ID None has connected to Gateway: ["gateway-prd-main-0p3z",{"micros":133718,"calls":["discord-sessions-green-prd-2-116",{"micros":132839,"calls":["start_session",{"micros":102772,"calls":["api-prd-main-cc4p",{"micros":96014,"calls":["get_user",{"micros":6684},"add_authorized_ip",{"micros":19391},"get_guilds",{"micros":20816},"coros_wait",{"micros":1}]}]},"guilds_connect",{"micros":1,"calls":[]},"presence_connect",{"micros":1,"calls":[]}]}]}] (Session ID: 6a6915641599f8aaea306029380a67cc).
-INFO 2022-01-29 13:25:17,861 - Syncing commands...
-INFO 2022-01-29 13:25:18,487 - Syncing permissions...
-INFO 2022-01-29 13:25:18,487 - Completed syncing all commands!
-INFO 2022-01-29 13:25:24,371 - 
-COMMAND NAME: unclaim
-COMMAND INFO: Target Province: 1471
-USER INFO:
-User Object: <class_playground.User object at 0x7f8f1d753940> - User Object Name: Connor13 - User Faction: <class_playground.Faction object at 0x7f8f1e0c9d30> - User Actions: 0
-INFO 2022-01-29 13:25:37,355 - 
-COMMAND NAME: claim
-COMMAND INFO: Target ID: 1471
-USER INFO:
-User Object: <class_playground.User object at 0x7f8f1cf509a0> - User Object Name: Connor13 - User Faction: <class_playground.Faction object at 0x7f8f1cef1160> - User Actions: 0
-INFO 2022-01-29 13:25:40,065 - User Claims: ['1471']
-INFO 2022-01-29 13:30:21,187 - 
-COMMAND NAME: claim
-COMMAND INFO: Target ID: 1473
-USER INFO:
-User Object: <class_playground.User object at 0x7f8f1e0c98b0> - User Object Name: Chicken nuggets - User Faction: <class_playground.Faction object at 0x7f8f1cf4d610> - User Actions: 0
-INFO 2022-01-29 13:30:23,979 - User Claims: ['1473']
-ERROR 2022-01-29 13:41:53,805 - 
-INFO 2022-01-29 13:56:30,231 - 
-COMMAND NAME: newfac
-COMMAND INFO: New Faction Name: Nýja heimsveldið
-USER INFO:
-User Object: <class_playground.User object at 0x7f8f1d0037f0> - User Object Name:  - User Faction:  - User Actions: 0
+WARNING 2022-01-29 14:45:55,085 - PyNaCl is not installed, voice will NOT be supported
+INFO 2022-01-29 14:45:55,089 - logging in using static token
+INFO 2022-01-29 14:45:55,373 - Shard ID None has sent the IDENTIFY payload.
+INFO 2022-01-29 14:45:55,493 - Shard ID None has connected to Gateway: ["gateway-prd-main-7052",{"micros":70504,"calls":["discord-sessions-green-prd-2-160",{"micros":69353,"calls":["start_session",{"micros":39925,"calls":["api-prd-main-3hh4",{"micros":36158,"calls":["get_user",{"micros":3127},"add_authorized_ip",{"micros":1521},"get_guilds",{"micros":5841},"coros_wait",{"micros":3}]}]},"guilds_connect",{"micros":2,"calls":[]},"presence_connect",{"micros":9712,"calls":[]}]}]}] (Session ID: fde2987499e9c5823a673634f529c1c9).
