@@ -298,9 +298,6 @@ class Faction:
 				return i
 
 
-permissions_list = ["Trade", "Claim", "Leader", ""]
-
-
 class Roles:
 	def __init__(self, name, id, faction):
 		self.central_name = name

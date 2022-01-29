@@ -50,10 +50,14 @@ async def fix_shit(game, discord_user):
 			game.users[discord_user.id].name = discord_user.name
 			game.save()
 # Include hotswappable cogs code here
-
+#
 def error_embed(content, title="Attention!"):
 	embed = discord.Embed(title=f"**{title}**", color=0xf1ad02,description=content)
 	embed.set_thumbnail(url="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.freepngimg.com%2Fthumb%2Femoji%2F81186-triangle-danger-text-area-sign-messaging-emoji.png&f=1&nofb=1")
+	return 
+def success_embed(content, title="Success!"):
+	embed = discord.Embed(title=f"**{title}**", color=0xaadaff,description=content)
+	embed.set_thumbnail(url="http://cdn.onlinewebfonts.com/svg/img_143278.png")
 	return embed
 # https://tenor.com/view/wooo-yeah-baby-gif-18955985
 async def map_update(id):
@@ -359,7 +363,7 @@ async def setup(ctx: commands.Context):
 @slash_setup.error
 async def setup_error(ctx, error):
 	print(error)
-	await ctx.send("You must be a dev to use this command")
+	await ctx.send(embed=error_embed("You must be a dev to use this command"))
 
 
 @not_in_fac()
@@ -381,18 +385,18 @@ async def join(ctx, faction):
 		game.users[user.id].faction = faction_obj
 		game.users[user.id].rank = faction_obj.roles[-1].central_id
 		faction_obj.users.append(user)
-		await ctx.send(
+		await ctx.send(embed=success_embed(
 		    f"You have sucessfully applied the faction **{faction}**, you now have the role  '{faction_obj.roles[-1].central_name}\n<@&{faction_obj.roles[2].central_id}>'"
-		)
+		))
 		game.save()
 	else:
-		await ctx.send(f"{faction} isn't a valid faction")
+		await ctx.send(embed=error_embed(f"{faction} isn't a valid faction"))
 
 
 @join.error
 async def join_error(ctx, error):
 	log.error(error)
-	await ctx.send("You must be factionless to use this command")
+	await ctx.send(embed=error_embed("You must be factionless to use this command"))
 
 
 @client.command()
@@ -485,7 +489,7 @@ async def leave(ctx):
 			await ctx.author.remove_roles(i)
 			print("Done removing")
 	print("sending message")
-	await ctx.send(f"You have successfully left faction: {faction.name}")
+	await ctx.send(embed=success_embed(f"You have successfully left faction: {faction.name}"))
 	print("Done")
 	game.save()
 
@@ -494,9 +498,9 @@ async def leave(ctx):
 @leave.error
 async def leave_error(ctx: commands.Context, error: commands.CommandError):
 	if isinstance(error, CheckFailure):
-		await ctx.send("You must be in a faction to use this command")
+		await ctx.send(embed=error_embed("You must be in a faction to use this command"))
 	else:
-		await ctx.send("An error occurred")
+		await ctx.send(embed=error_embed("An error occurred"))
 	print(error)
 
 
@@ -582,7 +586,7 @@ async def claim(ctx, id):
 
 	result = game.claim(id, game.get_faction(name=faction.name))
 	if result == "Sucessfully claimed":
-		await ctx.send(result)
+		#await ctx.send(result)
 		game.users[ctx.author.id].claims.append(id)
 		log.info(f"User Claims: {game.users[ctx.author.id].claims}")
 		game.save()
@@ -591,7 +595,7 @@ async def claim(ctx, id):
 		coordinates=map_json[f"l{id}"]["coordinates"]
 		print(coordinates)
 		image.snapshot(temp, eval(coordinates[0]))
-		await ctx.send(f"Successfully claimed province {id}",
+		await ctx.send(embed=success_embed(f"Successfully claimed province {id}"),
 		               file=discord.File("snapshot.png"))
 	else:
 		await ctx.send(embed=error_embed(result))
@@ -602,7 +606,7 @@ async def claim(ctx, id):
 @claim.error
 async def claim_error(ctx: commands.Context, error):
 	print(error)
-	await ctx.send("You must be in a faction to use this command")
+	await ctx.send(embed=error_embed("You must be in a faction to use this command"))
 
 
 #@client.command()
@@ -672,17 +676,17 @@ async def newfac(ctx, name):
 	forbidden_characters = ["%", "Admin", "/", "\'", "\"", "."]
 	for i in forbidden_characters:
 		if i.lower() in name.lower():
-			await ctx.send(embed=error_embed( f"You cannot have the character **{i}** in your faction name",title="Invalid Character"))
+			await ctx.send(embed=error_embed(f"You cannot have the character **{i}** in your faction name",title="Invalid Character"))
 			return
 	role_names = []
 	for i in ctx.guild.roles:
 		role_names.append(i.name)
 
 	if name in role_names:
-		await ctx.send("Role name already exists, try a different name")
+		await ctx.send(embed=error_embed("Role name already exists, try a different name"))
 		return
 	if game.create_faction(name) == "Faction name already exists":
-		await ctx.send("Faction name already exists")
+		await ctx.send(embed=error_embed("Faction name already exists"))
 		return
 	print("begin updating roles")
 	await update_roles(ctx)
@@ -695,7 +699,7 @@ async def newfac(ctx, name):
 	leader_role = ctx.guild.get_role(game.factions[list(game.factions.keys())[-1]].roles[0].central_id)
 	await ctx.author.add_roles(base_role, reason="Faction creation")
 	await ctx.author.add_roles(leader_role, reason="Faction creation")
-	await ctx.send(f"Created faction: **{name}**")
+	await ctx.send(embed=success_embed(f"Created faction: **{name}**"))
 	game.save()
 
 
@@ -739,7 +743,7 @@ async def clearfacs(ctx):
 	game.factions = {}
 	game.save()
 	print(game.current_claims)
-	await ctx.send("Factions sucessfully cleared")
+	await ctx.send(embed=success_embed("Factions sucessfully cleared"))
 
 
 @clearfacs.error
@@ -756,7 +760,7 @@ async def delete_fac(ctx, faction):
 	user_log(game, user, "delete_fac", f"Target Faction: {faction}")
 	faction_obj = game.get_faction(name=faction)
 	if not faction_obj:
-		await ctx.send("Target faction must exist. Make sure you spelled it right")
+		await ctx.send(embed=error_embed("Target faction must exist. Make sure you spelled it right"))
 		log.warning(f"Target Faction Result: {faction_obj} - Target Faction Name: {faction} - Game Factions: {game.factions}")
 		return
 	log.info(f"DELETE FAC USER FACTION INFO")
@@ -796,7 +800,7 @@ async def myfac(ctx):
 		if game.get_faction(name=i.name) != None:
 			await ctx.send(i.name)
 			return
-	await ctx.send("You are not in a faction. Use /join to join one")
+	await ctx.send(embed=error_embed("You are not in a faction. Use /join to join one"))
 
 
 @slash.slash(name="dorito", description="dorito", guild_ids=servers)
@@ -927,9 +931,8 @@ async def change_faction_color(ctx, color):
 	await ctx.send("Warning, may be a little broken")
 	colors = color.strip().split(",")
 	if len(colors) != 3:
-		await ctx.send(embed=error_embed(
-			"You need exactly three values (RGB) to change the color. Try something like **0, 0, 255**"
-		))
+		embed = discord.Embed(title="Change Faction Color!", description="You need exactly three values (RGB) to change the color.\nTry something like **0, 0, 255**", image="https://media1.tenor.com/images/b3b66ace65470cba241193b62366dfee/tenor.gif")
+		await ctx.send(embed=embed)
 		return
 	for index, i in enumerate(colors):
 		print(int(i))
@@ -952,16 +955,14 @@ async def change_faction_color(ctx, color):
 	game.save()
 	await update_roles(ctx)
 
-	await ctx.send("Faction color updated")
-	await ctx.send(
-		"You must be the leader of your faction to use this command")
+	await ctx.send(embed=success_embed("Faction color updated"))
 
 
 @change_faction_color.error
 async def change_faction_color_error(ctx: commands.Context, error):
 	print(error)
 	if isinstance(error, CheckFailure):
-		await ctx.send("You must be in a faction to use this command")
+		await ctx.send(embed=error_embed("You must be in a faction to use this command"))
 
 
 @dev()
@@ -977,9 +978,9 @@ async def manual_update(ctx):
 async def manual_update_error(ctx, error):
 	print(error)
 	if isinstance(error, CheckFailure):
-		await ctx.send("You must be a dev to use this command")
+		await ctx.send(embed=error_embed("You must be a dev to use this command"))
 	else:
-		await ctx.send("An error has occurred")
+		await ctx.send(embed=error_embed("An error has occurred"))
 
 
 @slash.slash(name="id_map",
@@ -1007,9 +1008,9 @@ async def redraw_map(ctx):
 async def manual_update_error(ctx, error):
 	print(error)
 	if isinstance(error, CheckFailure):
-		await ctx.send("You must be a dev to use this command")
+		await ctx.send(embed=error_embed("You must be a dev to use this command"))
 	else:
-		await ctx.send("An error has occurred")
+		await ctx.send(embed=error_embed("An error has occurred"))
 
 @slash.slash(name="get_connected", description="Get the ids of all provinces connected to the province with the given id", guild_ids=servers)
 async def get_connected(ctx, id):
@@ -1043,7 +1044,7 @@ async def unclaim(ctx, id):
 		temp.save("test.png")
 		game.update_map(temp)
 		game.save()
-		await ctx.send(f"Successfully unclaimed Province {id}",file=discord.File("test.png"))
+		await ctx.send(embed=success_embed(f"Successfully unclaimed Province {id}"),file=discord.File("test.png"))
 	else:
 		await ctx.send(embed=error_embed(f"**{id}** is an invalid ID. Make sure that the ID exists and you claimed it this update", title="Invalid ID"))
 
@@ -1108,7 +1109,7 @@ async def trade_propose(ctx, faction, offer, request):
 	
 	for i in list(game.trades.keys()):
 		if game.trades[i]["Offering"] == offer_list and game.trades[i]["Requesting"] == request_list:
-			await ctx.send(f"Cannot create a duplicate trade. ")
+			await ctx.send(embed=error_embed(f"Cannot create a duplicate trade. "))
 
 	trade_id = str(random.randint(1111,9999))
 	while game.trades.get(trade_id) != None:
@@ -1117,7 +1118,7 @@ async def trade_propose(ctx, faction, offer, request):
 	request_list.sort()
 	game.trades[trade_id] = {"From":user_fac_obj.id, "To":fac_obj.id, "Offering":offer_list, "Requesting":request_list}
 
-	await ctx.send("Trade listed")
+	await ctx.send(embed=success_embed("Trade listed"))
 	await ctx.send(str(game.trades))
 	game.save()
 
