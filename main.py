@@ -577,12 +577,12 @@ async def claim(ctx, id):
 			faction = i
 			break
 	if len(user.claims) >= game.action_limit and ctx.author.id not in exempt:
-		await ctx.send("You have exceeded your maximum daily claims")
+		await ctx.send(embed=error_embed("You have exceeded your maximum daily claims"))
 		return
 
 	result = game.claim(id, game.get_faction(name=faction.name))
-	await ctx.send(result)
 	if result == "Sucessfully claimed":
+		await ctx.send(result)
 		game.users[ctx.author.id].claims.append(id)
 		log.info(f"User Claims: {game.users[ctx.author.id].claims}")
 		game.save()
@@ -593,6 +593,8 @@ async def claim(ctx, id):
 		image.snapshot(temp, eval(coordinates[0]))
 		await ctx.send(f"Successfully claimed province {id}",
 		               file=discord.File("snapshot.png"))
+	else:
+		await ctx.send(embed=error_embed(result))
 
 	
 
