@@ -51,6 +51,7 @@ async def fix_shit(game, discord_user):
 			game.save()
 # Include hotswappable cogs code here
 
+def 
 # https://tenor.com/view/wooo-yeah-baby-gif-18955985
 async def map_update(id):
 	log.info("Updating the map")
@@ -582,10 +583,13 @@ async def claim(ctx, id):
 		game.users[ctx.author.id].claims.append(id)
 		log.info(f"User Claims: {game.users[ctx.author.id].claims}")
 		game.save()
-		image = game.map()
-		image.save("test.png")
+		temp = game.map()
+		map_json = r_test.map_json(game.map_name)
+		coordinates=map_json[f"l{id}"]["coordinates"]
+		print(coordinates)
+		image.snapshot(temp, eval(coordinates[0]))
 		await ctx.send(f"Successfully claimed province {id}",
-		               file=discord.File("test.png"))
+		               file=discord.File("snapshot.png"))
 
 	
 
@@ -1026,8 +1030,15 @@ async def unclaim(ctx, id):
 	if id in user.claims:
 		user.claims.remove(id)
 		game.current_claims.pop(id)
+		temp = Image.open("test.png").convert('RGB')
+		map_json = r_test.map_json(game.map_name)
+		coordinates=map_json[f"l{id}"]["coordinates"]
+		for i in coordinates:
+			image.quick_fill(temp, eval(i), (255,255,255))
+		temp.save("test.png")
+		game.update_map(temp)
 		game.save()
-		await ctx.send(f"Successfully unclaimed Province {id}")
+		await ctx.send(f"Successfully unclaimed Province {id}",file=discord.File("test.png"))
 	else:
 		await ctx.send("Invalid ID. Make sure that the ID exists and you claimed it this update")
 
@@ -1151,7 +1162,7 @@ async def trade_preview(ctx, trade_id):
 		await ctx.send(result)
 		return
 
-	temp = Image.open(io.BytesIO(base64.b64decode(r_test.map_image(game.map_name))))
+	temp = Image.open(io.BytesIO(base64.b64decode(r_test.map_image(game.map_name)))).convert('RGB')
 	
 	color = tuple(game.get_faction(id=trade["From"]).colors)
 	map_json = r_test.map_json(game.map_name)
