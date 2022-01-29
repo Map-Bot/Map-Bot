@@ -598,7 +598,10 @@ async def claim(ctx, id):
 		await ctx.send(embed=success_embed(f"Successfully claimed province {id}"),
 		               file=discord.File("snapshot.png"))
 	else:
-		await ctx.send(embed=error_embed(result))
+		if result:
+			await ctx.send(embed=error_embed(result))
+		else: 
+			await ctx.send(embed=error_embed("An error occurred, make sure you have a valid ID"))
 
 	
 
