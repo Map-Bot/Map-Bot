@@ -1,7 +1,48 @@
-WARNING 2022-01-28 16:50:27,779 - PyNaCl is not installed, voice will NOT be supported
-INFO 2022-01-28 16:50:27,782 - logging in using static token
-INFO 2022-01-28 16:50:28,079 - Shard ID None has sent the IDENTIFY payload.
-INFO 2022-01-28 16:50:28,245 - Shard ID None has connected to Gateway: ["gateway-prd-main-382p",{"micros":124845,"calls":["discord-sessions-green-prd-2-86",{"micros":123736,"calls":["start_session",{"micros":91909,"calls":["api-prd-main-8dvm",{"micros":81195,"calls":["get_user",{"micros":4306},"add_authorized_ip",{"micros":7248},"get_guilds",{"micros":11183},"coros_wait",{"micros":2}]}]},"guilds_connect",{"micros":2,"calls":[]},"presence_connect",{"micros":1,"calls":[]}]}]}] (Session ID: 2a840d4456d485c1f56f93ea390836cc).
-INFO 2022-01-28 16:50:30,277 - Syncing commands...
-INFO 2022-01-28 16:50:30,921 - Syncing permissions...
-INFO 2022-01-28 16:50:30,922 - Completed syncing all commands!
+WARNING 2022-01-28 17:29:52,671 - PyNaCl is not installed, voice will NOT be supported
+INFO 2022-01-28 17:29:52,675 - logging in using static token
+INFO 2022-01-28 17:29:52,985 - Shard ID None has sent the IDENTIFY payload.
+INFO 2022-01-28 17:29:53,090 - Shard ID None has connected to Gateway: ["gateway-prd-main-xhvr",{"micros":66233,"calls":["discord-sessions-green-prd-2-29",{"micros":57104,"calls":["start_session",{"micros":41852,"calls":["api-prd-main-p22c",{"micros":36558,"calls":["get_user",{"micros":3364},"add_authorized_ip",{"micros":4074},"get_guilds",{"micros":3898},"coros_wait",{"micros":2}]}]},"guilds_connect",{"micros":2,"calls":[]},"presence_connect",{"micros":9743,"calls":[]}]}]}] (Session ID: b0ac849c429d0a4fc274f69ef4291d2b).
+INFO 2022-01-28 17:29:55,127 - Syncing commands...
+INFO 2022-01-28 17:29:55,981 - Syncing permissions...
+INFO 2022-01-28 17:29:55,981 - Completed syncing all commands!
+INFO 2022-01-28 17:30:11,885 - 
+COMMAND NAME: promote
+COMMAND INFO: Target User: 55141460918534184
+USER INFO:
+User Object: <class_playground.User object at 0x7f74a4923460> - User Object Name: Goat - User Faction: <class_playground.Faction object at 0x7f74a49758b0> - User Actions: 0
+INFO 2022-01-28 17:30:37,088 - 
+COMMAND NAME: promote
+COMMAND INFO: Target User: 55141460918534184
+USER INFO:
+User Object: <class_playground.User object at 0x7f74a4975400> - User Object Name: Goat - User Faction: <class_playground.Faction object at 0x7f74a4993910> - User Actions: 0
+INFO 2022-01-28 17:30:53,245 - 
+COMMAND NAME: promote
+COMMAND INFO: Target User: 55141460918534184
+USER INFO:
+User Object: <class_playground.User object at 0x7f74a4993a00> - User Object Name: Goat - User Faction: <class_playground.Faction object at 0x7f74a487aa00> - User Actions: 0
+INFO 2022-01-28 17:31:21,379 - 
+COMMAND NAME: promote
+COMMAND INFO: Target User: 55141460918534184
+USER INFO:
+User Object: <class_playground.User object at 0x7f74a4906fa0> - User Object Name: Goat - User Faction: <class_playground.Faction object at 0x7f74a487a340> - User Actions: 0
+INFO 2022-01-28 17:39:36,090 - 
+COMMAND NAME: promote
+COMMAND INFO: Target User: 788046588626599978
+USER INFO:
+User Object: <class_playground.User object at 0x7f74a48c1dc0> - User Object Name: punished SP00NUBIS - User Faction: <class_playground.Faction object at 0x7f74a45bd7c0> - User Actions: 0
+ERROR 2022-01-28 17:39:36,505 - An exception has occurred while executing command `promote`:
+Traceback (most recent call last):
+  File "/opt/virtualenvs/python3/lib/python3.8/site-packages/discord_slash/client.py", line 1353, in invoke_command
+    await func.invoke(ctx, **args)
+  File "/opt/virtualenvs/python3/lib/python3.8/site-packages/discord_slash/model.py", line 210, in invoke
+    return await self.func(*args, **kwargs)
+  File "main.py", line 1419, in promote
+    print(target.faction)
+AttributeError: 'NoneType' object has no attribute 'faction'
+INFO 2022-01-28 17:40:22,214 - 
+COMMAND NAME: accept
+COMMAND INFO: Target User: !788046588626599978
+USER INFO:
+User Object: <class_playground.User object at 0x7f74a45bdca0> - User Object Name: punished SP00NUBIS - User Faction: <class_playground.Faction object at 0x7f74a45b6ca0> - User Actions: 0
+INFO 2022-01-28 17:40:22,215 - Target user result: None - target user id: 788046588626599978
+INFO 2022-01-28 17:40:22,215 - Game Users: {906329402885951558: <class_playground.User object at 0x7f74a45bd1f0>, 0: <class_playground.User object at 0x7f74a45bd1c0>, 339251879273955330: <class_playground.User object at 0x7f74a45bd7c0>, 855141460918534184: <class_playground.User object at 0x7f74a45b6c40>, 238567877618302976: <class_playground.User object at 0x7f74a4993220>, 840261055971328030: <class_playground.User object at 0x7f74a45bdca0>, '238567877618302976': <class_playground.User object at 0x7f74a4993220>, 667912021517271042: <class_playground.User object at 0x7f74a4993a30>, 916055012759707668: <class_playground.User object at 0x7f74a4612040>, 426862663948173318: <class_playground.User object at 0x7f74a46120d0>, 432317596000321536: <class_playground.User object at 0x7f74a4612160>, 686525861792317441: <class_playground.User object at 0x7f74a4993ac0>, '855141460918534184': <class_playground.User object at 0x7f74a45b6c40>}

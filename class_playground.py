@@ -49,8 +49,6 @@ class Game:
 
 		elif id != None:
 			output = [self.factions[i] for i in list(self.factions.keys()) if self.factions[i].id == id]
-		print("OUTPUT")
-		print(output)
 		if len(output)!=0:
 			return output[0]
 

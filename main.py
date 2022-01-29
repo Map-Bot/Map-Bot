@@ -118,7 +118,7 @@ async def map_update(id):
 			if map_result != "No map":
 				print("yes map")
 				map_result.save("test.png")
-				await channel.send("everyone\nMap Update:",
+				await channel.send(f"@everyone\nMap Update\nClaims: {game_it.action_limit}",
 				                   file=discord.File("test.png"))
 			else:
 				print("no map")
@@ -418,7 +418,7 @@ async def leave(ctx):
 	print(faction)
 	mems = 0
 	for i in faction.roles:
-		log.debug(f"Members list for role name: {ctx.guild.get_role(i.central_id).name}\n{ctx.guild.get_role(i.central_id).members}")
+		log.info(f"Members list for role name: {ctx.guild.get_role(i.central_id).name}\n{ctx.guild.get_role(i.central_id).members}")
 		mems += len(ctx.guild.get_role(i.central_id).members)
 	if mems > 1:
 		print(f"Members: {mems}")
@@ -619,11 +619,8 @@ async def update_roles(ctx):
 					j.central_name = role.name
 					await role.edit(color=discord.Color.from_rgb(
 					    i.colors[0], i.colors[1], i.colors[2]))
-					print("edited color")
 					if not role.hoist:
 						role.hoist = True
-					print(i.colors)
-					print(j.central_name)
 			elif i.server_id == ctx.guild.id:
 				if j.satellite_id == 0 and j.satellite_name not in role_names:
 					edited.append(j.central_name)
@@ -754,9 +751,9 @@ async def delete_fac(ctx, faction):
 		await ctx.send("Target faction must exist. Make sure you spelled it right")
 		log.warning(f"Target Faction Result: {faction_obj} - Target Faction Name: {faction} - Game Factions: {game.factions}")
 		return
-	log.debug(f"DELETE FAC USER FACTION INFO")
+	log.info(f"DELETE FAC USER FACTION INFO")
 	for i in list(game.users.values()):
-		log.debug(f"User Name: {i.name} - User Faction: {i.faction}")
+		log.info(f"User Name: {i.name} - User Faction: {i.faction}")
 		if isinstance(i.faction,class_playground.Faction):
 			if i.faction.id == faction_obj.id:
 				i.faction = ""
@@ -1267,7 +1264,7 @@ async def attack(ctx, attacker, target):
 	target_owner = game.game_json.get(target)
 	log.info(f"\nCOMMAND INFO:\nCommand: engage commence - Target Faction Province: {target}")
 	log.info(f"Target Owner: {target_owner}")
-	log.debug(f"Current Claims: {game.current_claims}")
+	log.info(f"Current Claims: {game.current_claims}")
 	#for i in game.factions:
 	#	log.info(f"Iteration: {i}")
 	#	log.info(f"Faction: {game.factions[i]}")
@@ -1408,8 +1405,12 @@ async def promote(ctx, target_user):
 	user_log(game, user, "promote", f"Target User: {target_user[3:-1]}")
 	print(target_user[3:-1])
 	print(game.users)
+	if "!" in target_user:
+		sliced_user = target_user[3:-1]
+	else:
+		sliced_user = target_user[2:-1]
 	try:
-		target = game.users.get(int(target_user[3:-1]))
+		target = game.users.get(int(sliced_user))
 	except:
 		await ctx.send("Invalid target user")
 	print(target)
@@ -1426,7 +1427,7 @@ async def promote(ctx, target_user):
 		role_dict[i.central_id] = i.perm_id
 		role_dict[i.satellite_id] = i.perm_id
 	print("Testing 2")
-	for i in ctx.guild.get_member(int(target_user[3:-1])).roles:
+	for i in ctx.guild.get_member(int(sliced_user)).roles:
 		id_result = role_dict.get(i.id)
 		if id_result:
 			if id_result < target_perms:
@@ -1445,9 +1446,9 @@ async def promote(ctx, target_user):
 		await ctx.send("You cannot promote someone at or above your rank")
 		return
 	role = ctx.guild.get_role(user.faction.roles[target_perms-2].central_id)
-	await ctx.guild.get_member(int(target_user[3:-1])).add_roles(role)
+	await ctx.guild.get_member(int(sliced_user)).add_roles(role)
 	role2 = ctx.guild.get_role(user.faction.roles[target_perms-1].central_id)
-	await ctx.guild.get_member(int(target_user[3:-1])).remove_roles(role2)
+	await ctx.guild.get_member(int(sliced_user)).remove_roles(role2)
 	await ctx.send(f"{target_user} has now been promoted to {role.name}")
 
 @in_fac()
@@ -1456,11 +1457,14 @@ async def promote(ctx, target_user):
 async def demote(ctx, target_user):
 	game = r_test.load_from_id(ctx.guild.id)
 	user = game.get_user(ctx.author.id)
-	user_log(game, user, "demote", f"Target User: {target_user[3:-1]}")
-	print(target_user[3:-1])
+	user_log(game, user, "demote", f"Target User: {target_user[2:-1]}")
+	if "!" in target_user:
+		sliced_user = target_user[3:-1]
+	else:
+		sliced_user = target_user[2:-1]
 	print(game.users)
 	try:
-		target = game.users.get(int(target_user[3:-1]))
+		target = game.users.get(int(sliced_user))
 	except:
 		await ctx.send("Invalid target user")
 	print(target)
@@ -1477,7 +1481,7 @@ async def demote(ctx, target_user):
 		role_dict[i.central_id] = i.perm_id
 		role_dict[i.satellite_id] = i.perm_id
 	print("Testing 2")
-	for i in ctx.guild.get_member(int(target_user[3:-1])).roles:
+	for i in ctx.guild.get_member(int(sliced_user)).roles:
 		id_result = role_dict.get(i.id)
 		if id_result:
 			if id_result < target_perms:
@@ -1496,9 +1500,9 @@ async def demote(ctx, target_user):
 		await ctx.send("You cannot demote someone at or above your rank")
 		return
 	role = ctx.guild.get_role(user.faction.roles[target_perms].central_id)
-	await ctx.guild.get_member(int(target_user[3:-1])).add_roles(role)
+	await ctx.guild.get_member(int(sliced_user)).add_roles(role)
 	role2 = ctx.guild.get_role(user.faction.roles[target_perms-1].central_id)
-	await ctx.guild.get_member(int(target_user[3:-1])).remove_roles(role2)
+	await ctx.guild.get_member(int(sliced_user)).remove_roles(role2)
 	await ctx.send(f"{target_user} has now been demoted to {role.name}")
 
 @in_fac()
@@ -1507,29 +1511,39 @@ async def demote(ctx, target_user):
 async def accept(ctx, target_user):
 	game = r_test.load_from_id(ctx.guild.id)
 	user = game.get_user(ctx.author.id)
-	user_log(game, user, "accept", f"Target User: {target_user[3:-1]}")
+	user_log(game, user, "accept", f"Target User: {target_user[2:-1]}")
 	print(target_user[3:-1])
+	if "!" in target_user:
+		sliced_user = target_user[3:-1]
+	else:
+		sliced_user = target_user[2:-1]
 	print(game.users)
 	try:
-		target = game.users.get(int(target_user[3:-1]))
+		target = game.users.get(int(sliced_user))
+		log.info(f"Target user result: {target} - target user id: {int(sliced_user)}")
+		log.info(f"Game Users: {game.users}")
 	except:
 		await ctx.send("Invalid target user")
+		return
 	print(target)
 	if not target:
 		await ctx.send("Invalid target user")
+		return
 	print(target.faction)
 	print(user.faction)
 	role = ctx.guild.get_role(user.faction.roles[-2].central_id)
-	target_discord_user = ctx.guild.get_member(int(target_user[3:-1]))
+	target_discord_user = ctx.guild.get_member(int(sliced_user))
 	if role in target_discord_user.roles:
 		await ctx.send("You cannot accept someone already in your faction")
 		return
 	target.rank = user.faction.roles[-2].central_id
-	game.users[target_user[3:-1]] = target
-	await ctx.guild.get_member(int(target_user[3:-1])).add_roles(role)
+	game.users[sliced_user] = target
+	await ctx.guild.get_member(int(sliced_user)).add_roles(role)
+	role = ctx.guild.get_role(user.faction.roles[-3].central_id)
+	await ctx.guild.get_member(int(sliced_user)).add_roles(role)
 	role = ctx.guild.get_role(user.faction.roles[-1].central_id)
-	await ctx.guild.get_member(int(target_user[3:-1])).remove_roles(role)
-	await ctx.send(target.rank)
+	await ctx.guild.get_member(int(sliced_user)).remove_roles(role)
+	await ctx.send(f"{target_user} has been accepted into {user.faction.name}")
 	game.save()
 @accept.error
 async def new_fac_error(ctx, error):

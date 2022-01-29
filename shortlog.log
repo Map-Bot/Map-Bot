@@ -1,0 +1,209 @@
+INFO 2022-01-28 17:02:12,537 - 
+COMMAND NAME: claim
+COMMAND INFO: Target ID: 17
+USER INFO:
+User Object: <class_playground.User object at 0x7f2ee2c8ec10> - User Object Name: GamingSquid - User Faction: <class_playground.Faction object at 0x7f2ee2c8e3d0> - User Actions: 0
+INFO 2022-01-28 17:02:14,507 - User Claims: ['17']
+ERROR 2022-01-28 17:02:17,390 - An exception has occurred while executing command `delete_fac`:
+Traceback (most recent call last):
+  File "/opt/virtualenvs/python3/lib/python3.8/site-packages/discord_slash/client.py", line 1353, in invoke_command
+    await func.invoke(ctx, **args)
+  File "/opt/virtualenvs/python3/lib/python3.8/site-packages/discord_slash/model.py", line 202, in invoke
+    raise error.CheckFailure
+discord_slash.error.CheckFailure
+ERROR 2022-01-28 17:02:35,226 - An exception has occurred while executing command `delete_fac`:
+Traceback (most recent call last):
+  File "/opt/virtualenvs/python3/lib/python3.8/site-packages/discord_slash/client.py", line 1353, in invoke_command
+    await func.invoke(ctx, **args)
+  File "/opt/virtualenvs/python3/lib/python3.8/site-packages/discord_slash/model.py", line 202, in invoke
+    raise error.CheckFailure
+discord_slash.error.CheckFailure
+INFO 2022-01-28 17:03:03,664 - 
+COMMAND NAME: claim
+COMMAND INFO: Target ID: 249
+USER INFO:
+User Object: <class_playground.User object at 0x7f2ee292e640> - User Object Name: Pseudohydnum Gelatinosum - User Faction: <class_playground.Faction object at 0x7f2ee2c8e6a0> - User Actions: 0
+INFO 2022-01-28 17:03:26,194 - 
+COMMAND NAME: change_faction_color
+COMMAND INFO: New Color: 255, 182, 193
+USER INFO:
+User Object: <class_playground.User object at 0x7f2ee292e4c0> - User Object Name: GamingSquid - User Faction: <class_playground.Faction object at 0x7f2ee291f250> - User Actions: 0
+INFO 2022-01-28 17:03:48,891 - 
+COMMAND NAME: change_faction_color
+COMMAND INFO: New Color: 254, 182, 193
+USER INFO:
+User Object: <class_playground.User object at 0x7f2ee291f5b0> - User Object Name: GamingSquid - User Faction: <class_playground.Faction object at 0x7f2ee2925700> - User Actions: 0
+ERROR 2022-01-28 17:05:13,563 - An exception has occurred while executing command `delete_fac`:
+Traceback (most recent call last):
+  File "/opt/virtualenvs/python3/lib/python3.8/site-packages/discord_slash/client.py", line 1353, in invoke_command
+    await func.invoke(ctx, **args)
+  File "/opt/virtualenvs/python3/lib/python3.8/site-packages/discord_slash/model.py", line 202, in invoke
+    raise error.CheckFailure
+discord_slash.error.CheckFailure
+INFO 2022-01-28 17:07:16,969 - 
+COMMAND NAME: leave
+COMMAND INFO: N/A
+USER INFO:
+User Object: <class_playground.User object at 0x7f2ee294a790> - User Object Name: Punished Valentine - User Faction: <class_playground.Faction object at 0x7f2ee2925a90> - User Actions: 0
+INFO 2022-01-28 17:07:16,970 - Members left in faction: 2
+INFO 2022-01-28 17:07:52,562 - 
+COMMAND NAME: apply
+COMMAND INFO: Target Faction Name: German syndicate - Faction Object: None
+USER INFO:
+User Object: <class_playground.User object at 0x7f2ee269ed30> - User Object Name: Punished Valentine - User Faction:  - User Actions: 0
+INFO 2022-01-28 17:08:28,925 - 
+COMMAND NAME: apply
+COMMAND INFO: Target Faction Name: German Syndicate - Faction Object: <class_playground.Faction object at 0x7f2ee294a850>
+USER INFO:
+User Object: <class_playground.User object at 0x7f2ee2beaac0> - User Object Name: Punished Valentine - User Faction:  - User Actions: 0
+INFO 2022-01-28 17:08:28,925 - Target Faction Name: German Syndicate
+INFO 2022-01-28 17:09:15,581 - 
+COMMAND NAME: change_faction_color
+COMMAND INFO: New Color: 254 254 254
+USER INFO:
+User Object: <class_playground.User object at 0x7f2ee2c8e220> - User Object Name: punished SP00NUBIS - User Faction: <class_playground.Faction object at 0x7f2ee2bead60> - User Actions: 0
+INFO 2022-01-28 17:09:19,973 - 
+COMMAND NAME: change_faction_color
+COMMAND INFO: New Color: red or some shot
+USER INFO:
+User Object: <class_playground.User object at 0x7f2ee268d550> - User Object Name: Goat - User Faction: <class_playground.Faction object at 0x7f2ee268d310> - User Actions: 0
+INFO 2022-01-28 17:09:28,494 - 
+COMMAND NAME: newfac
+COMMAND INFO: New Faction Name: arrrrrrrrg
+USER INFO:
+User Object: <class_playground.User object at 0x7f2ee3511640> - User Object Name:  - User Faction:  - User Actions: 0
+INFO 2022-01-28 17:09:34,408 - 
+COMMAND NAME: change_faction_color
+COMMAND INFO: New Color: 254, 254, 254
+USER INFO:
+User Object: <class_playground.User object at 0x7f2ee263ccd0> - User Object Name: punished SP00NUBIS - User Faction: <class_playground.Faction object at 0x7f2ee2631880> - User Actions: 0
+INFO 2022-01-28 17:10:02,031 - 
+COMMAND NAME: change_faction_color
+COMMAND INFO: New Color: 0,0,0
+USER INFO:
+User Object: <class_playground.User object at 0x7f2ee2631790> - User Object Name:  - User Faction: <class_playground.Faction object at 0x7f2ee2925b80> - User Actions: 0
+INFO 2022-01-28 17:10:10,673 - 
+COMMAND NAME: promote
+COMMAND INFO: Target User: ished Valentin
+USER INFO:
+User Object: <class_playground.User object at 0x7f2ee294af40> - User Object Name: Goat - User Faction: <class_playground.Faction object at 0x7f2ee2631ee0> - User Actions: 0
+ERROR 2022-01-28 17:10:10,977 - An exception has occurred while executing command `promote`:
+Traceback (most recent call last):
+  File "/opt/virtualenvs/python3/lib/python3.8/site-packages/discord_slash/client.py", line 1353, in invoke_command
+    await func.invoke(ctx, **args)
+  File "/opt/virtualenvs/python3/lib/python3.8/site-packages/discord_slash/model.py", line 210, in invoke
+    return await self.func(*args, **kwargs)
+  File "main.py", line 1412, in promote
+    print(target)
+UnboundLocalError: local variable 'target' referenced before assignment
+INFO 2022-01-28 17:10:13,256 - 
+COMMAND NAME: apply
+COMMAND INFO: Target Faction Name: connorism - Faction Object: None
+USER INFO:
+User Object: <class_playground.User object at 0x7f2ee2925c10> - User Object Name:  - User Faction:  - User Actions: 0
+INFO 2022-01-28 17:10:32,038 - 
+COMMAND NAME: apply
+COMMAND INFO: Target Faction Name: Connorism - Faction Object: <class_playground.Faction object at 0x7f2ee29258b0>
+USER INFO:
+User Object: <class_playground.User object at 0x7f2ee294a4c0> - User Object Name:  - User Faction:  - User Actions: 0
+INFO 2022-01-28 17:10:32,038 - Target Faction Name: Connorism
+ERROR 2022-01-28 17:10:41,955 - An exception has occurred while executing command `promote`:
+Traceback (most recent call last):
+  File "/opt/virtualenvs/python3/lib/python3.8/site-packages/discord_slash/client.py", line 1353, in invoke_command
+    await func.invoke(ctx, **args)
+  File "/opt/virtualenvs/python3/lib/python3.8/site-packages/discord_slash/model.py", line 202, in invoke
+    raise error.CheckFailure
+discord_slash.error.CheckFailure
+ERROR 2022-01-28 17:10:54,295 - An exception has occurred while executing command `promote`:
+Traceback (most recent call last):
+  File "/opt/virtualenvs/python3/lib/python3.8/site-packages/discord_slash/client.py", line 1353, in invoke_command
+    await func.invoke(ctx, **args)
+  File "/opt/virtualenvs/python3/lib/python3.8/site-packages/discord_slash/model.py", line 202, in invoke
+    raise error.CheckFailure
+discord_slash.error.CheckFailure
+INFO 2022-01-28 17:11:10,682 - 
+COMMAND NAME: promote
+COMMAND INFO: Target User: 55141460918534184
+USER INFO:
+User Object: <class_playground.User object at 0x7f2ee2682bb0> - User Object Name: Goat - User Faction: <class_playground.Faction object at 0x7f2ee2bea9d0> - User Actions: 0
+ERROR 2022-01-28 17:11:10,905 - An exception has occurred while executing command `promote`:
+Traceback (most recent call last):
+  File "/opt/virtualenvs/python3/lib/python3.8/site-packages/discord_slash/client.py", line 1353, in invoke_command
+    await func.invoke(ctx, **args)
+  File "/opt/virtualenvs/python3/lib/python3.8/site-packages/discord_slash/model.py", line 210, in invoke
+    return await self.func(*args, **kwargs)
+  File "main.py", line 1415, in promote
+    print(target.faction)
+AttributeError: 'NoneType' object has no attribute 'faction'
+INFO 2022-01-28 17:11:35,287 - 
+COMMAND NAME: unclaim
+COMMAND INFO: Target Province: 17
+USER INFO:
+User Object: <class_playground.User object at 0x7f2ee25e60a0> - User Object Name: GamingSquid - User Faction: <class_playground.Faction object at 0x7f2ee261f520> - User Actions: 0
+INFO 2022-01-28 17:11:43,299 - 
+COMMAND NAME: claim
+COMMAND INFO: Target ID: 173
+USER INFO:
+User Object: <class_playground.User object at 0x7f2ee2679a30> - User Object Name: GamingSquid - User Faction: <class_playground.Faction object at 0x7f2ee261f9a0> - User Actions: 0
+INFO 2022-01-28 17:11:45,251 - User Claims: ['173']
+INFO 2022-01-28 17:12:04,656 - 
+COMMAND NAME: accept
+COMMAND INFO: Target User: 55141460918534184
+USER INFO:
+User Object: <class_playground.User object at 0x7f2ee291f1f0> - User Object Name: Goat - User Faction: <class_playground.Faction object at 0x7f2ee25e6df0> - User Actions: 0
+ERROR 2022-01-28 17:12:05,077 - Accept Error: 'NoneType' object has no attribute 'faction'
+ERROR 2022-01-28 17:12:05,078 - <class 'AttributeError'>
+INFO 2022-01-28 17:12:16,484 - 
+COMMAND NAME: claim
+COMMAND INFO: Target ID: 1074
+USER INFO:
+User Object: <class_playground.User object at 0x7f2ee292e5b0> - User Object Name: arsacyclopentadiene - User Faction: <class_playground.Faction object at 0x7f2ee2631d30> - User Actions: 0
+INFO 2022-01-28 17:12:18,561 - User Claims: ['1074']
+INFO 2022-01-28 17:12:21,978 - 
+COMMAND NAME: accept
+COMMAND INFO: Target User: entin
+USER INFO:
+User Object: <class_playground.User object at 0x7f2ee292ed60> - User Object Name: Goat - User Faction: <class_playground.Faction object at 0x7f2ee2672850> - User Actions: 0
+ERROR 2022-01-28 17:12:22,307 - Accept Error: local variable 'target' referenced before assignment
+ERROR 2022-01-28 17:12:22,307 - <class 'UnboundLocalError'>
+INFO 2022-01-28 17:12:26,933 - 
+COMMAND NAME: promote
+COMMAND INFO: Target User: 667912021517271042
+USER INFO:
+User Object: <class_playground.User object at 0x7f2ee2c8e250> - User Object Name: Connor13 - User Faction: <class_playground.Faction object at 0x7f2ee2631220> - User Actions: 0
+INFO 2022-01-28 17:12:31,345 - 
+COMMAND NAME: claim
+COMMAND INFO: Target ID: 2633
+USER INFO:
+User Object: <class_playground.User object at 0x7f2ee26232b0> - User Object Name: arsacyclopentadiene - User Faction: <class_playground.Faction object at 0x7f2ee25ed700> - User Actions: 0
+INFO 2022-01-28 17:12:32,890 - 
+COMMAND NAME: accept
+COMMAND INFO: Target User: 55141460918534184
+USER INFO:
+User Object: <class_playground.User object at 0x7f2ee2682340> - User Object Name: Goat - User Faction: <class_playground.Faction object at 0x7f2ee2beab50> - User Actions: 0
+ERROR 2022-01-28 17:12:33,203 - Accept Error: 'NoneType' object has no attribute 'faction'
+ERROR 2022-01-28 17:12:33,203 - <class 'AttributeError'>
+INFO 2022-01-28 17:12:38,568 - 
+COMMAND NAME: claim
+COMMAND INFO: Target ID: 1010
+USER INFO:
+User Object: <class_playground.User object at 0x7f2ee269ed60> - User Object Name: Pseudohydnum Gelatinosum - User Faction: <class_playground.Faction object at 0x7f2ee268d820> - User Actions: 0
+INFO 2022-01-28 17:12:52,828 - 
+COMMAND NAME: accept
+COMMAND INFO: Target User: ished Valentine#939
+USER INFO:
+User Object: <class_playground.User object at 0x7f2ee2672ee0> - User Object Name: Goat - User Faction: <class_playground.Faction object at 0x7f2ee2c8e940> - User Actions: 0
+ERROR 2022-01-28 17:12:53,103 - Accept Error: local variable 'target' referenced before assignment
+ERROR 2022-01-28 17:12:53,103 - <class 'UnboundLocalError'>
+INFO 2022-01-28 17:13:09,770 - 
+COMMAND NAME: accept
+COMMAND INFO: Target User: ishedValentine#939
+USER INFO:
+User Object: <class_playground.User object at 0x7f2ee2bd6b50> - User Object Name: Goat - User Faction: <class_playground.Faction object at 0x7f2ee26727c0> - User Actions: 0
+ERROR 2022-01-28 17:13:10,303 - Accept Error: local variable 'target' referenced before assignment
+ERROR 2022-01-28 17:13:10,303 - <class 'UnboundLocalError'>
+INFO 2022-01-28 17:14:05,495 - 
+COMMAND NAME: claim
+COMMAND INFO: Target ID: 7926262
+USER INFO:
+User Object: <class_playground.User object at 0x7f2ee2c8e370> - User Object Name: GamingSquid - User Faction: <class_playground.Faction object at 0x7f2ee29258e0> - User Actions: 0
