@@ -1403,8 +1403,6 @@ async def promote(ctx, target_user):
 	game = r_test.load_from_id(ctx.guild.id)
 	user = game.get_user(ctx.author.id)
 	user_log(game, user, "promote", f"Target User: {target_user[3:-1]}")
-	print(target_user[3:-1])
-	print(game.users)
 	if "!" in target_user:
 		sliced_user = target_user[3:-1]
 	else:
@@ -1462,7 +1460,7 @@ async def demote(ctx, target_user):
 		sliced_user = target_user[3:-1]
 	else:
 		sliced_user = target_user[2:-1]
-	print(game.users)
+
 	try:
 		target = game.users.get(int(sliced_user))
 	except:
@@ -1517,7 +1515,6 @@ async def accept(ctx, target_user):
 		sliced_user = target_user[3:-1]
 	else:
 		sliced_user = target_user[2:-1]
-	print(game.users)
 	try:
 		target = game.users.get(int(sliced_user))
 		log.info(f"Target user result: {target} - target user id: {int(sliced_user)}")
