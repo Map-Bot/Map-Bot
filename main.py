@@ -57,7 +57,7 @@ def error_embed(content, title="Attention!"):
 	return embed
 def success_embed(content, title="Success!"):
 	embed = discord.Embed(title=f"**{title}**", color=0xaadaff,description=content)
-	embed.set_thumbnail(url="http://cdn.onlinewebfonts.com/svg/img_143278.png")
+	embed.set_thumbnail(url="http://clipart-library.com/images_k/check-mark-png-transparent/check-mark-png-transparent-12.png")
 	return embed
 # https://tenor.com/view/wooo-yeah-baby-gif-18955985
 async def map_update(id):
