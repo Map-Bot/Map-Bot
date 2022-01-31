@@ -122,7 +122,7 @@ class Game:
 		print(faction)
 		if not self.verify_id(id):
 			return "Invalid ID"
-		if self.game_json[id] == faction.id or self.current_claims.get(id) == faction.id or self.game_json[id] != 0:
+		if self.game_json[id] == faction.id or self.current_claims.get(id) or self.game_json[id] != 0:
 			return f"Province already {id} claimed"
 		print(self.game_json[id])
 		self.current_claims[id] = faction.id
