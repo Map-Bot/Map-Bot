@@ -26,7 +26,7 @@ class Game:
 		self.map_name = ""
 		self.game_json = {}
 		self.trades = {}
-		self.schedule = "* 8 * * *"
+		self.schedule = "* * * * *"
 		self.current_claims = {}
 		self.description = ""
 		self.action_limit = 1
