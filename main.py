@@ -77,15 +77,18 @@ async def map_update(id):
 			print(temp)
 			print(i)
 			print(i.faction)
-			faction = game.get_faction(name=i.faction)
+			if isinstance(i.faction, class_playground.Fation):
+				faction = i.faction
+			else:
+				faction = game.get_faction(name=i.faction)
 			if faction == None:
 				pass
 			log.info(f"Claim list for user {i.name}: {i.claims}")
 			#log.info(f"User Object Info: {dir(i)}")
 			for j in i.claims:
 				print("redraw")
-				log.info(f"-----EDITED PROVINCE: {j} NEW OWNER: {i.faction.name}------")
-				log.debug(f"RESULT OF PROVINCE EDIT: {game.edit_province(j, i.faction)}")
+				log.info(f"-----EDITED PROVINCE: {j} NEW OWNER: {faction.name}------")
+				log.debug(f"RESULT OF PROVINCE EDIT: {game.edit_province(j, faction)}")
 
 			i.claims = []
 			i.actions = 0
