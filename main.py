@@ -77,7 +77,7 @@ async def map_update(id):
 			print(temp)
 			print(i)
 			print(i.faction)
-			if isinstance(i.faction, class_playground.Fation):
+			if isinstance(i.faction, class_playground.Faction):
 				faction = i.faction
 			else:
 				faction = game.get_faction(name=i.faction)
