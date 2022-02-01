@@ -1139,10 +1139,10 @@ def trade_check(trade, user, faction, game):
 	attack_list = list(game.attacks.keys())
 	for i in trade["Offering"]:
 		if str(i) in attack_list:
-			return "You cannot traded a province that is being attacked"
+			return "You cannot trade a province that is being attacked"
 	for i in trade["Requesting"]:
 		if str(i) in attack_list:
-			return "You cannot traded a province that is being attacked"
+			return "You cannot trade a province that is being attacked"
 	errors_offer=[]
 	errors_request=[]
 	for i in trade["Offering"]:
@@ -1166,12 +1166,18 @@ async def trade_preview(ctx, trade_id):
 	game = r_test.load_from_id(ctx.guild.id)
 	user = game.get_user(ctx.author.id)
 	
-	faction = game.get_faction(name=user.faction)
+	if isinstance(user.faction, class_playground.Faction):
+		faction = user.faction
+	elif user.faction != "":
+		faction = game.get_faction(name=user.faction)
+	else:
+		await ctx.send(embed=error_embed("Cannot find faction"))
+		return
 	trade = game.trades.get(trade_id)
 	user_log(game, user, "trade preview", f"Trade ID: {trade_id} - Trade Info: {trade}")
 	await ctx.defer()
 	result = trade_check(trade, user, faction, game)
-	if result != None:
+	if result != None and result != "You must be in the target faction to accept this trade":
 		await ctx.send(result)
 		return
 
@@ -1200,8 +1206,14 @@ async def trade_preview(ctx, trade_id):
 async def trade_accept(ctx, trade_id):
 	game = r_test.load_from_id(ctx.guild.id)
 	user = game.get_user(ctx.author.id)
-	
-	faction = game.get_faction(name=user.faction)
+	if isinstance(user.faction, class_playground.Faction):
+		faction = user.faction
+	elif user.faction != "":
+		faction = game.get_faction(name=user.faction)
+	else:
+		await ctx.send(embed=error_embed("Cannot find faction"))
+		return
+
 	trade = game.trades.get(trade_id)
 	user_log(game, user, "trade accept", f"Trade ID: {trade_id} - Trade Info: {trade}")
 	await ctx.defer()
@@ -1230,7 +1242,13 @@ async def trade_view(ctx):
 	game = r_test.load_from_id(ctx.guild.id)	
 	user = game.get_user(ctx.author.id)
 	user_log(game, user, "trade view", f"Trade List: {game.trades}")
-	faction = game.get_faction(name=user.faction)
+	if isinstance(user.faction, class_playground.Faction):
+		faction = user.faction
+	elif user.faction != "":
+		faction = game.get_faction(name=user.faction)
+	else:
+		await ctx.send(embed=error_embed("Cannot find faction"))
+		return
 	embed = discord.Embed(color=0x1111ee)
 	for i in list(game.trades.keys()):
 		trade = game.trades[i]

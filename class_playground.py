@@ -182,8 +182,8 @@ class Game:
 		    io.BytesIO(base64.b64decode(r_test.map_image(self.map_name))))
 
 		for i in self.current_claims.keys():
-			owner = self.current_claims[i] - 1
-			if owner != -1:
+			owner = self.current_claims[i]
+			if owner != 0:
 				coordinates = r_test.map_json(
 				    self.map_name)[f"l{i}"]["coordinates"]
 				faction = self.factions[owner]
