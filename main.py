@@ -540,7 +540,7 @@ async def maps(ctx):
 async def map(ctx):
 	await ctx.defer()
 	game = r_test.load_from_id(ctx.guild.id)
-	check_update(game)
+	#check_update(game)
 	image = game.map()
 	if image != "No map":
 		image.save("test.png")
@@ -573,7 +573,7 @@ async def claim(ctx, id):
 	
 	game = r_test.load_from_id(ctx.guild.id)
 	user = game.get_user(ctx.author.id)
-	check_update(game)
+	#check_update(game)
 	await fix_shit(game, ctx.author)
 	user_log(game, user, "claim", f"Target ID: {id}")
 	done = 0
@@ -801,7 +801,7 @@ async def myfac(ctx):
 	game = r_test.load_from_id(ctx.guild.id)
 	user = game.get_user(ctx.author.id)
 	user_log(game, user, "myfac", "N/A")
-	check_update(game)
+	#check_update(game)
 	for i in ctx.author.roles:
 		if game.get_faction(name=i.name) != None:
 			await ctx.send(i.name)
@@ -846,7 +846,7 @@ async def update(ctx, schedule):
 		return await map_update(param)
 
 	game.schedule = schedule
-	check_update(game)
+	#check_update(game)
 	game.save()
 	await ctx.send("done")
 
