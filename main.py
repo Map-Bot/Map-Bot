@@ -82,7 +82,7 @@ async def map_update(id):
 			else:
 				faction = game.get_faction(name=i.faction)
 			if faction == None:
-				pass
+				continue
 			log.info(f"Claim list for user {i.name}: {i.claims}")
 			#log.info(f"User Object Info: {dir(i)}")
 			for j in i.claims:
