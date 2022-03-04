@@ -91,7 +91,7 @@ async def map_update(id):
 				log.debug(f"RESULT OF PROVINCE EDIT: {game.edit_province(j, faction)}")
 
 			i.claims = []
-			i.actions = 1
+			i.actions = 0
 		game.current_claims = {}
 		game.save()
 		
