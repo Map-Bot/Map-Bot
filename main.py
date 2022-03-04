@@ -935,7 +935,7 @@ async def change_faction_color(ctx, color):
 	leader = False
 
 
-	await ctx.send("Warning, may be a little broken")
+	await ctx.send("Warning, may be a little broken"), ephemeral=True
 	colors = color.strip().split(",")
 	if len(colors) != 3:
 		embed = discord.Embed(title="Change Faction Color!", description="You need exactly three values (RGB) to change the color.\nTry something like **0, 0, 255**",color=0x96d031)
