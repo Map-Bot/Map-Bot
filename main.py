@@ -1051,6 +1051,7 @@ async def unclaim(ctx, id):
 			image.quick_fill(temp, eval(i), (255,255,255))
 		temp.save("test.png")
 		game.update_map(temp)
+		user.actions -= 1
 		game.save()
 		await ctx.send(embed=success_embed(f"Successfully unclaimed Province {id}"),file=discord.File("test.png"))
 	else:
