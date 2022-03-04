@@ -590,6 +590,7 @@ async def claim(ctx, id):
 	result = game.claim(id, game.get_faction(name=faction.name))
 	if result == "Sucessfully claimed":
 		#await ctx.send(result)
+		user.actions += 1
 		game.users[ctx.author.id].claims.append(id)
 		log.info(f"User Claims: {game.users[ctx.author.id].claims}")
 		game.save()
