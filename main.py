@@ -1324,7 +1324,7 @@ async def attack(ctx, attacker, target):
 	if game.game_json.get(attacker) != faction.id:
 		print(f"attacker {faction.id}")
 		print(f"Real Owner {game.game_json.get(attacker)}")
-		await ctx.send("You must own the attacking province")
+		await ctx.send("You must own the attacking province for at least one round")
 		return
 	if user.actions >= game.action_limit:
 		await ctx.send(embed=error_embed("You have used up all of your actions for this update period"))
