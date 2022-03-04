@@ -591,7 +591,6 @@ async def claim(ctx, id):
 	if result == "Sucessfully claimed":
 		#await ctx.send(result)
 		game.users[ctx.author.id].claims.append(id)
-		user.actions += 1
 		log.info(f"User Claims: {game.users[ctx.author.id].claims}")
 		game.save()
 		temp = game.map()
