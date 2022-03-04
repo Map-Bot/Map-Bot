@@ -1354,7 +1354,7 @@ async def attack(ctx, attacker, target):
 
 	game.attacks[f"{target}"] = {"attacking_province": attacker, "defending_province": target,"attackers":[user.discord_id], "defenders":[0], "max_attackers":attack_count, "max_defenders":defense_count, "instigator": user.discord_id}
 	user.actions += 1
-	await ctx.send(f"**Attacking province {target} from province {attacker}**\nMaximum Attackers: {attack_count}\nMaximum Defenders: {defense_count} \nPings: <@&{faction.roles[-1].role_id}>")
+	await ctx.send(f"**Attacking province {target} from province {attacker}**\nMaximum Attackers: {attack_count}\nMaximum Defenders: {defense_count}")
 	game.save()
 	await complete_attack(ctx, target)
 
