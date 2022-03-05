@@ -163,8 +163,8 @@ async def map_update(id):
 				embed = discord.Embed(title="**BATTLE RESULTS**", color = 0xf92424)
 				embed.set_thumbnail(url="https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fclipart-library.com%2Fimg1%2F1063584.png&f=1&nofb=1")
 				embed.add_field(name="***Attacker Victory!***", value=f"A righteous victory over the enemy was achieved at province {attack}!")
-			embed.add_field(name="Attack Dice", value=f"Attack Dice Rolls: `{', '.join(str(i) for i in attack_dice)}`\nTotal: {sum(attack_dice)}", inline=False)
-			embed.add_field(name="Defense Dice", value=f"Defense Dice Rolls: `{', '.join(str(i) for i in defense_dice)}`\nTotal: {sum(defense_dice)}", inline=False)
+			embed.add_field(name="Attack Dice", value=f"Attack Dice Rolls: `{', '.join(str(i) for i in attack_dice)}`\nSumTotal: {sum(attack_dice)}", inline=False)
+			embed.add_field(name="Defense Dice", value=f"Defense Dice Rolls: `{', '.join(str(i) for i in defense_dice)}`\nSum Total: {sum(defense_dice)}", inline=False)
 			base_coords = r_test.map_json(game.map_name)[f"l{attack}"]["coordinates"][0]
 			base_coords = eval(base_coords)
 			print(base_coords)
@@ -1283,8 +1283,8 @@ async def complete_attack(ctx, id):
 		embed.set_thumbnail(url="https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fclipart-library.com%2Fimg1%2F1063584.png&f=1&nofb=1")
 		embed.add_field(name="***Attacker Victory!***", value=f"A righteous victory over the enemy was achieved at province {id}!")
 	game.save()
-	embed.add_field(name="Attack Dice", value=f"Attack Dice Rolls: `{', '.join(str(i) for i in attack_dice)}`\nTotal: {sum(attack_dice)}", inline=False)
-	embed.add_field(name="Defense Dice", value=f"Defense Dice Rolls: `{', '.join(str(i) for i in defense_dice)}`\nTotal: {sum(defense_dice)}", inline=False)
+	embed.add_field(name="Attack Dice", value=f"Attack Dice Rolls: `{', '.join(str(i) for i in attack_dice)}`\nSum Total: {sum(attack_dice)}", inline=False)
+	embed.add_field(name="Defense Dice", value=f"Defense Dice Rolls: `{', '.join(str(i) for i in defense_dice)}`\nSum Total: {sum(defense_dice)}", inline=False)
 	base_coords = r_test.map_json(game.map_name)[f"l{id}"]["coordinates"][0]
 	base_coords = eval(base_coords)
 	img = game.map()
