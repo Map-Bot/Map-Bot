@@ -59,11 +59,6 @@ def success_embed(content, title="Success!"):
 	embed = discord.Embed(title=f"**{title}**", color=0xaadaff,description=content)
 	embed.set_thumbnail(url="http://clipart-library.com/images_k/check-mark-png-transparent/check-mark-png-transparent-12.png")
 	return embed
-def claim_embed(content, title="Province Claimed!"):
-	embed = discord.Embed(title=f"**{title}**", color=0xaadaff,description=content)
-	embed.file(url="http://clipart-library.com/images_k/check-mark-png-transparent/check-mark-png-transparent-12.png")
-	embed.set_image(url="attachment://snapshot.png")
-	return embed
 # https://tenor.com/view/wooo-yeah-baby-gif-18955985
 async def map_update(id):
 	log.info("Updating the map")
@@ -603,7 +598,8 @@ async def claim(ctx, id):
 		coordinates=map_json[f"l{id}"]["coordinates"]
 		print(coordinates)
 		image.snapshot(temp, eval(coordinates[0]))
-		await ctx.send(embed=claim_embed(f"Successfully claimed province {id}"))
+		await ctx.send(embed=success_embed(f"Successfully claimed province {id}"),
+		               file=discord.File("snapshot.png"))
 	else:
 		if result:
 			await ctx.send(embed=error_embed(result))
