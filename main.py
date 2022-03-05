@@ -598,10 +598,8 @@ async def claim(ctx, id):
 		coordinates=map_json[f"l{id}"]["coordinates"]
 		print(coordinates)
 		image.snapshot(temp, eval(coordinates[0]))
-		await ctx.send(claim_embed(content="Successfully claimed province {id}", title="Province Claimed!"):
-		embed = discord.Embed(title=f"**{title}**", color=0xaadaff,description=content)
-		embed.set_image(url="attachment://snapshot.png")
-		return embed)
+		await ctx.send(embed=success_embed(f"Successfully claimed province {id}"),
+		               file=discord.File("snapshot.png"))
 	else:
 		if result:
 			await ctx.send(embed=error_embed(result))
