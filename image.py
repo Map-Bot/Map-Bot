@@ -1,3 +1,16 @@
+## Rusty's Dot Map Function updated with / commands. Can I learn it and make it work within the new bot's structure?
+@slash.slash(name="dotmap", description="prints dots with unique colors corresponding to each province they are a part of", guild_ids=servers)
+async def dot_map(self, ctx):
+        province_map = Image.open("./original_map.png").convert("RGBA")
+        province_map_rgb = province_map.convert("RGB")
+        with open("./province_data.json", "r") as f:
+            province_data = json.load(f)
+        for province in province_data:
+            for area in province_data[province]["coordinates"]:
+                province_map_rgb.putpixel(make_tuple(area), (255, 0, 0, 255))
+        province_map_rgb.save("./test_map.png")
+        await ctx.send(file=discord.File("./test_map.png"))
+
 def snapshot(img, base_coords):
 	print('beginning snapshot')
 	width=175
@@ -73,4 +86,3 @@ def quick_fill_core(image_reference, x, y, value, selected_color):
         y += 1
         if not (last_row_length != 0 and y < image_reference.size[1]):
             break
-
