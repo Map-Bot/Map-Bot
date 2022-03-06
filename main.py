@@ -1335,7 +1335,7 @@ async def attack(ctx, attacker, target):
 	target_full = r_test.map_json(game.map_name)[f"l{target}"]
 	print(target_full)
 	neighbor_ids = [i[1:] for i in target_full["neighbors"] if "l" in i]
-	defense_count = 1
+	defense_count = 0
 	for i in neighbor_ids:
 		if game.game_json.get(i) == target_owner:
 			defense_count += 1
