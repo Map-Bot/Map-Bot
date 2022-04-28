@@ -1036,7 +1036,7 @@ async def get_connected(ctx, id):
 					result.append(f"{i[1:]} (water)")
 			await ctx.send(f'Connected IDs for Province {id}:\n{", ".join(result)}')
 
-@slash.(name="unclaim", description="Unclaims a province with the given ID that you have claimed this update", guild_ids=servers)
+@slash.slash(name="unclaim", description="Unclaims a province with the given ID that you have claimed this update", guild_ids=servers)
 async def unclaim(ctx, id):
 	game = r_test.load_from_id(ctx.guild.id)
 	user = game.get_user(ctx.author.id)
