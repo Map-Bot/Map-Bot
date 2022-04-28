@@ -596,6 +596,8 @@ async def claim(ctx, id):
 		temp = game.map()
 		map_json = r_test.map_json(game.map_name)
 		coordinates=map_json[f"l{id}"]["coordinates"]
+		for i in coordinates:
+			image.quick_fill(temp, eval(i), 1, (255,255,255))
 		print(coordinates)
 		image.snapshot(temp, eval(coordinates[0]))
 		await ctx.send(embed=success_embed(f"Successfully claimed province {id}"),
