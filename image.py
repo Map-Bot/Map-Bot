@@ -124,4 +124,4 @@ def quick_fill_core(image_reference, x, y, value, selected_color, pattern, patte
         y += 1
         if not (last_row_length != 0 and y < image_reference.size[1]):
             break
- 
+
