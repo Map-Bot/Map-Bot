@@ -979,7 +979,6 @@ async def change_faction_color_error(ctx: commands.Context, error):
 async def manual_update(ctx):
 	await ctx.send("Sending update...")
 	await map_update(ctx.guild.id)
-
 	await game = r_test.load_from_id(ctx.guild.id)
 	log.info(game.game_json)
 	await ctx.send("Redrawing")
