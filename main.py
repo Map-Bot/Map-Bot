@@ -1392,7 +1392,7 @@ async def engage(ctx, id):
 	user_log(game, user, "engage join", f"Target Province: {id} - Attacker or Defender: {attacker_or_defender}")
 	if user.actions >= game.action_limit:
 		await ctx.send(embed=error_embed("You have used up all of your actions for this update period"))
-	
+		return
 	game.attacks[id][f"{attacker_or_defender}s"].append(user.discord_id)
 	user.actions += 1
 	await ctx.send(f'Successfully became {attacker_or_defender} for province {id}.\nNew Totals:\nAttackers Committted: {len(game.attacks[id]["attackers"])}, Max Attackers: {attack_info["max_attackers"]}\nCurrent Defenders: {len(game.attacks[id]["defenders"])}, Max Defenders: {attack_info["max_attackers"]}')
