@@ -1046,7 +1046,7 @@ async def unclaim(ctx, id):
 		map_json = r_test.map_json(game.map_name)
 		coordinates=map_json[f"l{id}"]["coordinates"]
 		for i in coordinates:
-			image.quick_fill(temp, eval(i), (255,255,255))
+			image.quick_fill(temp, eval(i), pattern=1, pattern_color=(1, 1, 1, 1), (255,255,255))
 		temp.save("test.png")
 		game.update_map(temp)
 		game.save()
