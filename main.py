@@ -665,7 +665,7 @@ async def update_roles(ctx):
 
 @not_in_fac()
 #@has_permissions(manage_channels=True, manage_roles=True)
-slash.slash(name="newfac",
+@slash.slash(name="newfac",
              description="Create a new faction with the provided name",
              guild_ids=servers)
 async def newfac(ctx, name):
@@ -922,7 +922,7 @@ async def new_claims(ctx):
 
 @in_fac()
 @leader()
-slash.slash(name="change_faction_color",
+@slash.slash(name="change_faction_color",
              description="Changes the faction color to the given RGB values",
              guild_ids=servers)
 async def change_faction_color(ctx, color):
