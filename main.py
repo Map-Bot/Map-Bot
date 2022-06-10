@@ -668,7 +668,7 @@ async def update_roles(ctx):
 @slash.slash(name="newfac",
              description="Create a new faction with the provided name",
              guild_ids=servers)
-async def newfac(ctx, name):
+asyc def newfac(ctx, name):
 	#Add config option later for restricting certain characters like :
 	game = r_test.load_from_id(ctx.guild.id)
 	user = game.get_user(ctx.author.id)
@@ -925,7 +925,7 @@ async def new_claims(ctx):
 @slash.slash(name="change_faction_color",
              description="Changes the faction color to the given RGB values",
              guild_ids=servers)
-async def change_faction_color(ctx, color):
+asyc def change_faction_color(ctx, color):
 	await ctx.defer()
 	game = r_test.load_from_id(ctx.guild.id)
 	user = game.get_user(ctx.author.id)
