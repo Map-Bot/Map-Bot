@@ -26,7 +26,7 @@ time.tzset()
 logging.basicConfig(filename = "logfile.log", filemode = "w", format = Log_Format, level = logging.INFO)
 log = logging.getLogger("my-logger")
 #print(mp.cpu_count())
-servers = [828422029618446399,810657122932883477,935758410090160159,983854630830227527]
+servers = [828422029618446399,810657122932883477,935758410090160159,983854630830227527,995607654233817108]
 exempt = [339251879273955330,740630812315090984,811024803292905532]
 schedules = {}
 client = commands.Bot(command_prefix="%", intents=discord.Intents.all())
