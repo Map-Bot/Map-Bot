@@ -15,7 +15,7 @@ from discord_slash.model import ButtonStyle
 """
 import class_playground
 import aiocron
-# from decorators import *
+from decorators import *
 import r_test
 import random
 from PIL import Image
@@ -205,8 +205,8 @@ def check_update(game):
 		                                       start=True)
 
 
-#@dev()
-button = interactions.Button(style=interactions.ButtonStyle.PRIMARY, label="Join", custom_id="join")
+@dev()
+#button = interactions.Button(style=interactions.ButtonStyle.PRIMARY, label="Join", custom_id="join")
 @bot.command(name="setup", description="Setup a game", scope=servers)
 async def slash_setup(ctx):
 	await ctx.defer()
@@ -380,13 +380,13 @@ async def setup(ctx: interactions.CommandContext):
 			await ctx.send("This game does not exist")
 
 """
-#@slash_setup.error
+@slash_setup.error
 async def setup_error(ctx, error):
 	print(error)
 	await ctx.send(embed=error_embed("You must be a dev to use this command"))
 
 
-#@not_in_fac()
+@not_in_fac()
 @bot.command(name="apply",
              description="Apply to the stated faction",
              scope=servers)
@@ -413,7 +413,7 @@ async def join(ctx, faction):
 		await ctx.send(embed=error_embed(f"{faction} isn't a valid faction"))
 
 
-#@join.error
+@join.error
 async def join_error(ctx, error):
 	log.error(error)
 	await ctx.send(embed=error_embed("You must be factionless to use this command"))
@@ -428,7 +428,7 @@ async def user(ctx):
 	await ctx.send(user)
 
 
-#@in_fac()
+@in_fac()
 @bot.command(name="leave",
              description="Leave your current faction",
              scope=servers)
@@ -515,7 +515,7 @@ async def leave(ctx):
 
 
 
-#@leave.error
+@leave.error
 async def leave_error(ctx: interactions.CommandContext):
 	if isinstance(error, CheckFailure):
 		await ctx.send(embed=error_embed("You must be in a faction to use this command"))
@@ -590,7 +590,7 @@ async def y(ctx: interactions.CommandContext):
 	await ctx.send("https://tenor.com/view/wooo-yeah-baby-gif-18955985")
 
 
-#@in_fac()
+@in_fac()
 @bot.command(name="claim",
              description="Claim the province with the given ID",
              scope=servers)
@@ -635,7 +635,7 @@ async def claim(ctx, id):
 	
 
 
-#@claim.error
+@claim.error
 async def claim_error(ctx: interactions.CommandContext, error):
 	print(error)
 	await ctx.send(embed=error_embed("You must be in a faction to use this command"))
@@ -689,8 +689,8 @@ async def update_roles(ctx):
 	#await ctx.send(f"Roles updated: {', '.join(edited)}")
 
 
-#@not_in_fac()
-#@has_permissions(manage_channels=True, manage_roles=True)
+@not_in_fac()
+@has_permissions(manage_channels=True, manage_roles=True)
 @bot.command(name="newfac",
              description="Create a new faction with the provided name",
              scope=servers)
@@ -735,7 +735,7 @@ async def newfac(ctx, name):
 	game.save()
 
 
-#@newfac.error
+@newfac.error
 async def new_fac_error(ctx, error):
 	log.error(f"Decorator Error: {error}")
 	log.error(type(error))
@@ -757,7 +757,7 @@ async def factions(ctx):
 	game = r_test.load_from_id(ctx.guild.id)
 	await ctx.send(str(game.faction_names()))
 
-#@dev()
+@dev()
 @bot.command(name="clearfacs",
              description="Clears all factions in game",
              scope=servers)
@@ -778,11 +778,11 @@ async def clearfacs(ctx):
 	await ctx.send(embed=success_embed("Factions sucessfully cleared"))
 
 
-#@clearfacs.error
+@clearfacs.error
 async def clearfacs_error(ctx, error):
 	await ctx.send("You must be a dev to use this command")
 
-#@dev()
+@dev()
 @bot.command(name="delete_fac",
              description="Deletes selected faction",
              scope=servers)
@@ -862,7 +862,7 @@ async def log_command(ctx):
 
 
 
-#@dev()
+@dev()
 @bot.command(name="update", description="*/1 * * * *", scope=servers)
 async def update(ctx, schedule):
 	game = r_test.load_from_id(ctx.guild.id)
@@ -877,12 +877,12 @@ async def update(ctx, schedule):
 	await ctx.send("done")
 
 
-#@update.error
+@update.error
 async def update_error(ctx, error):
 	await ctx.send("You must be a dev to use this command")
 
 
-#@dev()
+@dev()
 @bot.command(name="end_update", description="dev only", scope=servers)
 async def end_update(ctx):
 	game = r_test.load_from_id(ctx.guild.id)
@@ -891,7 +891,7 @@ async def end_update(ctx):
 	await ctx.send("All updates have been deleted")
 
 
-#@end_update.error
+@end_update.error
 async def end_update_error(ctx, error):
 	if isinstance(error, CheckFailure):
 		await ctx.send("You must be a dev to use this command")
@@ -899,7 +899,7 @@ async def end_update_error(ctx, error):
 		await ctx.send("An error occurred")
 
 
-#@dev()
+@dev()
 @bot.command(name="delete_game",
              description="Permanently deletes the current game",
              scope=servers)
@@ -916,7 +916,7 @@ async def delete_game(ctx):
 	await ctx.send(f"Game **{game.name}** has been deleted")
 
 
-#@delete_game.error
+@delete_game.error
 async def delete_game_error(ctx, error):
 	print(error)
 	await ctx.send("You must be a dev to use this command")
@@ -946,8 +946,8 @@ async def new_claims(ctx):
 		    "No map found for current game. Try using /add_map first")
 
 
-#@in_fac()
-#@leader()
+@in_fac()
+@leader()
 @bot.command(name="change_faction_color",
              description="Changes the faction color to the given RGB values",
              scope=servers)
@@ -991,14 +991,14 @@ async def change_faction_color(ctx, color):
 	await ctx.send(embed=success_embed("Faction color updated"))
 
 
-#@change_faction_color.error
+@change_faction_color.error
 async def change_faction_color_error(ctx: interactions.CommandContext, error):
 	print(error)
 	if isinstance(error, CheckFailure):
 		await ctx.send(embed=error_embed("You must be in a faction to use this command"))
 
 
-#@dev()
+@dev()
 @bot.command(name="manual_update",
              description="Manually update the map",
              scope=servers)
@@ -1006,7 +1006,7 @@ async def manual_update(ctx):
 	await ctx.send("Sending update...")
 	await map_update(ctx.guild.id)
 
-#@manual_update.error
+@manual_update.error
 async def manual_update_error(ctx, error):
 	print(error)
 	if isinstance(error, CheckFailure):
@@ -1024,7 +1024,7 @@ async def id_map(ctx):
 	    "https://media.discordapp.net/attachments/878093499399041095/884572546673029151/Extremist_Map_3_Province_Map_Water_Connection_.png"
 	)
 
-#@dev()
+@dev()
 @bot.command(name="redraw_map",
              description="Manually update the map",
              scope=servers)
@@ -1036,7 +1036,7 @@ async def redraw_map(ctx):
 	game.save()
 
 
-#@manual_update.error
+@manual_update.error
 async def manual_update_error(ctx, error):
 	print(error)
 	if isinstance(error, CheckFailure):
@@ -1080,8 +1080,8 @@ async def unclaim(ctx, id):
 	else:
 		await ctx.send(embed=error_embed(f"**{id}** is an invalid ID. Make sure that the ID exists and you claimed it this update", title="Invalid ID"))
 
-#@upper_midrank()
-#@slash.subcommand(base="trade", name="propose", description="Propose a new trade", scope=servers)
+@upper_midrank()
+@slash.subcommand(base="trade", name="propose", description="Propose a new trade", scope=servers)
 async def trade_propose(ctx, faction, offer, request):
 	game = r_test.load_from_id(ctx.guild.id)
 	user = game.get_user(ctx.author.id)
@@ -1186,7 +1186,7 @@ def trade_check(trade, user, faction, game):
 			message += f"\nYour faction does not own province ID(s): {', '.join(errors_request)}"
 		return f"Cannot accept trade, see the following errors:{message}"
 
-#@slash.subcommand(base="trade", name="preview", description="Look at a trade", scope=servers)
+@slash.subcommand(base="trade", name="preview", description="Look at a trade", scope=servers)
 async def trade_preview(ctx, trade_id):
 	game = r_test.load_from_id(ctx.guild.id)
 	user = game.get_user(ctx.author.id)
@@ -1226,8 +1226,8 @@ async def trade_preview(ctx, trade_id):
 	await ctx.send(file=discord.File("trade.png"))
 	game.save()
 
-#@upper_midrank()
-#@slash.subcommand(base="trade", name="accept", description="Accept a trade", scope=servers)
+@upper_midrank()
+@slash.subcommand(base="trade", name="accept", description="Accept a trade", scope=servers)
 async def trade_accept(ctx, trade_id):
 	game = r_test.load_from_id(ctx.guild.id)
 	user = game.get_user(ctx.author.id)
@@ -1262,7 +1262,7 @@ async def trade_accept(ctx, trade_id):
 	await ctx.send(file=discord.File("map.png"))
 	game.save()
 
-#@slash.subcommand(base="trade", name="view", description="View trades", scope=servers)
+@slash.subcommand(base="trade", name="view", description="View trades", scope=servers)
 async def trade_view(ctx):
 	game = r_test.load_from_id(ctx.guild.id)	
 	user = game.get_user(ctx.author.id)
@@ -1321,7 +1321,7 @@ async def complete_attack(ctx, id):
 	await ctx.send(embed=embed,file=discord.File("snapshot.png"))
 	game.save()
 
-#@slash.subcommand(base="engage",name="commence", description="Attack the target province", scope=servers)
+@slash.subcommand(base="engage",name="commence", description="Attack the target province", scope=servers)
 async def attack(ctx, attacker, target):
 	game = r_test.load_from_id(ctx.guild.id)
 	user = game.get_user(ctx.author.id)
@@ -1383,7 +1383,7 @@ async def attack(ctx, attacker, target):
 	await complete_attack(ctx, target)
 
 
-#@slash.subcommand(base="engage",name="join", description="Become an attacaker or defender of the given province", scope=servers)
+@slash.subcommand(base="engage",name="join", description="Become an attacaker or defender of the given province", scope=servers)
 async def engage(ctx, id):
 	game = r_test.load_from_id(ctx.guild.id)
 	user = game.get_user(ctx.author.id)
@@ -1424,7 +1424,7 @@ async def engage(ctx, id):
 	game.save()
 	await complete_attack(ctx, id)
 
-#@slash.subcommand(base="engage", name="info", description="See the info of a battle", scope=servers)
+@slash.subcommand(base="engage", name="info", description="See the info of a battle", scope=servers)
 async def engage_info(ctx, id):
 	game = r_test.load_from_id(ctx.guild.id)
 	attack_info = game.attacks.get(id)
@@ -1443,7 +1443,7 @@ async def engage_info(ctx, id):
 	embed.set_image(url="attachment://snapshot.png")
 	await ctx.send(embed=embed, file=discord.File("snapshot.png"))
 	
-#@dev()
+@dev()
 @bot.command(name="delete_attack", description=":troll:", scope=servers)
 async def delete_attack(ctx, id):
 	game = r_test.load_from_id(ctx.guild.id)
@@ -1454,7 +1454,7 @@ async def delete_attack(ctx, id):
 	user_log(game, user, "delete_attack", f"Attack ID: {id}")
 	game.save()
 
-#@dev()
+@dev()
 @bot.command(name="edit_max_actions", description="Self explanitory", scope=servers)
 async def edit_max_actions(ctx, max):
 	game=r_test.load_from_id(ctx.guild.id)
@@ -1462,8 +1462,8 @@ async def edit_max_actions(ctx, max):
 	await ctx.send(f"New max: {max}")
 	game.save()
 
-#@in_fac()
-#@midrank()
+@in_fac()
+@midrank()
 @bot.command(name="promote", description="Promotes the pinged user", scope=servers)
 async def promote(ctx, target_user):
 	game = r_test.load_from_id(ctx.guild.id)
@@ -1515,8 +1515,8 @@ async def promote(ctx, target_user):
 	await ctx.guild.get_member(int(sliced_user)).remove_roles(role2)
 	await ctx.send(embed=success_embed(f"{target_user} has now been promoted to {role.name}"))
 
-#@in_fac()
-#@midrank()
+@in_fac()
+@midrank()
 @bot.command(name="demote", description="Promotes the pinged user", scope=servers)
 async def demote(ctx, target_user):
 	game = r_test.load_from_id(ctx.guild.id)
@@ -1569,8 +1569,8 @@ async def demote(ctx, target_user):
 	await ctx.guild.get_member(int(sliced_user)).remove_roles(role2)
 	await ctx.send(embed=success_embed(f"{target_user} has now been demoted to {role.name}"))
 
-#@in_fac()
-#@midrank()
+@in_fac()
+@midrank()
 @bot.command(name="accept", description="Accepts the pinged user", scope=servers)
 async def accept(ctx, target_user):
 	game = r_test.load_from_id(ctx.guild.id)
@@ -1608,7 +1608,7 @@ async def accept(ctx, target_user):
 	await ctx.guild.get_member(int(sliced_user)).remove_roles(role)
 	await ctx.send(embed=success_embed(f"{target_user} has been accepted into {user.faction.name}"))
 	game.save()
-#@accept.error
+@accept.error
 async def accept_error(ctx, error):
 	log.error(f"Accept Error: {error}")
 	log.error(type(error))
