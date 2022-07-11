@@ -69,8 +69,9 @@ class Game:
 		print(self.map_bytes == "")
 		if self.map_bytes == "":
 			self.map_bytes = r_test.map_image(self.map_name)
+			print("redrawing map")
 			self.redraw_map()
-
+		print("Returning map")
 		return Image.open(io.BytesIO(base64.b64decode(self.map_bytes)))
 		
 	#return "No map"
@@ -147,13 +148,11 @@ class Game:
 
 	def redraw_map(self):
 		print("began redraw")
-		temp = Image.open(
-		    io.BytesIO(base64.b64decode(r_test.map_image(self.map_name)))).convert('RGB')
+		temp = Image.open(io.BytesIO(base64.b64decode(r_test.map_image(self.map_name)))).convert('RGB')
 		for i in self.game_json.keys():
 			owner = self.game_json[i]
 			if owner != 0:
-				coordinates = r_test.map_json(
-				    self.map_name)[f"l{i}"]["coordinates"]
+				coordinates = r_test.map_json(self.map_name)[f"l{i}"]["coordinates"]
 				print(coordinates)
 				if self.factions.get(owner):
 					faction = self.factions[owner]
@@ -202,8 +201,8 @@ class Game:
 		def temp_fill(coords):
 			image.quick_fill(temp, eval(coords), (0, 0, 255))
 
-		with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
-			executor.map(temp_fill, coords)
+		#with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+			#executor.map(temp_fill, coords)
 
 	def add_faction_server(self, server_id, faction):
 		if faction not in self.faction_names():
@@ -287,10 +286,10 @@ class Faction:
 		else:
 			return "Faction already connected to another server"
 
-	def create_role(name):
+	def create_role(self, name):
 		self.roles.append(Roles(name, len(self.roles)))
 
-	def find_role(discord_id):
+	def find_role(self, discord_id):
 		print(self)
 		print(self.roles)
 		for i in self.roles:

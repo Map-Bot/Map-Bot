@@ -1,10 +1,61 @@
-INFO 2022-02-01 12:26:42,551 - 
-COMMAND NAME: trade view
-COMMAND INFO: Trade List: {'4097': {'From': 10, 'To': 11, 'Offering': ['1475'], 'Requesting': ['1485']}, '2528': {'From': 6, 'To': 2, 'Offering': ['1637', '1661'], 'Requesting': ['420', '749']}, '4326': {'From': 11, 'To': 14, 'Offering': ['300'], 'Requesting': ['1478', '1607', '1611', '1636']}, '4206': {'From': 10, 'To': 11, 'Offering': ['1475'], 'Requesting': ['1485']}, '7650': {'From': 5, 'To': 6, 'Offering': ['465'], 'Requesting': ['735']}, '4119': {'From': 4, 'To': 11, 'Offering': ['13'], 'Requesting': ['873']}, '7477': {'From': 10, 'To': 11, 'Offering': ['1475'], 'Requesting': ['1985']}, '1861': {'From': 10, 'To': 11, 'Offering': ['1475'], 'Requesting': ['1485']}, '5190': {'From': 11, 'To': 10, 'Offering': ['1485'], 'Requesting': ['1475']}}
-USER INFO:
-User Object: <class_playground.User object at 0x7f6c541b6ac0> - User Object Name: IvaGrievous♡ - User Faction: <class_playground.Faction object at 0x7f6c541b6a00> - User Actions: 0
-INFO 2022-02-01 12:26:50,186 - 
-COMMAND NAME: trade preview
-COMMAND INFO: Trade ID: 2528 - Trade Info: {'From': 6, 'To': 2, 'Offering': ['1637', '1661'], 'Requesting': ['420', '749']}
-USER INFO:
-User Object: <class_playground.User object at 0x7f6c5416ff70> - User Object Name: IvaGrievous♡ - User Faction: <class_playground.Faction object at 0x7f6c541b6eb0> - User Actions: 0
+INFO 2022-07-11 13:52:39,694 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,694 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,694 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,694 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,694 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,695 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,695 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,695 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,695 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,695 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,695 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,695 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,695 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,695 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,695 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,695 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,695 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,695 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,695 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,695 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,695 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,695 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,695 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,695 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,695 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,696 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,696 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,696 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,696 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,696 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,696 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,696 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,696 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,696 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,696 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,696 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,696 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,696 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,696 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,696 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,696 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,696 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,696 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,696 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,696 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,696 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,697 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,697 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,697 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,697 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,697 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,697 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,697 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,697 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,697 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,697 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,697 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,697 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,697 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,697 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+INFO 2022-07-11 13:52:39,697 - Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
