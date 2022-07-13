@@ -18,12 +18,10 @@ test_json = {
   "gameType": "N/A",
   "roles": "none"
 }
-
+direc = {}
 
 def pack(obj):
     return codecs.encode(pickle.dumps(obj), "base64").decode()
-
-
 def unpack(obj):
     return pickle.loads(codecs.decode(obj.encode(), "base64"))
 
@@ -43,9 +41,8 @@ def save_game(name, obj):
     load_game_object(name)
     print("SAVED")
 
-
 def add_game(name, obj):
-    if r.jsonget("games", Path.rootPath()) is None:
+    if r.jsonget("games", Path.rootPath()) == None:
         r.jsonset("games", Path.rootPath(), {})
     directory = r.jsonget("games", Path.rootPath())
     if name in directory:
@@ -59,11 +56,10 @@ def add_game(name, obj):
 
 
 def load_game_object(name):
-    if r.jsonget("games", Path.rootPath()) is None:
+    if r.jsonget("games", Path.rootPath()) == None:
         r.jsonset("games", Path.rootPath(), {})
     directory = r.jsonget("games", Path.rootPath())
     return unpack(directory[name])
-
 
 def strip_json(json_obj):
     removal_keys = []
@@ -78,9 +74,9 @@ def strip_json(json_obj):
         new_json[i] = 0
     return new_json
 
-
 def upload_map_json(name):
-    if r.jsonget("map_jsons", Path.rootPath()) is None:
+
+    if r.jsonget("map_jsons", Path.rootPath()) == None:
         r.jsonset("map_jsons", Path.rootPath(), {})
 
     objects = r.jsonget("map_jsons", Path.rootPath())
@@ -90,9 +86,8 @@ def upload_map_json(name):
     r.jsonset("map_jsons", Path.rootPath(), objects)
     print("JSON uploaded")
 
-
 def upload_map_image(name):
-        if r.jsonget("map_images", Path.rootPath()) is None:
+        if r.jsonget("map_images", Path.rootPath()) == None:
             r.jsonset("map_images", Path.rootPath(), {})
         objects = r.jsonget("map_images")
     
@@ -102,9 +97,8 @@ def upload_map_image(name):
             r.jsonset("map_images", Path.rootPath(), objects)
         print("Image uploaded")
 
-
 def map_image(name):
-    if r.jsonget("map_images", Path.rootPath()) is None:
+    if r.jsonget("map_images", Path.rootPath()) == None:
         r.jsonset("map_images", Path.rootPath(), {})
         return "Invalid Image"
     response = r.jsonget("map_images", Path(f".{name}")) 
@@ -113,9 +107,8 @@ def map_image(name):
     else:
         return "Invalid Image"
 
-
 def map_json(name):
-    if r.jsonget("map_jsons", Path.rootPath()) is None:
+    if r.jsonget("map_jsons", Path.rootPath()) == None:
         r.jsonset("map_jsons", Path.rootPath(), {})
         return "Invalid JSON"
     response = r.jsonget("map_jsons", Path(f".{name}")) 
@@ -126,11 +119,9 @@ def map_json(name):
 
 
 def load_from_id(id):
-    print("starting load from ID")
-    if r.jsonget("games", Path.rootPath()) is None:
+    if r.jsonget("games", Path.rootPath()) == None:
         r.jsonset("games", Path.rootPath(), {})
     games = r.jsonget("games", Path.rootPath())
-    print("starting loop")
     for i in games.keys():
         game = unpack(games[i])
         if game.server_id == id:
