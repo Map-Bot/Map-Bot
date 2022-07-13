@@ -1,14 +1,13 @@
 from discord.ext import commands
-from interactions.ext.checks import check
 import r_test
-#from discord_slash.utils.manage_commands import create_choice, create_option
+from discord_slash.utils.manage_commands import create_choice, create_option
 import class_playground
 devs = [339251879273955330, 750744079079440506, 244638942169792513, 811024803292905532]
 
 def dev():
     async def predicate(ctx):
         return ctx.author.id in devs
-    return check(predicate)
+    return commands.check(predicate)
 
 def get_faction(ctx, id):
     game = r_test.load_from_id(ctx.guild.id)
@@ -36,7 +35,7 @@ def in_fac():
         if faction == None:
             return False
         return True
-    return check(predicate)
+    return commands.check(predicate)
 
 
 def not_in_fac():
@@ -46,7 +45,7 @@ def not_in_fac():
         if faction != None:
             return False
         return True
-    return check(predicate)
+    return commands.check(predicate)
 
 def get_perms(ctx):
     game = r_test.load_from_id(ctx.guild.id)
@@ -81,7 +80,7 @@ def leader():
             return True
         else:
             return False
-    return check(predicate)
+    return commands.check(predicate)
 def lieutenant():
     async def predicate(ctx):
         result = get_perms(ctx)
@@ -91,7 +90,7 @@ def lieutenant():
             return True
         else:
             return False
-    return check(predicate)
+    return commands.check(predicate)
 def upper_midrank():
     async def predicate(ctx):
         result = get_perms(ctx)
@@ -101,7 +100,7 @@ def upper_midrank():
             return True
         else:
             return False
-    return check(predicate)
+    return commands.check(predicate)
 def midrank():
     async def predicate(ctx):
         result = get_perms(ctx)
@@ -111,7 +110,7 @@ def midrank():
             return True
         else:
             return False
-    return check(predicate)
+    return commands.check(predicate)
 """
 def not_in_fac():
     async def predicate(ctx):
@@ -123,5 +122,5 @@ def not_in_fac():
                 return False
 
         return True
-    return check(predicate)
+    return commands.check(predicate)
   """
