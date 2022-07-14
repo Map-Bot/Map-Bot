@@ -27,7 +27,7 @@ logging.basicConfig(filename = "logfile.log", filemode = "w", format = Log_Forma
 log = logging.getLogger("my-logger")
 #print(mp.cpu_count())
 servers = [943000675908980746,995607654233817108]
-exempt = [339251879273955330,740630812315090984,811024803292905532]
+exempt = [339251879273955330,740630812315090984,811024803292905532,928903804001353738]
 schedules = {}
 client = commands.Bot(command_prefix="%", intents=discord.Intents.all())
 slash = SlashCommand(client, sync_commands=True)
