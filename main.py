@@ -268,7 +268,12 @@ async def slash_setup(ctx):
 	game.add_map(select_ctx.selected_options[0])
 	await ctx.send("Added the selected map")
 
-
+"""@slash_setup.error
+async def setup_error(ctx, error):
+	print(error)
+	await ctx.send(embed=error_embed("You must be a dev to use this command"))
+"""	
+	
 async def wait_for(ctx, msg, reactions):
 	for i in reactions:
 		await msg.add_reaction(i)
@@ -363,10 +368,7 @@ async def setup(ctx: commands.Context):
 			await ctx.send("This game does not exist")
 
 
-@slash_setup.error
-async def setup_error(ctx, error):
-	print(error)
-	await ctx.send(embed=error_embed("You must be a dev to use this command"))
+
 
 
 @not_in_fac()
