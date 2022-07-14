@@ -52,15 +52,6 @@ pkginfo==1.7.1
 platformdirs==2.3.0
 poetry==1.1.6
 poetry-core==1.0.4
-protobuf==3.17.3
-ptyprocess==0.7.0
-pyasn1==0.4.8
-pyasn1-modules==0.2.8
-pycparser==2.20
-pyflakes==2.1.1
-pygame==2.0.1
-pylev==1.4.0
-PyOpenGL==3.1.5
 pyparsing==2.4.7
 pyquil==1.9.0
 python-dateutil==2.8.2
@@ -76,11 +67,6 @@ requests-toolbelt==0.9.1
 rope==0.18.0
 rsa==4.7.2
 SecretStorage==3.3.1
-shellingham==1.4.0
-six==1.16.0
-sounddevice==0.4.2
-SQLAlchemy==1.4.23
-sqlparse==0.4.2
 termcolor==1.1.0
 toml==0.10.2
 tomlkit==0.7.2
