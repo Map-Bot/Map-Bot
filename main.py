@@ -997,7 +997,7 @@ async def manual_update_error(ctx, error):
 async def id_map(ctx):
 	await ctx.defer()
 	await ctx.send(
-	    "https://media.discordapp.net/attachments/878093499399041095/884572546673029151/Extremist_Map_3_Province_Map_Water_Connection_.png"
+	    "https://i.redd.it/ipmdzczv5hw41.png"
 	)
 
 @dev()
