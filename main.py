@@ -286,7 +286,7 @@ async def wait_for(ctx, msg, reactions):
 	return None
 
 
-@commands.command
+#@commands.command
 async def setup(ctx: commands.Context):
 	#Record each step of setup and save the configuration information and the exact step last completed in the config file of the game.
 	author = ctx.message.author
